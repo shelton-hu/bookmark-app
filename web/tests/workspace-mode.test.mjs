@@ -1,0 +1,92 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import ts from "typescript";
+
+// Execute the real TS request boundary without adding a browser or test dependency.
+const moduleUrl = (source) => `data:text/javascript;base64,${Buffer.from(ts.transpileModule(source, {
+  compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext },
+}).outputText).toString("base64")}`;
+const modeUrl = moduleUrl(await readFile(new URL("../src/workspaceMode.ts", import.meta.url), "utf8"));
+const mode = await import(modeUrl);
+const apiSource = (await readFile(new URL("../src/api.ts", import.meta.url), "utf8"))
+  .replace('"./workspaceMode"', JSON.stringify(modeUrl));
+const { api, post } = await import(moduleUrl(apiSource));
+const originalFetch = globalThis.fetch;
+const ok = () => new Response(JSON.stringify({ ok: true }), { status: 200 });
+test.afterEach(() => { globalThis.fetch = originalFetch; mode.resetWorkspaceMode(); });
+
+test("fresh workspace starts in management; explicit enjoy mode restricts management pages", () => {
+  assert.equal(mode.getWorkspaceMode(), "manage");
+  for (const page of ["settings", "folders", "transfer", "jobs", "trash"]) {
+    assert.equal(mode.accessiblePage(page, "enjoy"), "library");
+    assert.equal(mode.accessiblePage(page, "manage"), page);
+  }
+  assert.equal(mode.accessiblePage("library", "enjoy"), "library");
+  assert.equal(mode.accessiblePage("pending", "enjoy"), "library");
+  assert.equal(mode.accessiblePage("pending", "manage"), "pending");
+});
+test("read-only blocks every write path before fetch, including delayed callbacks", async () => {
+  let sent = 0;
+  globalThis.fetch = async () => { sent++; return ok(); };
+  const writes = [["/bookmarks", "POST"], ["/bookmarks/1", "PATCH"], ["/bookmarks/1", "DELETE"],
+    ["/bookmarks/1/restore", "POST"], ["/folders", "POST"], ["/folders/bulk-delete", "POST"],
+    ["/settings", "PUT"], ["/tokens/1", "DELETE"], ["/import/confirm", "POST"], ["/jobs", "POST"],
+    ["/assistant/apply", "POST"], ["/folders/organize-apply", "POST"],
+    ["/trash/delete-preview", "POST"], ["/trash/delete", "POST"], ["/trash/restore", "POST"]];
+  mode.setWorkspaceMode("manage");
+  const delayedSave = () => post("/bookmarks", { title: "stale" });
+  mode.setWorkspaceMode("enjoy");
+  for (const [path, method] of writes) await assert.rejects(api(path, { method }), /纯享模式/);
+  await assert.rejects(delayedSave(), /纯享模式/);
+  assert.equal(sent, 0);
+});
+test("search, detail reads and login/logout continue working in enjoy mode", async () => {
+  const sent = [];
+  globalThis.fetch = async (path) => { sent.push(path); return ok(); };
+  await api("/bookmarks?q=moon");
+  await api("/folders");
+  for (const action of ["login", "logout", "setup"]) await post(`/auth/${action}`);
+  assert.equal(sent.length, 5);
+});
+test("management permits writes; returning to enjoy blocks subsequent writes", async () => {
+  let sent = 0;
+  globalThis.fetch = async () => { sent++; return ok(); };
+  mode.setWorkspaceMode("manage");
+  for (const method of ["POST", "PATCH", "PUT", "DELETE"]) await api("/bookmarks/1", { method });
+  assert.equal(mode.setWorkspaceMode("enjoy"), true);
+  await assert.rejects(post("/bookmarks"), /纯享模式/);
+  assert.equal(sent, 4);
+});
+test("in-flight writes must finish before switching to enjoy", async () => {
+  let resolve;
+  globalThis.fetch = () => new Promise((done) => { resolve = done; });
+  mode.setWorkspaceMode("manage");
+  const pending = post("/bookmarks");
+  assert.equal(mode.setWorkspaceMode("enjoy"), false);
+  assert.equal(mode.getWorkspaceMode(), "manage");
+  resolve(ok());
+  await pending;
+  assert.equal(mode.setWorkspaceMode("enjoy"), true);
+});
+test("failed and cancelled requests release the mode switch", async () => {
+  for (const error of [new TypeError("network"), new DOMException("cancelled", "AbortError")]) {
+    mode.setWorkspaceMode("manage");
+    globalThis.fetch = async () => { throw error; };
+    await assert.rejects(post("/bookmarks"));
+    assert.equal(mode.setWorkspaceMode("enjoy"), true);
+  }
+  mode.setWorkspaceMode("manage");
+  globalThis.fetch = async () => new Response('{"detail":"conflict"}', { status: 409 });
+  await assert.rejects(post("/bookmarks"), /conflict/);
+  assert.equal(mode.setWorkspaceMode("enjoy"), true);
+});
+test("authentication reset revokes writes even while an earlier write settles", async () => {
+  mode.setWorkspaceMode("manage");
+  const finish = mode.beginWorkspaceRequest("/bookmarks", "POST");
+  mode.resetWorkspaceMode();
+  await assert.rejects(post("/bookmarks"), /纯享模式/);
+  finish();
+  finish(); // completion is idempotent
+  assert.equal(mode.setWorkspaceMode("enjoy"), true);
+});

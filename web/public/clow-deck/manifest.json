@@ -1,0 +1,216 @@
+{
+  "source": "https://github.com/alvesmatheus/clow-cards/tree/master/server/public/cards",
+  "width": 600,
+  "height": 1344,
+  "processing": "edge-aware scan denoise; clean outer stock; blank scroll panel; original glyph and matching illustration retained",
+  "cards": [
+    {
+      "key": "arrow",
+      "original_sha256": "cd7ec96bb644536fee164e570463ba2146911328b261c5601f83a6b6e31376a5"
+    },
+    {
+      "key": "big",
+      "original_sha256": "b66e10f5ff5fe73827b6313624f23ea072a3ef2f0a6923b2edc177f8bb2f0134"
+    },
+    {
+      "key": "bubbles",
+      "original_sha256": "12b47ad83a44402b6797f144e34d24e598b0461a92144cab46389193b31765c0"
+    },
+    {
+      "key": "change",
+      "original_sha256": "996530b6195927467bbe1b9621f4750ad4c603f348ba5adef8c4b991c67aca5d"
+    },
+    {
+      "key": "cloud",
+      "original_sha256": "dc3c8185d79045a0ca5ae7c1262cf3b82f36349ad2010809698570954b2406f8"
+    },
+    {
+      "key": "create",
+      "original_sha256": "30af5eb69f3b37389be5ff21052a7360c82e9a857b2707d9327168fd5ea25678"
+    },
+    {
+      "key": "dark",
+      "original_sha256": "c124eee78f109bdc84a4c4b5a79ecc22d9c8b3f2de8ff041e2da2f2cd0b8a671"
+    },
+    {
+      "key": "dash",
+      "original_sha256": "486857af4f03525138a83c0e02bf49573bce283f6ba998718588721bb5dba848"
+    },
+    {
+      "key": "dream",
+      "original_sha256": "5a161a5b85b32440d9dba3e6bf53dfd084f3904fd4f92dc9e9b4da1b089a28e7"
+    },
+    {
+      "key": "earthy",
+      "original_sha256": "863c4be3e755bf5dc7192ef34dce7f8849d1e00e0f00588fe2f2a8687865f9fb"
+    },
+    {
+      "key": "erase",
+      "original_sha256": "5f00f6dd93994fb942642a4bc6f9b5bc307bc24e077c360a8ff40c304e619243"
+    },
+    {
+      "key": "fight",
+      "original_sha256": "0387232c56f2f985970c4aec5489162ac1d01875db0c1d77bb2b99693b427961"
+    },
+    {
+      "key": "firey",
+      "original_sha256": "3e7609c13563a3b6d55ca196eafdbe7bdfec793cf440ca536f43caab66aeb762"
+    },
+    {
+      "key": "float",
+      "original_sha256": "9088a703be0f690a42a12771f3cb9cfb59101420d2becc022022edb9398e048f"
+    },
+    {
+      "key": "flower",
+      "original_sha256": "6929fef4768eef7ea1de296493d8919d3faf81ca7d466a0d261b795dc035f003"
+    },
+    {
+      "key": "fly",
+      "original_sha256": "dbdf53f94f7895252df74cd27d28ade3b4f05a0f19042622f7f9f1fd55a1dc6d"
+    },
+    {
+      "key": "freeze",
+      "original_sha256": "5829dc0a62903b28a6463d6a7bab824f24494aa608d11f0af798f5a7b996f55c"
+    },
+    {
+      "key": "glow",
+      "original_sha256": "a750f08a15e445eb038eb411c0b9ea08f4b0fc57ee22c0276ace4307661269ee"
+    },
+    {
+      "key": "illusion",
+      "original_sha256": "d9e69ad23c9cedff73d64d490402c6579ee89fcf5283a64c3073862b2621e383"
+    },
+    {
+      "key": "jump",
+      "original_sha256": "d775c6ab1032312c5ea4e3a64a4a8779c6c05d42d6610c8d34fc52bad578cccd"
+    },
+    {
+      "key": "libra",
+      "original_sha256": "0e287b32d7534a8318797eff73f56c333ea946cc2f972ed97af0c7284ff4bce8"
+    },
+    {
+      "key": "light",
+      "original_sha256": "5c96ee78b443da7cf16e0bb08169dbd0893ddfd7b7342da43fd1e00ff6eaa66c"
+    },
+    {
+      "key": "little",
+      "original_sha256": "1663528ae5f458584b04e86e75f3789c9c648d8634ec6f0073fee2056aed7e75"
+    },
+    {
+      "key": "lock",
+      "original_sha256": "3e277aeaefd6edc136fe3c29b72ed8ac03f7d04ee42c896d98dd83b46ff53109"
+    },
+    {
+      "key": "loop",
+      "original_sha256": "ab7ba265b17bcef213c9dabffd1d12b7da04ed6bb461be5c305a1fbcadb8fced"
+    },
+    {
+      "key": "maze",
+      "original_sha256": "0b6ddc2c0e94fdebc8597ce04b9d0ab758aaafc7a241c8214915f188a799f0a8"
+    },
+    {
+      "key": "mirror",
+      "original_sha256": "6cf2306307240cc3298af3c235c942693a37d10bc98fb26a12ff3cabf84604fa"
+    },
+    {
+      "key": "mist",
+      "original_sha256": "380b66509b7b6c73c8343f2b048bdb61f963fdb752b9f95b8200cc57d24a33a7"
+    },
+    {
+      "key": "move",
+      "original_sha256": "055e71e2d6d9c63201f6f61d1c9766bbfd314b5aa7030d83b6569e577ca086ab"
+    },
+    {
+      "key": "power",
+      "original_sha256": "a31f761f5b9a8a6572fed7b69c2b6c53d28fd60bc60cdc65af56e73da243a476"
+    },
+    {
+      "key": "rain",
+      "original_sha256": "e49d4fc6ffbbb1ecc75109ae4b4ab173e64abf701d72c142439b8853182dd5c0"
+    },
+    {
+      "key": "return",
+      "original_sha256": "6a3a0de717088bda8c061b1daa5a4e301d24551a55d360c3e9d9803a77c24db8"
+    },
+    {
+      "key": "sand",
+      "original_sha256": "7e4f6de4641f9bf567b953354ce622a866e95a12a65e01e01809e811f33c4656"
+    },
+    {
+      "key": "shadow",
+      "original_sha256": "f32a49538bb1dcca9ea6ff2408de89e7c445e5adc7aef8e6b3c3ff8748858955"
+    },
+    {
+      "key": "shield",
+      "original_sha256": "9cb2ef711cb42d6efebb4dbdc6c7ead5f7c0359d1b3d95ea47964c88928f6c6e"
+    },
+    {
+      "key": "shot",
+      "original_sha256": "bcfb3254b84efbbdf5d3addb297539b390b238ae32693ac4ccf8e6e88c2f61d4"
+    },
+    {
+      "key": "silent",
+      "original_sha256": "f91b5dce1ad3d5fcd03f18830680545f70442baaa21e4178484ae05688121f09"
+    },
+    {
+      "key": "sleep",
+      "original_sha256": "b916f7123cdfd7396a4c0e6cba15bae21664c77d9238111253793d6927622923"
+    },
+    {
+      "key": "snow",
+      "original_sha256": "dcf01658fbbc117bec442219a4daf88e6dec5e5fa3a6f2b681158fb514862a8c"
+    },
+    {
+      "key": "song",
+      "original_sha256": "0b739ffa7a202b82a54a81dfe99c5ce0d3880b5e438337ce15146f387e32176f"
+    },
+    {
+      "key": "storm",
+      "original_sha256": "0245cd4bd1d4498362a223f93283e416faae81dce10230c2540c2fa154e3f1d2"
+    },
+    {
+      "key": "sweet",
+      "original_sha256": "e04e311b60085517ac96a7fbc94638bb0dc75d6ef5ca57f5f1e4be152a8c6e5d"
+    },
+    {
+      "key": "sword",
+      "original_sha256": "4119331924460d59d6c8b5d8755374952ef8c09c4bccad6d30a70d8c6b6cd6be"
+    },
+    {
+      "key": "through",
+      "original_sha256": "9fa4d13a553527940e26556fc2d3aa521532eac17a245cf973dd106ba8b94edd"
+    },
+    {
+      "key": "thunder",
+      "original_sha256": "4e88d5d650fac4c85ae11a25c21a62287b32cd71fce97c11acf7278357a2768f"
+    },
+    {
+      "key": "time",
+      "original_sha256": "72c2ce6d7c737cdf13381c595ecec3965036696da7978b1899829d21da65d24b"
+    },
+    {
+      "key": "twin",
+      "original_sha256": "95c992beea68aae111aecd749d8d3aff65ee7230e897262027322c21bd4d4689"
+    },
+    {
+      "key": "voice",
+      "original_sha256": "5f80708f00b82d3b71308d2f3b864d752fc3a12269c165dfe41f9ff24ea2b9cb"
+    },
+    {
+      "key": "watery",
+      "original_sha256": "c9ce2f114cc8c6d5e3ac5185c9f0ef94bda9af26a21edf2a438259ad50253895"
+    },
+    {
+      "key": "wave",
+      "original_sha256": "d7f23a84d03ce3e795097d3ca76c1829f20040354df55626743024744ce19a99"
+    },
+    {
+      "key": "windy",
+      "original_sha256": "f3c3ab17bed571d10959cbb9916343b4e4e168b461134cf23f14c9f1cc09e049"
+    },
+    {
+      "key": "wood",
+      "original_sha256": "3405a6f6c0c4d13f1ba126904063d3db3168d4f59b3e9a2ddac3774c0e39211b"
+    }
+  ]
+}

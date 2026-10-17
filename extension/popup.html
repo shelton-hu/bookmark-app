@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>确认收藏 · 拾页</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main>
+    <header>
+      <div class="brand">
+        <img src="icons/icon-48.png" width="36" height="36" alt="">
+        <div>
+          <span>拾页</span>
+          <h1 id="heading">收藏此页面</h1>
+        </div>
+      </div>
+      <button id="settings" class="text-button" type="button">设置</button>
+    </header>
+
+    <section class="page-summary" aria-labelledby="page-title">
+      <h2 id="page-title">正在读取当前页面…</h2>
+      <p id="page-url"></p>
+    </section>
+
+    <p id="status" role="status" aria-live="polite"></p>
+
+    <footer>
+      <button id="cancel" class="secondary" type="button">取消</button>
+      <button id="confirm" type="button" disabled>确认收藏</button>
+    </footer>
+  </main>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

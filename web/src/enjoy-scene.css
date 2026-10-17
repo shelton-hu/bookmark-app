@@ -1,0 +1,105 @@
+/* The enjoy scene owns its canvas; management retains the parchment workbench. */
+body.enjoy-surface { background: #160f24; }
+.clarity-shell.clow-theme.mode-enjoy {
+  --text: #f4e9db; --muted: #c3aebe; --surface: #2b1e39; --border: #b18a5e50;
+  display: block; position: relative; isolation: isolate; min-height: 100svh; overflow: clip;
+  background: radial-gradient(ellipse at 50% 72%, #67354955, transparent 62%), radial-gradient(ellipse at 40% 48%, #49255688, transparent 65%), #160f24;
+  color: var(--text);
+}
+.mode-enjoy .enjoy-atmosphere { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+.enjoy-ground {
+  position: absolute; top: calc(var(--enjoy-top, 125px) + var(--enjoy-face, 470px) + 140px); left: 50%;
+  width: max(1060px, 108vw); max-width: 1900px; aspect-ratio: 1;
+  transform: translate(-50%, -50%) scaleY(.36); transform-origin: center;
+}
+/* Rotate the circular artwork inside the fixed ground projection. */
+.enjoy-ground img {
+  display: block; width: 100%; height: 100%; opacity: .72; filter: drop-shadow(0 0 2px #edb97535);
+  transform-origin: center; animation: enjoy-circle-turn 90s linear infinite;
+}
+@keyframes enjoy-circle-turn { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .enjoy-ground img { animation: none; } }
+.clarity-shell.mode-enjoy .workspace { margin: 0; width: 100%; min-width: 0; background: transparent; }
+.clarity-shell.mode-enjoy .library-main {
+  --enjoy-top: clamp(95px, 13svh, 150px); --enjoy-face: 470px;
+  display: block; max-width: none; padding: 0; margin: 0; min-height: 100svh; position: relative;
+}
+.clarity-shell.mode-enjoy { --enjoy-top: clamp(95px, 13svh, 150px); --enjoy-face: 470px; }
+.clarity-shell.mode-enjoy .library-panel {
+  padding: 0; margin: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none;
+}
+.mode-enjoy .bookmark-hands { padding-top: 4px; }
+.mode-enjoy .hand-section { border: 0; }
+.mode-enjoy .hand-caption { display: none; }
+.clarity-shell.mode-enjoy .hand-rail {
+  padding-top: 140px; padding-bottom: 180px; background: transparent; scrollbar-width: none;
+}
+.mode-enjoy .hand-rail::-webkit-scrollbar { display: none; }
+.mode-enjoy .hand-rail:focus-visible { outline: 1px dashed #b49c7970; outline-offset: -8px; }
+.clarity-shell.mode-enjoy .clow-card .clow-art { box-shadow: .6px 1px #ad8858, 0 12px 22px -8px #08040dbb; }
+.clarity-shell.mode-enjoy .clow-card .clow-art::after { box-shadow: 0 0 18px 5px #f2c46d33, 0 0 38px 12px #ebc06d16; }
+.clarity-shell.mode-enjoy .clow-card .clow-art:focus-visible { outline-color: #fff0b9; }
+/* Search and its native popover remain the only persistent controls. */
+.clarity-shell.mode-enjoy .enjoy-search {
+  position: relative; z-index: 2; display: flex; align-items: center; gap: 12px;
+  width: min(700px, calc(100% - 48px)); height: 64px; margin: 0 auto;
+  top: 0; padding: 8px 10px 8px 22px; border: 1px solid #c9a47355; border-radius: 17px;
+  background: #30213fe8; color: #eee2e3; box-shadow: 0 10px 36px #08041020;
+}
+.mode-enjoy .library-main { padding-top: calc(var(--enjoy-top) - 64px) !important; }
+.mode-enjoy .enjoy-search:focus-within { border-color: #d7b87b; box-shadow: 0 0 0 3px #e7c67c12; }
+.clarity-shell.mode-enjoy .enjoy-search input {
+  width: 0; flex: 1; min-width: 0; height: 44px; padding: 0; border: 0; border-radius: 0; outline: none;
+  background: transparent; box-shadow: none; color: #fff6e9; font-size: 17px;
+}
+.mode-enjoy .enjoy-search input::placeholder { color: #c9b9c9; opacity: 1; }
+.mode-enjoy .enjoy-search input::-webkit-search-cancel-button { display: none; }
+.mode-enjoy .enjoy-search > button { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 10px; flex: 0 0 auto; color: #e8d8df; background: transparent; }
+.mode-enjoy .enjoy-search > button:hover { background: #c49fcb16; }
+.enjoy-menu {
+  position: fixed; inset: auto; top: calc(clamp(95px, 13svh, 150px) + 12px); right: max(24px, calc((100vw - 700px) / 2));
+  margin: 0; width: 240px; padding: 10px; border: 1px solid #a6836955; border-radius: 14px;
+  background: #30213f; color: #f4e9db; box-shadow: 0 12px 45px #08051070;
+}
+.enjoy-menu:popover-open { display: grid; gap: 6px; }
+.enjoy-menu::backdrop { background: transparent; }
+.enjoy-menu > button { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 44px; padding: 10px; border: 0; border-radius: 8px; color: inherit; background: transparent; text-align: left; }
+.enjoy-menu button:hover { background: #d1a9da17; }
+.enjoy-menu .enjoy-search-kind { display: flex; gap: 4px; border-bottom: 1px solid #b18a5e40; padding-bottom: 10px; }
+.enjoy-search-kind button { flex: 1; min-height: 44px; border: 0; border-radius: 8px; background: transparent; color: #c3aebe; }
+.enjoy-search-kind button[aria-pressed="true"] { background: #ad879331; color: #ffe3a9; }
+.enjoy-surface :is(.enjoy-menu, .enjoy-search) button:focus-visible { outline: 2px solid #efd19b; outline-offset: 1px; }
+.clarity-shell.mode-enjoy .empty { border: 0; background: transparent; box-shadow: none; color: #f4e9db; margin-top: 120px; }
+.mode-enjoy .empty p { color: #c3aebe; }
+.mode-enjoy .skeletons { display: flex; justify-content: center; overflow: hidden; gap: 18px; margin-top: 140px; padding-inline: 24px; }
+.mode-enjoy .skeleton-card { flex: 0 0 210px; height: 470px; border: 1px solid #b18a5e30; background: #33203c; }
+.mode-enjoy .skeleton-card > div { background: #432c4b; }
+.clarity-shell.mode-enjoy :is(.notice, .error-box) { position: relative; z-index: 2; margin: 12px auto; width: min(700px, calc(100% - 48px)); background: #32203e; color: #f4e9db; border-color: #a7835955; }
+.clarity-shell.mode-enjoy .toast {
+  background: #302139; color: #fff2dd; border-color: #a88a63;
+  box-shadow: 0 8px 28px #08041080; font-size: 14px; line-height: 1.6;
+  bottom: max(24px, env(safe-area-inset-bottom)); padding: 8px 10px 8px 16px;
+}
+.clarity-shell.mode-enjoy .toast > svg { flex-shrink: 0; color: #efd19b; }
+.clarity-shell.mode-enjoy .toast .toast-message { min-width: 0; overflow-wrap: anywhere; }
+.clarity-shell.mode-enjoy .toast .icon-button { flex-shrink: 0; color: #fff2dd; }
+.clarity-shell.mode-enjoy .toast .icon-button:hover { background: #49334f; }
+.clarity-shell.mode-enjoy .toast .icon-button:focus-visible { outline: 2px solid #efd19b; outline-offset: -2px; }
+.enjoy-surface .clow-reader::backdrop { background: #10081985; backdrop-filter: blur(5px); }
+/* Native cursor: no following DOM overlay, input delay, or pointer-event interception. */
+@media (pointer: fine) and (hover: hover) and (forced-colors: none) {
+  body.enjoy-surface, body.enjoy-surface * { cursor: url('/clow-scene/sealing-wand.svg') 3 5, auto !important; }
+}
+@media (max-width: 900px) {
+  .clarity-shell.mode-enjoy, .clarity-shell.mode-enjoy .library-main { --enjoy-top: 96px; --enjoy-face: 389px; }
+  .clarity-shell.mode-enjoy .hand-rail { padding-top: 110px; padding-bottom: 150px; }
+  .enjoy-ground { top: calc(var(--enjoy-top) + var(--enjoy-face) + 108px); width: max(780px, 120vw); transform: translate(-50%, -50%) scaleY(.42); }
+  .clarity-shell.mode-enjoy .enjoy-search { width: calc(100% - 32px); }
+  .enjoy-menu { top: 108px; right: 24px; }
+}
+@media (max-width: 480px) {
+  .clarity-shell.mode-enjoy .enjoy-search { width: calc(100% - 32px); height: 58px; padding-left: 16px; gap: 8px; }
+  .mode-enjoy .enjoy-search input { font-size: 16px; }
+  .mode-enjoy .skeleton-card { flex-basis: 174px; height: 389px; }
+}
+@media (forced-colors: active) { .enjoy-atmosphere { display: none; } }

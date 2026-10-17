@@ -1,0 +1,155 @@
+/* Clean printed card stock: a single thin edge and a soft cast shadow. */
+.hand-rail { --card-width: 210px; --card-step: 136px; --face-height: 470px; }
+.hand-slot { height: var(--face-height); }
+.clarity-shell .clow-card,
+.clarity-shell .clow-card:is(:hover, :focus-within, .is-selected, .is-drawn) {
+  padding: 0; border: 0; border-radius: 11px; background: transparent; box-shadow: none;
+}
+.clarity-shell .hand-card,
+.clarity-shell .hand-card:is(.is-selected, .is-drawn) {
+  width: var(--card-width); height: var(--face-height); min-height: var(--face-height);
+}
+.clarity-shell .clow-card::before, .clarity-shell .clow-card::after { display: none; }
+.clarity-shell .clow-card .clow-art {
+  position: relative; flex: 0 0 auto; isolation: isolate;
+  display: block; width: 100%; height: var(--face-height, 470px); min-height: 0;
+  border-radius: 11px; padding: 0; overflow: visible; border: 0;
+  background: #f0dcae;
+  box-shadow: .6px 1px 0 #ad8858, 2px 5px 9px -4px #49341c50, 5px 10px 18px -8px #49341c28;
+}
+.clow-face-image { display: block; width: 100%; height: 100%; object-fit: fill; border-radius: inherit; user-select: none; -webkit-user-drag: none; }
+.clarity-shell .clow-card .clow-art::before {
+  content: ""; position: absolute; inset: 0; z-index: 2; border-radius: inherit; pointer-events: none;
+  background: linear-gradient(115deg, #fff9e415, transparent 35%, transparent 75%, #50301a08);
+  box-shadow: inset .5px .5px 0 #fff3d66b;
+}
+.clarity-shell .clow-card .clow-art::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none; opacity: 0;
+  box-shadow: 0 0 18px 5px #d8b75d30, 0 0 30px 8px #ca994918, 7px 15px 22px -9px #40241438;
+  transition: opacity 200ms ease-out;
+}
+.clarity-shell .clow-card:is(.is-drawn, .is-selected, :focus-within) .clow-art::after { opacity: 1; }
+.clarity-shell .clow-card.is-reading > .clow-art { visibility: hidden; }
+/* Live lettering follows the lower ribbon; the original artwork stays intact. */
+.clow-scroll-title {
+  position: absolute; z-index: 1; inset: 0; width: 100%; height: 100%; pointer-events: none;
+  fill: #41251e; font: 500 48px/1.1 "Songti SC", "Noto Serif SC", serif;
+  font-synthesis: none; overflow: hidden;
+}
+.clow-scroll-title text { stroke: #41251e; stroke-width: .6px; stroke-linejoin: round; paint-order: stroke fill; }
+.clarity-shell .clow-card .clow-art .clow-scroll-title { width: 100%; height: 100%; max-height: none; transform: none; transition: none; }
+.clow-title-measure { visibility: hidden; }
+.clarity-shell .clow-card .ribbon-select { top: 7px; right: 6px; z-index: 4; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; background: #fffae9e8; }
+.clarity-shell .clow-card .ribbon-select input { width: 20px; height: 20px; accent-color: #7a3546; }
+.clarity-shell .clow-card .clow-art:focus-visible { outline: 2px dashed #7a3546; outline-offset: -6px; }
+
+.clow-reader {
+  position: fixed; inset: 0; margin: 0; padding: 0; border: 0; max-width: none; max-height: none;
+  width: 100%; height: 100dvh; overflow: hidden; background: transparent; color: #433125;
+  perspective: 1600px;
+}
+.clow-reader::backdrop { background: #24162270; backdrop-filter: blur(3px); }
+.clow-flight {
+  position: absolute; left: 50%; top: 50%; width: auto;
+  height: min(720px, calc(100dvh - 32px), calc((100vw - 32px) / var(--card-ratio, .44643)));
+  aspect-ratio: var(--card-ratio, .44643); container-type: inline-size;
+  transform: translate(-50%, -50%) translate(var(--flight-x, 0px), var(--flight-y, 0px)) scale(var(--flight-scale, 1));
+  transition: transform 460ms cubic-bezier(.2,.75,.25,1); transform-style: preserve-3d;
+}
+.clow-reader.is-flipped .clow-flight { transform: translate(-50%, -50%) translate(0, 0) scale(1, 1); }
+.clow-flipper { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 460ms cubic-bezier(.2,.65,.3,1); }
+.clow-reader.is-flipped .clow-flipper { transform: rotateY(180deg); }
+.clow-reader-front, .clow-reader-back { position: absolute; inset: 0; border-radius: 16px; backface-visibility: hidden; -webkit-backface-visibility: hidden; box-shadow: 1px 1px 0 #ad8858, 0 22px 60px #1f122248; }
+.clow-reader-front { pointer-events: none; }
+.clow-reader-back {
+  --reader-gold: #d8ba81; --reader-ink: #f5e9d4; --reader-muted: #c8b69e;
+  transform: rotateY(180deg); display: flex; flex-direction: column; gap: 16px; padding: 28px;
+  border: 1px solid #b49863; color: var(--reader-ink);
+  background: radial-gradient(ellipse at 10% 0, #75435365, transparent 65%), linear-gradient(155deg, #492b3c, #2c2030 80%);
+  overflow: hidden;
+}
+.clow-reader-back::before {
+  content: ""; position: absolute; inset: 8px; border: 1px solid #d8ba8145; border-radius: 9px;
+  box-shadow: inset 0 0 0 3px #d8ba8105; pointer-events: none;
+}
+.clow-reader-back::after {
+  content: ""; position: absolute; inset: 170px -65px 54px; opacity: .06; pointer-events: none;
+  background: url("/clow-scene/clow-circle.svg") center bottom / 100% auto no-repeat;
+  mask-image: linear-gradient(transparent, #000 30%);
+}
+.clow-reader-back > * { position: relative; z-index: 1; }
+.clow-detail-heading { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.clow-detail-seal {
+  width: 48px; height: 48px; flex: 0 0 auto; display: grid; place-items: center;
+  border: 1px solid #d8ba8170; border-radius: 50%; color: #efdaa9;
+  font: 500 27px/1 Georgia, "Songti SC", serif;
+  box-shadow: inset 0 0 0 4px #d8ba8109; background: #b7925610;
+}
+.clow-detail-edition { display: grid; gap: 6px; }
+.clow-detail-edition > span { font-size: 10px; line-height: 1; letter-spacing: 4px; color: var(--reader-muted); }
+.clow-detail-edition > strong { font: 500 16px/1.2 Georgia, "Songti SC", serif; letter-spacing: 2px; color: var(--reader-gold); }
+.clow-close {
+  display: grid; place-items: center; width: 44px; height: 44px; flex: 0 0 auto; margin-left: auto;
+  border: 1px solid transparent; border-radius: 50%; color: #dfcba9; background: transparent; cursor: pointer;
+}
+.clow-close:hover { border-color: #d8ba8140; background: #d8ba810c; }
+.clow-reader-back h2 { margin: 3px 0 0; color: #fff0d5; font: 600 27px/1.4 Georgia, "Songti SC", "Noto Serif SC", serif; overflow-wrap: anywhere; max-height: 22%; overflow: auto; flex-shrink: 0; }
+.clow-detail-rule { flex-shrink: 0; height: 9px; background: linear-gradient(90deg, #d8ba8150, #d8ba8125 44%, transparent 44%, transparent 56%, #d8ba8125 56%, #d8ba8150) center / 100% 1px no-repeat; }
+.clow-detail-rule::after { content: ""; position: absolute; left: calc(50% - 3px); top: 1px; width: 6px; height: 6px; transform: rotate(45deg); border: 1px solid #d8ba8190; }
+.clow-detail-scroll { min-height: 0; flex: 1; overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #ac8d5680 transparent; padding: 0 4px 0 0; }
+.clow-detail-scroll dl { margin: 0; }
+.clow-detail-field { padding: 0 0 18px; }
+.clow-detail-address { padding: 13px 14px; margin-bottom: 18px; border: 1px solid #d8ba8125; border-radius: 7px; background: #140e1c38; }
+.clow-detail-scroll dt, .clow-detail-scroll h3 { margin: 0 0 8px; font-size: 12px; line-height: 1.5; font-weight: 500; color: var(--reader-gold); letter-spacing: 2px; }
+.clow-detail-scroll dd, .clow-detail-scroll p { margin: 0; font-size: 14px; line-height: 1.85; white-space: pre-wrap; overflow-wrap: anywhere; }
+.clow-detail-scroll dd svg { margin-right: 7px; vertical-align: -2px; color: var(--reader-gold); }
+.clow-detail-summary { padding-top: 16px; border-top: 1px solid #d8ba8125; }
+.clow-detail-scroll section { margin-top: 6px; }
+.clow-detail-scroll section p { color: #e2d1bc; }
+.clow-full-url { color: #e9d8b7; user-select: text; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+.clow-detail-scroll .clow-full-url { font-size: 13px; line-height: 1.75; }
+.clow-detail-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 18px; }
+.clow-detail-tags button { min-height: 44px; padding: 5px 10px; border: 1px solid #d8ba8135; border-radius: 5px; background: #d8ba810b; color: #e5cfa5; cursor: pointer; }
+.clow-detail-tags button:hover { background: #d8ba811a; }
+.clow-detail-scroll .clow-detail-date { margin-top: 18px; font-size: 12px; color: var(--reader-muted); }
+.clow-detail-scroll .card-error { color: #ffb6b6; }
+.clow-detail-footer { flex-shrink: 0; padding-top: 12px; border-top: 1px solid #d8ba812e; }
+.clow-open-site {
+  display: flex; align-items: center; justify-content: center; gap: 9px; min-height: 48px; padding: 10px 14px;
+  border: 1px solid #ebd5a3; border-radius: 6px; background: linear-gradient(110deg, #ead4a3, #c8a66e);
+  box-shadow: inset 0 0 0 3px #4027380a; color: #352332; text-decoration: none; font-weight: 600; letter-spacing: 1px;
+}
+.clow-open-site:hover { background: linear-gradient(110deg, #f5e1b5, #dbbb87); }
+.clow-manage-actions { display: flex; justify-content: space-between; gap: 8px; margin-top: 8px; }
+.clow-manage-actions button { display: inline-flex; align-items: center; gap: 5px; min-height: 44px; border: 0; background: transparent; color: #e5cfa5; cursor: pointer; }
+.clow-reader :is(button, a, [tabindex]):focus-visible { outline: 2px solid #eed49c; outline-offset: 3px; }
+@media (forced-colors: active) {
+  .clow-reader-back { color: CanvasText; background: Canvas; --reader-ink: CanvasText; --reader-muted: CanvasText; --reader-gold: CanvasText; }
+  .clow-reader-back::after { display: none; }
+  .clow-open-site { border-color: ButtonText; }
+}
+@media (max-width: 900px) {
+  .hand-rail { --card-width: 174px; --card-step: 110px; --face-height: 389px; }
+}
+@media (max-width: 480px) {
+  .clow-reader-back { padding: 20px; gap: 10px; }
+  .clow-reader-back h2 { font-size: 23px; }
+}
+@container (max-width: 260px) {
+  .clow-reader-back { padding: 14px; gap: 8px; }
+  .clow-detail-heading { gap: 6px; }
+  .clow-detail-seal { display: none; }
+  .clow-detail-edition { min-width: 0; }
+  .clow-detail-edition > span { letter-spacing: 1px; }
+  .clow-detail-edition > strong { font-size: 14px; letter-spacing: 0; }
+  .clow-reader-back h2 { font-size: 20px; }
+  .clow-open-site { padding: 8px 4px; font-size: 13px; letter-spacing: 0; }
+}
+@media (max-height: 600px) {
+  .clow-reader-back { overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; }
+  .clow-detail-scroll { flex: 0 0 auto; overflow: visible; }
+  .clow-reader-back h2 { max-height: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .clarity-shell .clow-card .clow-art::after, .clow-flight, .clow-flipper { transition: none; }
+}

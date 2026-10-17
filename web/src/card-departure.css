@@ -1,0 +1,39 @@
+/* Quiet lettering below the card opens its back without covering the artwork. */
+.clarity-shell .clow-card .clow-details-seal {
+  position: absolute; z-index: 5; left: calc(50% - 44px); top: calc(100% + 8px); width: 88px; height: 44px;
+  display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0; border: 0; border-radius: 2px;
+  color: #795835; background: transparent; box-shadow: none;
+  font: 500 13px/1 Georgia, "Songti SC", serif; letter-spacing: 2px; cursor: pointer;
+}
+.clarity-shell.mode-enjoy .clow-card .clow-details-seal { color: #d8ba81; text-shadow: 0 1px 3px #160f24; }
+.clarity-shell .hand-card .clow-details-seal { opacity: 0; pointer-events: none; }
+.bookmark-hand[data-active-index=""] .hand-card.is-centered .clow-details-seal,
+.clarity-shell .hand-card:is(.is-drawn, :focus-within) .clow-details-seal { opacity: 1; pointer-events: auto; }
+.clarity-shell .clow-card .clow-details-seal:hover { color: #54391d; background: transparent; }
+.clarity-shell.mode-enjoy .clow-card .clow-details-seal:hover { color: #fff0c5; }
+.clarity-shell .clow-card .clow-details-seal:focus-visible { outline: 2px solid #ffe7b4; outline-offset: 3px; }
+.clarity-shell .clow-card:is(.is-reading, .is-departing) > :is(.clow-art, .clow-details-seal) { visibility: hidden; }
+.clow-popup-notice { margin: 0; color: #f1d5a0; font-size: 13px; line-height: 1.65; }
+
+.clow-departure {
+  position: fixed; inset: 0; width: 100%; height: 100dvh; max-width: none; max-height: none;
+  margin: 0; padding: 0; border: 0; overflow: hidden; color: #f5e9d4; background: transparent;
+  perspective: 1400px;
+}
+.clow-departure::backdrop { background: #150b2290; }
+.clow-departure-flight {
+  position: absolute; top: 50%; left: 50%; height: min(600px, calc(100dvh - 140px), calc((100vw - 64px) * 2.24));
+  aspect-ratio: 600 / 1344; transform-style: preserve-3d;
+}
+.clow-departure-flipper { position: absolute; inset: 0; transform-style: preserve-3d; }
+.clow-departure-front, .clow-departure-back { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 12px; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.clow-departure-front { background: #efdbaa; box-shadow: 1px 1px #ae8a56; }
+.clow-departure-back { transform: rotateY(180deg); }
+.clow-shards { position: absolute; visibility: hidden; pointer-events: none; }
+.clow-departure-cancel { position: absolute; z-index: 2; top: max(18px, env(safe-area-inset-top)); right: 22px; width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid #d8ba8160; border-radius: 50%; color: #eed8ae; background: #382233; cursor: pointer; }
+.clow-departure-cancel:focus-visible { outline: 2px solid #eed49c; outline-offset: 3px; }
+.clow-departure-status { position: absolute; bottom: max(16px, env(safe-area-inset-bottom)); left: 24px; right: 24px; text-align: center; margin: 0; color: #e2cba5; font-size: 13px; line-height: 1.6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (forced-colors: active) {
+  .clarity-shell .clow-card .clow-details-seal,
+  .clarity-shell.mode-enjoy .clow-card .clow-details-seal { background: ButtonFace; color: ButtonText; border: 1px solid ButtonText; text-shadow: none; }
+}

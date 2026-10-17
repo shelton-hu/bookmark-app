@@ -1,0 +1,12 @@
+/* Every brand asset is transparent; wrappers must not reintroduce a badge. */
+.brand-logo { display: block; flex-shrink: 0; object-fit: contain; }
+.brand-mark,
+.clarity-shell .sidebar .brand-mark,
+.auth-icon:has(.brand-logo) {
+  background: transparent; border: 0; padding: 0; box-shadow: none;
+}
+.catalog-trigger .brand-logo { width: 32px; height: 32px; }
+@media (max-width: 760px) {
+  .catalog-trigger .brand-logo { width: 28px; height: 28px; }
+  .workbench-brand .brand-logo { width: 28px; height: 28px; }
+}

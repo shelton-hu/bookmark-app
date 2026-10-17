@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>拾页 · 叠页拾光</title>
+  <path id="back-page" d="M21 6h25l10 10v32a4 4 0 0 1-4 4H21Z" fill="#D6B466" transform="rotate(5 38.5 29)"/>
+  <path d="M12 10h28l12 12v32a4 4 0 0 1-4 4H12a4 4 0 0 1-4-4V14a4 4 0 0 1 4-4Z" fill="#642F43"/>
+  <path d="M40 10v9a3 3 0 0 0 3 3h9Z" fill="#F2D99E"/>
+  <path d="M25 21c1.35 5.65 3.35 7.65 9 9-5.65 1.35-7.65 3.35-9 9-1.35-5.65-3.35-7.65-9-9 5.65-1.35 7.65-3.35 9-9Z" fill="#F2D99E"/>
+</svg>

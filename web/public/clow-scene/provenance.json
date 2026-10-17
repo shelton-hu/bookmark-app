@@ -1,0 +1,20 @@
+{
+  "circle": {
+    "source": "https://magicchickenhouse.com/2023/05/29/card-captor-sakura-magic-circles-and-card-backgrounds/",
+    "image": "https://magicchickenhouse.com/wp-content/uploads/2023/05/clow7.webp",
+    "original_size": [
+      900,
+      900
+    ],
+    "processing": "Crop (56,56,844,844), luminance threshold 160, potracer 0.0.4 cubic contours (alphamax 1.0, opttolerance 0.15, turdsize 2); transparent compound SVG path with even-odd holes recolored pale gold. Original composition and glyph contours retained; no embedded bitmap or invented detail. Fan reference, not official production artwork.",
+    "asset": "clow-circle.svg",
+    "generator": "tools/trace_clow_circle.py"
+  },
+  "cursor": {
+    "source": "Locally drawn SVG inspired by Sakura sealing wand: bird beak, red eye and white wing",
+    "hotspot": [
+      3,
+      5
+    ]
+  }
+}

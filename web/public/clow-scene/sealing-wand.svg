@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 64 64">
+<defs><linearGradient id="gold" x2="1" y2="1"><stop stop-color="#fff1ae"/><stop offset=".5" stop-color="#edc361"/><stop offset="1" stop-color="#a76d30"/></linearGradient><linearGradient id="red" x2="0" y2="1"><stop stop-color="#fb8199"/><stop offset=".5" stop-color="#d33962"/><stop offset="1" stop-color="#932847"/></linearGradient></defs>
+<g stroke="#713449" stroke-width="1.7" stroke-linejoin="round">
+<path d="M30 38 47 60 53 56 38 34Z" fill="url(#red)"/><path d="m38 44 6-4 3 4-6 4Z" fill="url(#gold)"/>
+<path d="M32 13C43 11 51 19 48 30 46 40 36 44 27 39 19 35 16 26 20 20Z" fill="url(#red)"/>
+<path d="M25 17 5 8 14 24 28 27Z" fill="url(#gold)"/>
+<path d="M19 21C17 17 22 13 29 14 36 15 41 21 39 27 38 32 33 34 28 31 24 29 24 25 19 21Z" fill="#fff8e4"/>
+<path d="M36 19C42 9 49 8 60 10L51 17 59 16 50 24 56 24C50 33 42 34 38 30Z" fill="#fffbed"/>
+<path d="m39 23 12-6m-10 10 9-3" fill="none" stroke="#c9a587" stroke-width="1.2"/>
+<ellipse cx="29" cy="23" rx="4" ry="5" fill="url(#gold)"/><ellipse cx="29" cy="23" rx="2" ry="3" fill="#c7345e" stroke="none"/><circle cx="28.5" cy="21.8" r=".8" fill="#fff" stroke="none"/>
+</g></svg>

@@ -1,0 +1,139 @@
+/* Management uses readable, vertical rows; all rules stay out of enjoy mode. */
+.clarity-shell.mode-manage { background: #f6f5f2; }
+.clarity-shell.mode-manage .workspace { background: #f6f5f2; }
+.clarity-shell.mode-manage .management-heading { min-height: 0; margin: 0 0 20px; padding: 0; background: none; border: 0; box-shadow: none; }
+.clarity-shell.mode-manage .management-heading::before, .clarity-shell.mode-manage .management-heading::after { display: none; }
+.clarity-shell.mode-manage .management-heading h1 { margin: 0 0 6px; font: 700 25px/1.35 var(--font-sans, sans-serif); color: #342e33; overflow-wrap: anywhere; }
+.clarity-shell.mode-manage .management-heading p { margin: 0; font-size: 13px; color: #71686b; }
+.clarity-shell.mode-manage .search-panel { margin-bottom: 16px; background: #fff; border: 1px solid #e6e1dd; box-shadow: none; border-radius: 10px; }
+.clarity-shell.mode-manage .search-row { background: transparent; box-shadow: none; }
+.clarity-shell.mode-manage .search-input,
+.clarity-shell.mode-manage .filter-row input {
+  background: #fff; border-color: #ded7d2; box-shadow: none;
+}
+.clarity-shell.mode-manage .search-input input { background: transparent; }
+.clarity-shell.mode-manage .search-input:focus-within,
+.clarity-shell.mode-manage .filter-row input:focus {
+  border-color: #874455; box-shadow: 0 0 0 3px #7a354623;
+}
+.clarity-shell.mode-manage .search-row .segmented {
+  align-self: center; background: #f3e9d8; background-clip: padding-box;
+  border: 1px solid #dcc7a2; border-radius: 8px; padding: 3px; box-shadow: none;
+}
+.clarity-shell.mode-manage .clow-catalog--compact { max-width: 100%; }
+.clarity-shell.mode-manage .clow-catalog--compact .catalog-trigger {
+  display: flex; gap: 8px; width: 220px; max-width: 100%; min-height: 44px; padding: 8px 12px;
+  border: 1px solid #713749; border-radius: 8px; background: #7a3546; color: #fff8e9; box-shadow: none;
+}
+.clarity-shell.mode-manage .clow-catalog--compact .catalog-trigger strong { font: 500 13px/1.5 var(--font-sans, sans-serif); }
+.clarity-shell.mode-manage .clow-catalog--compact .catalog-trigger:hover { border-color: #592536; background: #592536; color: #fff8e9; }
+.clarity-shell.mode-manage .clow-catalog--compact .catalog-trigger:focus-visible { outline: 2px solid #874455; outline-offset: 2px; }
+.catalog-panel.catalog-panel--compact {
+  width: min(360px, calc(100vw - 32px)); padding: 0; border: 1px solid #ded7d2; border-radius: 10px;
+  background: #fff; color: #51484c; box-shadow: 0 12px 32px #30202c26; font-family: var(--font-sans, sans-serif);
+}
+.catalog-panel--compact .catalog-heading { margin: 0 14px; padding: 4px 0; border-color: #eee8e5; }
+.catalog-panel--compact .catalog-heading h2 { font: 650 14px/1.5 var(--font-sans, sans-serif); letter-spacing: 0; color: #342e33; }
+.catalog-panel--compact .catalog-reset { font-size: 12px; color: #79394a; }
+.catalog-panel--compact .catalog-reset:hover { background: #f7f3f4; }
+.catalog-panel--compact .catalog-pages { padding: 6px 8px 10px; scrollbar-color: #c5b7bc transparent; }
+.catalog-panel--compact .catalog-row { border-radius: 6px; }
+.catalog-panel--compact .catalog-row::before { background: #e9e2e4; }
+.catalog-panel--compact .catalog-select { min-height: 44px; padding-block: 6px; font-size: 13px; white-space: normal; }
+.catalog-panel--compact .catalog-select small { font-family: inherit; font-size: 12px; color: #80747a; }
+.catalog-panel--compact .catalog-expand, .catalog-panel--compact .catalog-leaf { min-height: 44px; }
+.catalog-panel--compact .catalog-leaf span { width: 4px; height: 4px; border-radius: 50%; background: #b8a5ad; transform: none; box-shadow: none; }
+.catalog-panel--compact .catalog-row:hover { background: #f7f3f4; }
+.catalog-panel--compact .catalog-row.is-current {
+  color: #79394a; background: #f6e9ee; box-shadow: inset 3px 0 #874455; font-weight: 600;
+}
+.catalog-panel--compact .catalog-row.is-current::after { display: none; }
+.catalog-panel--compact .catalog-footnote { padding: 9px 12px; border-color: #eee8e5; color: #80747a; letter-spacing: 0; }
+@media (max-width: 760px) {
+  .catalog-panel.catalog-panel--compact { width: auto; border-radius: 12px; }
+}
+
+.clarity-shell.mode-manage .library-panel { padding: 0; background: #fff; border: 1px solid #e6e1dd; border-radius: 10px; box-shadow: none; overflow: hidden; }
+.clarity-shell.mode-manage .list-toolbar { display: block; padding: 12px 18px; margin: 0; min-height: 0; background: #fcfbfa; border-bottom: 1px solid #e6e1dd; border-radius: 0; }
+.clarity-shell.mode-manage .results-toolbar { margin: 0; padding: 0; border: 0; background: none; min-width: 0; }
+/* Keep the checkbox gutter aligned with rows; actions use the full content inset. */
+.clarity-shell.mode-manage .list-toolbar .toolbar-actions { flex-wrap: wrap; padding-inline-start: 8px; }
+.clarity-shell.mode-manage .list-toolbar .result-count { display: block; color: #71686b; font-size: 13px; }
+.clarity-shell.mode-manage .result-count strong { font-size: inherit; color: #342e33; }
+.clarity-shell.mode-manage .bookmark-rows { display: flex; flex-direction: column; min-width: 0; }
+.clarity-shell.mode-manage .bookmark-row { display: grid; grid-template-columns: 32px minmax(0, 1fr) auto; align-items: start; column-gap: 12px; padding: 15px 18px 15px 10px; border-bottom: 1px solid #eeeae6; background: #fff; }
+.clarity-shell.mode-manage .bookmark-row:last-child { border-bottom: 0; }
+.clarity-shell.mode-manage .bookmark-row:hover { background: #fcfaf8; }
+.clarity-shell.mode-manage .bookmark-row.is-selected { background: #faf0f1; box-shadow: inset 3px 0 #874455; }
+.clarity-shell.mode-manage .bookmark-row-select { display: flex; align-items: center; justify-content: center; width: 32px; min-height: 32px; cursor: pointer; }
+.clarity-shell.mode-manage .bookmark-row-select input { width: 16px; height: 16px; margin: 0; accent-color: #7a3546; }
+.clarity-shell.mode-manage .bookmark-row-content { min-width: 0; }
+.clarity-shell.mode-manage .bookmark-row h2 { margin: 2px 0 4px; color: #302b31; font: 650 15px/1.45 var(--font-sans, sans-serif); overflow-wrap: anywhere; }
+.clarity-shell.mode-manage .bookmark-row h2 a { color: inherit; text-decoration: none; }
+.clarity-shell.mode-manage .bookmark-row h2 a:hover { color: #7a3546; text-decoration: underline; text-underline-offset: 3px; }
+.clarity-shell.mode-manage .bookmark-row-url { font-size: 12px; line-height: 1.6; color: #71686b; overflow-wrap: anywhere; }
+.clarity-shell.mode-manage .bookmark-row-meta { display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 5px; color: #71686b; font-size: 12px; line-height: 1.6; }
+.clarity-shell.mode-manage .bookmark-row-meta > span { display: inline-flex; align-items: center; gap: 5px; overflow-wrap: anywhere; }
+.clarity-shell.mode-manage .bookmark-row-meta svg { flex-shrink: 0; }
+.clarity-shell.mode-manage .bookmark-row-status { color: #876124; }
+.clarity-shell.mode-manage .bookmark-row-status.failed { color: #a13842; }
+.clarity-shell.mode-manage .bookmark-row-actions { display: flex; align-items: center; gap: 4px; }
+.clarity-shell.mode-manage .bookmark-row button { display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-height: 36px; padding: 6px 9px; background: transparent; color: #65565c; border: 1px solid transparent; border-radius: 6px; font: inherit; font-size: 12px; box-shadow: none; cursor: pointer; }
+.clarity-shell.mode-manage .bookmark-row button:hover { background: #eee7e5; color: #542f3a; }
+.clarity-shell.mode-manage .bookmark-row button.row-delete:hover { background: #fce9e9; color: #a2303d; }
+.clarity-shell.mode-manage .bookmark-row button:disabled { opacity: .5; cursor: not-allowed; }
+.clarity-shell.mode-manage .bookmark-row :is(button, a, input):focus-visible { outline: 2px solid #874455; outline-offset: 3px; }
+.clarity-shell.mode-manage .bookmark-row .is-expanded { transform: rotate(180deg); }
+.clarity-shell.mode-manage .bookmark-row-details { grid-column: 2 / -1; margin-top: 12px; padding: 14px; background: #f8f6f3; border-radius: 6px; color: #51484c; font-size: 13px; line-height: 1.7; overflow-wrap: anywhere; }
+.clarity-shell.mode-manage .bookmark-row-details[hidden] { display: none; }
+.clarity-shell.mode-manage .bookmark-row-details dl { margin: 0; }
+.clarity-shell.mode-manage .bookmark-row-details dt { font-weight: 650; }
+.clarity-shell.mode-manage .bookmark-row-details dd { margin: 3px 0 12px; white-space: pre-wrap; }
+.clarity-shell.mode-manage .bookmark-row-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.clarity-shell.mode-manage .bookmark-row-tags button { background: #ede7e3; }
+.clarity-shell.mode-manage .bookmark-row-error { color: #a13842; }
+.clarity-shell.mode-manage .bookmark-row-detail-footer { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; color: #71686b; font-size: 12px; }
+.clarity-shell.mode-manage .bookmark-row-skeletons { display: flex; flex-direction: column; gap: 0; }
+.clarity-shell.mode-manage .bookmark-row-skeletons .skeleton-card { min-height: 108px; height: 108px; border: 0; border-bottom: 1px solid #eeeae6; border-radius: 0; padding: 18px; }
+@media (max-width: 900px) {
+  .clarity-shell.mode-manage .management-heading { margin-bottom: 16px; }
+  .clarity-shell.mode-manage .management-heading h1 { font-size: 22px; }
+  .clarity-shell.mode-manage .bookmark-row { grid-template-columns: 36px minmax(0, 1fr); gap: 4px 8px; padding: 10px 12px 10px 4px; }
+  .clarity-shell.mode-manage .bookmark-row-select { width: 36px; min-height: 44px; }
+  .clarity-shell.mode-manage .bookmark-row-actions { grid-column: 2; justify-content: flex-end; }
+  .clarity-shell.mode-manage .bookmark-row button { min-height: 44px; min-width: 44px; padding: 8px 10px; }
+  .clarity-shell.mode-manage .bookmark-row-details { grid-column: 1 / -1; margin: 0 4px 4px 8px; }
+  .clarity-shell.mode-manage .list-toolbar { padding: 10px 12px; }
+}
+
+/* The header checkbox shares the exact gutter and width of each row checkbox. */
+.clarity-shell.mode-manage .library-panel { scroll-margin-top: 16px; }
+.clarity-shell.mode-manage .library-panel .list-toolbar { padding-left: 10px; }
+.clarity-shell.mode-manage .list-selection-summary { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 16px; }
+.clarity-shell.mode-manage .page-select-all { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; font-size: 13px; color: #51484c; cursor: pointer; white-space: nowrap; }
+.clarity-shell.mode-manage .page-select-box { display: flex; align-items: center; justify-content: center; width: 32px; }
+.clarity-shell.mode-manage .page-select-box input { width: 16px; height: 16px; margin: 0; accent-color: #7a3546; }
+.clarity-shell.mode-manage .bookmark-pagination { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 12px 16px; padding: 14px 18px; border-top: 1px solid #e6e1dd; background: #fcfbfa; color: #71686b; font-size: 13px; }
+.clarity-shell.mode-manage .page-size { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.clarity-shell.mode-manage .bookmark-pagination select { width: auto; min-height: 44px; padding: 6px 10px; border: 1px solid #ded7d2; border-radius: 6px; background: #fff; color: #51484c; font: inherit; }
+.clarity-shell.mode-manage .page-buttons, .clarity-shell.mode-manage .page-number-group { display: flex; align-items: center; gap: 8px; }
+.clarity-shell.mode-manage .page-buttons { flex-wrap: wrap; justify-content: flex-end; }
+.clarity-shell.mode-manage .bookmark-pagination button { min-width: 44px; min-height: 44px; padding: 8px 10px; border: 1px solid #ded7d2; border-radius: 6px; background: #fff; color: #65565c; font: inherit; cursor: pointer; }
+.clarity-shell.mode-manage .bookmark-pagination button:hover:not(:disabled) { border-color: #874455; background: #f7eef0; }
+.clarity-shell.mode-manage .bookmark-pagination button[aria-current="page"] { background: #7a3546; color: #fff8e9; border-color: #7a3546; }
+.clarity-shell.mode-manage .bookmark-pagination button:disabled { opacity: .45; cursor: not-allowed; }
+.clarity-shell.mode-manage :is(.bookmark-pagination, .page-select-all) :is(button, select, input):focus-visible { outline: 2px solid #874455; outline-offset: 3px; }
+.clarity-shell.mode-manage .page-ellipsis { padding: 0 2px; }
+@media (max-width: 900px) {
+  .clarity-shell.mode-manage .library-panel .list-toolbar { padding-left: 4px; }
+  .clarity-shell.mode-manage .page-select-box { width: 36px; }
+  .clarity-shell.mode-manage .page-select-all { gap: 8px; }
+  .clarity-shell.mode-manage .list-selection-summary { width: 100%; }
+  .clarity-shell.mode-manage .bookmark-pagination { padding: 12px; gap: 10px; }
+}
+@media (max-width: 480px) {
+  .clarity-shell.mode-manage .page-buttons { width: 100%; }
+  .clarity-shell.mode-manage .page-buttons, .clarity-shell.mode-manage .page-number-group { gap: 8px; }
+  .clarity-shell.mode-manage .page-number-group:not(:has([aria-current="page"])) { display: none; }
+  .clarity-shell.mode-manage .page-ellipsis { display: none; }
+}

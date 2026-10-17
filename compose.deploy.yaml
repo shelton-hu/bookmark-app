@@ -1,0 +1,25 @@
+services:
+  bookmark:
+    image: ${BOOKMARK_IMAGE:?Set BOOKMARK_IMAGE to your published image repository}:${BOOKMARK_TAG:-v0.0.1}
+    restart: unless-stopped
+    ports:
+      - "${BOOKMARK_BIND:-0.0.0.0}:${BOOKMARK_PORT:-8093}:8000"
+    environment:
+      DATA_DIR: /data
+      PORT: "8000"
+      ALLOWED_ORIGINS: ${BOOKMARK_ALLOWED_ORIGINS:-}
+    volumes:
+      - type: bind
+        source: ${BOOKMARK_DATA_DIR:?Set BOOKMARK_DATA_DIR to an absolute host path}
+        target: /data
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    init: true
+    stop_grace_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
