@@ -89,14 +89,14 @@ export function VersionFooter({ state, enjoy = false }: { state: VersionState; e
   </footer>;
 }
 
-export function HeaderVersion({ state, onOpen }: { state: VersionState; onOpen: () => void }) {
+export function BrandVersion({ state, onOpen }: { state: VersionState; onOpen: () => void }) {
   const { info, checking, failed } = state;
   const available = !failed && info?.status === "update_available";
   const uncertain = failed || !info || ["unknown", "unchecked", "development", "disabled"].includes(info.status);
   const version = info ? info.version === "development" ? "开发版" : info.version : failed ? "版本暂不可用" : "读取中…";
   return <a href="#settings"
     onClick={(event) => { event.preventDefault(); onOpen(); }}
-    className={`header-version${available ? " has-update" : uncertain ? " is-uncertain" : ""}`}
+    className={`brand-version${available ? " has-update" : uncertain ? " is-uncertain" : ""}`}
     title={`${version} · ${statusText(state)}，点击查看版本与更新`}
     aria-label={`当前版本 ${version}，${statusText(state)}，查看版本与更新`}>
     {version}{available && <span>可升级</span>}

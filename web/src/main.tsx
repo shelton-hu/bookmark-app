@@ -63,7 +63,7 @@ import type {
 } from "./api";
 import ClassificationAssistant from "./ClassificationAssistant";
 import TransferPage from "./TransferPage";
-import VersionPanel, { useVersion, VersionFooter, HeaderVersion } from "./VersionPanel";
+import VersionPanel, { useVersion, VersionFooter, BrandVersion } from "./VersionPanel";
 import "./style.css";
 import "./green-workspace.css";
 import "./clow-cards.css";
@@ -798,8 +798,11 @@ function App() {
           <div className="brand-mark">
             <BrandMark transparent />
           </div>
-          <div>
-            <strong>拾页</strong>
+          <div className="brand-copy">
+            <div className="brand-title-row">
+              <strong>拾页</strong>
+              <BrandVersion state={versionState} onOpen={() => navigate("settings")} />
+            </div>
             <span>THE BOOK OF BOOKMARKS</span>
           </div>
           <button
@@ -907,13 +910,10 @@ function App() {
       )}
       <div className="workspace" inert={drawerOpen}>
         {managing && <header className="topbar">
-          <div className="workbench-identity">
-            <button className="workbench-brand" onClick={() => navigate("library")} aria-label="拾页，返回书签库">
-              <BrandMark size={32} transparent />
-              <strong>拾页</strong>
-            </button>
-            <HeaderVersion state={versionState} onOpen={() => navigate("settings")} />
-          </div>
+          <button className="workbench-brand" onClick={() => navigate("library")} aria-label="拾页，返回书签库">
+            <BrandMark size={32} transparent />
+            <strong>拾页</strong>
+          </button>
           <div className="workbench-tools">
             <WorkspaceModeSwitch mode={mode} busy={Boolean(busy)} onChange={switchMode} />
             {managing && <button className="icon-button settings-toggle" aria-label="设置" aria-current={page === "settings" ? "page" : undefined} onClick={() => navigate("settings")}><SettingsIcon size={19} /></button>}
