@@ -8,6 +8,7 @@ services:
       DATA_DIR: /data
       PORT: "8000"
       ALLOWED_ORIGINS: ${BOOKMARK_ALLOWED_ORIGINS:-}
+      CHECK_UPDATES: ${BOOKMARK_CHECK_UPDATES:-true}
     volumes:
       - type: bind
         source: ${BOOKMARK_DATA_DIR:?Set BOOKMARK_DATA_DIR to an absolute host path}

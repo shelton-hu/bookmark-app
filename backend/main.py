@@ -17,6 +17,7 @@ from typing import Annotated, Literal
 from pydantic import BaseModel, Field, ConfigDict, StrictInt, field_validator, model_validator
 from .store import Store, now
 from .bookmark_query import QueryVectors, read_bookmarks
+from .version import VersionCheck
 from .worker import Worker, text_for, safe_error
 from . import services, importing
 from starlette.concurrency import run_in_threadpool
@@ -200,6 +201,7 @@ def create_app(data_dir=None, start_worker=True):
     store = Store(data_dir)
     worker = Worker(store)
     query_vectors = QueryVectors()
+    version_check = VersionCheck()
 
     @asynccontextmanager
     async def lifespan(app):
@@ -210,6 +212,7 @@ def create_app(data_dir=None, start_worker=True):
 
     app = FastAPI(title='Personal Bookmarks', lifespan=lifespan)
     app.state.store, app.state.worker = store, worker
+    app.state.version_check = version_check
 
     @app.middleware('http')
     async def origin_guard(request, call_next):
@@ -249,6 +252,10 @@ def create_app(data_dir=None, start_worker=True):
 
     def auth(request: Request):
         return identity(request)
+
+    @app.get('/api/version', dependencies=[Depends(auth)])
+    def version(check: bool = False, force: bool = False):
+        return app.state.version_check.read(check=check, force=force)
 
     def save_auth(request: Request):
         return identity(request, bearer=True)

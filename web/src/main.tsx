@@ -63,6 +63,7 @@ import type {
 } from "./api";
 import ClassificationAssistant from "./ClassificationAssistant";
 import TransferPage from "./TransferPage";
+import VersionPanel, { useVersion, VersionFooter } from "./VersionPanel";
 import "./style.css";
 import "./green-workspace.css";
 import "./clow-cards.css";
@@ -356,6 +357,7 @@ function App() {
     listPanelRef.current?.scrollIntoView({ block: "start" });
   };
   const [error, setError] = useState("");
+  const versionState = useVersion(Boolean(auth?.authenticated));
   const [toast, setToast] = useState("");
   const [busy, setBusy] = useState("");
   const [dialog, setDialog] = useState<DialogState | null>(null);
@@ -1303,6 +1305,7 @@ function App() {
               modelConfigured={Boolean(settings && modelReady(settings.classification))}
             />
           )}
+          {managing && page === "settings" && <VersionPanel state={versionState} />}
           {managing && page === "settings" &&
             (settings ? (
               <SettingsPage
@@ -1500,10 +1503,7 @@ function App() {
             </section>
           )}
         </main>
-        {managing && <footer className="app-footer">
-          <span>拾页 · 你的收藏，你来掌握</span>
-          <span>数据保存在自己的 NAS</span>
-        </footer>}
+        <VersionFooter state={versionState} enjoy={!managing} />
       </div>
       {managing && dialog && (
         <Modal

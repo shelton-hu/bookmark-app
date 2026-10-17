@@ -90,7 +90,7 @@ class ReleaseTests(unittest.TestCase):
         self.addCleanup(self.contexts.close)
         self.output = self.contexts.enter_context(redirect_stdout(io.StringIO()))
         self.contexts.enter_context(patch.dict(os.environ, {'IMAGE': IMAGE, 'REGISTRY': 'registry.example.test',
-                                                 'PLATFORMS': 'linux/amd64,linux/arm64', 'BUMP': '', 'TAG': ''}))
+                                                 'PLATFORMS': 'linux/amd64,linux/arm64', 'BUMP': '', 'TAG': '', 'RELEASE_GIT_REMOTE': ''}))
 
     def git(self, *args):
         return subprocess.check_output(['git', *args], cwd=self.root, text=True).strip()
@@ -174,6 +174,69 @@ class ReleaseTests(unittest.TestCase):
             with self.assertRaises(publisher.ReleaseError):
                 with publisher.release_lock(self.state.parent):
                     self.fail('Second publisher acquired the release lock')
+
+    def test_public_tag_is_published_only_after_verified_latest_and_build_identity_is_passed(self):
+        self.seed()
+        def sync(root, remote, revision, tag):
+            self.assertEqual(json.loads(self.state.read_text())[IMAGE]['version'], tag)
+            self.assertEqual(execute.call_count, 2)
+            self.assertEqual((root, remote, revision, tag), (self.root, 'origin', self.git('rev-parse', 'HEAD'), 'v0.0.6'))
+        with patch.object(publisher, 'public_repository', return_value=('origin', 'example/bookmark-app', 'v0.0.5')), \
+             patch.object(publisher, 'choose_version', return_value=('v0.0.5', 'v0.0.6')), \
+             patch.object(publisher, 'export_source'), patch.object(publisher, 'execute') as execute, \
+             patch.object(publisher, 'manifest', return_value=index()), \
+             patch.object(publisher, 'publish_tag', side_effect=sync) as tag:
+            publisher.release(self.root)
+        tag.assert_called_once()
+        build = execute.call_args_list[0].args[0]
+        self.assertIn('REVISION=' + self.git('rev-parse', 'HEAD'), build)
+        self.assertIn('UPDATE_REPOSITORY=example/bookmark-app', build)
+
+    def test_failed_build_never_publishes_public_tag(self):
+        with patch.object(publisher, 'public_repository', return_value=('origin', 'example/bookmark-app', 'v0.0.5')), \
+             patch.object(publisher, 'choose_version', return_value=('v0.0.5', 'v0.0.6')), \
+             patch.object(publisher, 'export_source'), \
+             patch.object(publisher, 'execute', side_effect=subprocess.CalledProcessError(1, 'build')), \
+             patch.object(publisher, 'publish_tag') as tag:
+            with self.assertRaises(subprocess.CalledProcessError):
+                publisher.release(self.root)
+        tag.assert_not_called()
+
+    def test_failed_tag_sync_records_image_success_and_reports_partial_release(self):
+        with patch.object(publisher, 'public_repository', return_value=('origin', 'example/bookmark-app', 'v0.0.5')), \
+             patch.object(publisher, 'choose_version', return_value=('v0.0.5', 'v0.0.6')), \
+             patch.object(publisher, 'export_source'), patch.object(publisher, 'execute'), \
+             patch.object(publisher, 'manifest', return_value=index()), \
+             patch.object(publisher, 'publish_tag', side_effect=publisher.ReleaseError('tag failure')):
+            with self.assertRaises(publisher.ReleaseError):
+                publisher.release(self.root)
+        self.assertEqual(json.loads(self.state.read_text())[IMAGE]['version'], 'v0.0.6')
+        self.assertNotIn('发布成功', self.output.getvalue())
+
+    def test_publishes_and_verifies_exact_commit_tag_with_git_transport(self):
+        bare = self.root / '.release/public.git'
+        bare.parent.mkdir(exist_ok=True)
+        subprocess.run(['git', 'init', '--bare', '-q', str(bare)], check=True)
+        self.git('remote', 'add', 'publication-test', str(bare))
+        revision = self.git('rev-parse', 'HEAD')
+        publisher.publish_tag(self.root, 'publication-test', revision, 'v0.0.6')
+        self.assertEqual(self.git('ls-remote', '--tags', 'publication-test', 'refs/tags/v0.0.6'),
+                         revision + '\trefs/tags/v0.0.6')
+
+    def test_public_remote_parsing_and_numeric_stable_version(self):
+        refs = 'a\trefs/tags/v0.0.9\nb\trefs/tags/v0.0.10\nc\trefs/tags/v1.0.0-beta\n'
+        for url in ['git@github.com:example/bookmark-app.git', 'https://github.com/example/bookmark-app.git']:
+            with patch.dict(os.environ, {'RELEASE_GIT_REMOTE': 'origin'}), \
+                 patch.object(publisher.subprocess, 'check_output', side_effect=[url, url, refs]):
+                self.assertEqual(publisher.public_repository(self.root), ('origin', 'example/bookmark-app', 'v0.0.10'))
+        with patch.dict(os.environ, {'RELEASE_GIT_REMOTE': 'origin'}), \
+             patch.object(publisher.subprocess, 'check_output', return_value='https://example.test/private/repository'):
+            with self.assertRaises(publisher.ReleaseError):
+                publisher.public_repository(self.root)
+        with patch.dict(os.environ, {'RELEASE_GIT_REMOTE': 'origin'}), \
+             patch.object(publisher.subprocess, 'check_output', side_effect=['git@github.com:example/app.git', 'git@github.com:other/app.git']):
+            with self.assertRaises(publisher.ReleaseError):
+                publisher.public_repository(self.root)
 
 
 if __name__ == '__main__':

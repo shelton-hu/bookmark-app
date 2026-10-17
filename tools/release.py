@@ -157,15 +157,49 @@ def execute(arguments, cwd=None):
     subprocess.run(arguments, cwd=cwd, check=True)
 
 
+def public_repository(root):
+    remote = os.environ.get('RELEASE_GIT_REMOTE', '')
+    if not remote:
+        return '', '', 'v0.0.0'
+    if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.-]*', remote):
+        raise ReleaseError('RELEASE_GIT_REMOTE 必须是 Git remote 名称，例如 origin。')
+    url = subprocess.check_output(['git', 'remote', 'get-url', '--push', remote], cwd=root, text=True).strip()
+    match = re.fullmatch(r'(?:git@github\.com:|https://github\.com/)([A-Za-z0-9-]+/[A-Za-z0-9_.-]+?)(?:\.git)?', url)
+    if not match:
+        raise ReleaseError('更新检查仅支持公开 GitHub 仓库；请核对 RELEASE_GIT_REMOTE 或留空关闭。')
+    fetch_url = subprocess.check_output(['git', 'remote', 'get-url', remote], cwd=root, text=True).strip()
+    if fetch_url != url:
+        raise ReleaseError('版本发布要求 remote 的读取和推送地址一致，避免从不同仓库检查版本。')
+    # Read before building: credentials/network failures cannot silently disable publication.
+    refs = subprocess.check_output(['git', 'ls-remote', '--tags', remote, 'refs/tags/v*'], cwd=root, text=True)
+    tags = [row.split('\t')[1][10:] for row in refs.splitlines() if '\trefs/tags/' in row]
+    stable = [tag for tag in tags if VERSION.fullmatch(tag) and len(tag) <= 128]
+    return remote, match.group(1), max(stable or ['v0.0.0'], key=version_parts)
+
+
+def publish_tag(root, remote, revision, tag):
+    try:
+        execute(['git', 'push', remote, f'{revision}:refs/tags/{tag}'], cwd=root)
+        observed = subprocess.check_output(['git', 'ls-remote', '--tags', remote, f'refs/tags/{tag}'], cwd=root, text=True)
+        if observed.strip() != f'{revision}\trefs/tags/{tag}':
+            raise ReleaseError('远端版本标签未指向本次源码。')
+    except (OSError, subprocess.CalledProcessError, ReleaseError) as exc:
+        raise ReleaseError(f'镜像 {tag} 和 latest 已上传，但公开版本标签未验证，页面可能暂时无法发现更新。'
+                           f'\n请重试：git push {remote} {revision}:refs/tags/{tag}') from exc
+
+
 def release(root, dry_run=False):
     image, platforms = configuration(os.environ)
     directory = root / '.release'
+    remote, repository, public_version = public_repository(root)
     # Planning is read-only: it neither locks nor creates local release state.
     if dry_run:
         records = read_records(directory / 'state.json')
-        base, tag = choose_version(image, records.get(image, {}).get('version', 'v0.0.0'),
+        recorded = max(records.get(image, {}).get('version', 'v0.0.0'), public_version, key=version_parts)
+        base, tag = choose_version(image, recorded,
                                    os.environ.get('BUMP') or 'patch', os.environ.get('TAG') or '')
         print(f'版本：{base} → {tag}\n目标：{image}:{tag}\n平台：{",".join(platforms)}\n同时更新：{image}:latest\n仅预览，未构建、未上传。', flush=True)
+        print(f'公开版本来源：{repository or "未启用"}', flush=True)
         return
     with release_lock(directory):
         status = subprocess.check_output(['git', 'status', '--porcelain', '--untracked-files=normal'], cwd=root, text=True)
@@ -173,14 +207,16 @@ def release(root, dry_run=False):
             raise ReleaseError('发布使用已提交的源码。请先提交代码变更；本机配置和被忽略的数据不参与发布。')
         revision = subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=root, text=True).strip()
         records = read_records(directory / 'state.json')
-        base, tag = choose_version(image, records.get(image, {}).get('version', 'v0.0.0'),
+        recorded = max(records.get(image, {}).get('version', 'v0.0.0'), public_version, key=version_parts)
+        base, tag = choose_version(image, recorded,
                                    os.environ.get('BUMP') or 'patch', os.environ.get('TAG') or '')
         print(f'发布：{base} → {tag}\n镜像：{image}:{tag}\n源码：{revision}', flush=True)
         with tempfile.TemporaryDirectory(prefix='source-', dir=directory) as temporary:
             context = Path(temporary)
             export_source(root, revision, context)
             execute(['make', '--no-print-directory', '_publish', f'TAG={tag}', f'IMAGE={image}',
-                     f'PLATFORMS={",".join(platforms)}'], cwd=context)
+                     f'PLATFORMS={",".join(platforms)}', f'REVISION={revision}',
+                     f'UPDATE_REPOSITORY={repository}'], cwd=context)
         published = manifest(image + ':' + tag)
         verify_image(published, platforms, tag)
         execute(['docker', 'buildx', 'imagetools', 'create', '--tag', image + ':latest',
@@ -191,6 +227,8 @@ def release(root, dry_run=False):
         records[image] = {'version': tag, 'digest': published['digest'], 'revision': revision,
                           'published_at': datetime.now(timezone.utc).isoformat()}
         write_records(directory / 'state.json', records)
+        if remote:
+            publish_tag(root, remote, revision, tag)
         print(f'发布成功：{image}:{tag}\nlatest 已同步：{image}:latest\n摘要：{published["digest"]}', flush=True)
 
 

@@ -9,8 +9,9 @@ IMAGE ?= $(REGISTRY)/your-github-username/bookmark-app
 PLATFORMS ?= linux/amd64,linux/arm64
 BUILDER ?= bookmark-app-multiarch-serial
 BUILDKIT_CONFIG ?= buildkitd.toml
+RELEASE_GIT_REMOTE ?=
 
-export TAG IMAGE REGISTRY PLATFORMS BUILDER BUILDKIT_CONFIG BUMP
+export TAG IMAGE REGISTRY PLATFORMS BUILDER BUILDKIT_CONFIG BUMP RELEASE_GIT_REMOTE
 
 .PHONY: release publish release-plan _publish login help
 
@@ -58,6 +59,10 @@ _publish:
 			--platform "$$platform" \
 			--provenance=false \
 			--label "org.opencontainers.image.version=$$tag" \
+			--label "org.opencontainers.image.revision=$${REVISION:-unknown}" \
+			--build-arg "APP_VERSION=$$tag" \
+			--build-arg "APP_REVISION=$${REVISION:-unknown}" \
+			--build-arg "APP_UPDATE_REPOSITORY=$${UPDATE_REPOSITORY:-}" \
 			--tag "$$platform_image" \
 			--push \
 			.; \
