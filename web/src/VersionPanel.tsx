@@ -80,13 +80,28 @@ function statusText({ info, checking, failed }: VersionState): string {
 export function VersionFooter({ state, enjoy = false }: { state: VersionState; enjoy?: boolean }) {
   return <footer className={`app-footer${enjoy ? " enjoy-version-footer" : ""}`}>
     <span>拾页 · 你的收藏，你来掌握</span>
-    <a className="version-footer-link" href={enjoy ? undefined : "#settings"}
+    {!enjoy ? <span>数据保存在自己的 NAS</span> : <a className="version-footer-link"
       title={enjoy ? "切换管理版，在应用设置中检查更新" : "查看版本与更新"}>
       <span>{state.info ? state.info.version === "development" ? "开发版" : state.info.version : state.failed ? "版本暂不可用" : "版本读取中"}</span>
       <span aria-hidden="true">·</span>
       <span>{statusText(state)}</span>
-    </a>
+    </a>}
   </footer>;
+}
+
+export function HeaderVersion({ state, onOpen }: { state: VersionState; onOpen: () => void }) {
+  const { info, checking, failed } = state;
+  const available = !failed && info?.status === "update_available";
+  const uncertain = failed || !info || ["unknown", "unchecked", "development", "disabled"].includes(info.status);
+  const version = info ? info.version === "development" ? "开发版" : info.version : failed ? "版本暂不可用" : "读取中…";
+  return <a href="#settings"
+    onClick={(event) => { event.preventDefault(); onOpen(); }}
+    className={`header-version${available ? " has-update" : uncertain ? " is-uncertain" : ""}`}
+    title={`${version} · ${statusText(state)}，点击查看版本与更新`}
+    aria-label={`当前版本 ${version}，${statusText(state)}，查看版本与更新`}>
+    {version}{available && <span>可升级</span>}
+    {checking && <span className="sr-only">正在检查更新</span>}
+  </a>;
 }
 
 export default function VersionPanel({ state }: { state: VersionState }) {
