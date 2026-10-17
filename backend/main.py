@@ -313,7 +313,7 @@ def create_app(data_dir=None, start_worker=True):
             raise HTTPException(404, 'Job not found')
         return job
 
-    def save_bookmark(data, imported=False, source_folder='', restore=None):
+    def save_bookmark(data, imported=False, source_folder='', restore=None, auto_classify=True):
         try:
             url = services.normalize_url(data['url'])
         except (ValueError, UnicodeError) as e:
@@ -344,7 +344,7 @@ def create_app(data_dir=None, start_worker=True):
         store.execute('UPDATE bookmarks SET preserve_import_folder=? WHERE id=?', (int(bool((restore or {}).get('preserve_import_folder', False))), identifier))
         store.invalidate_index()
         cfg = store.settings()['classification']
-        if not imported and not manual and cfg.get('model') and cfg.get('api_key'):
+        if auto_classify and not imported and not manual and cfg.get('model') and cfg.get('api_key'):
             create_job('classify', [identifier])
         return {'bookmark': store.bookmark(identifier), 'duplicate': False}
 
@@ -413,7 +413,8 @@ def create_app(data_dir=None, start_worker=True):
 
     @app.post('/api/bookmarks')
     def bookmark_create(data: Save, user=Depends(save_auth)):
-        result = save_bookmark(data.model_dump(exclude_unset=True))
+        # Extension collection is an inbox action; AI runs only after an explicit request.
+        result = save_bookmark(data.model_dump(exclude_unset=True), auto_classify=user != ('bearer',))
         if user == ('bearer',):
             result['bookmark'] = {k: result['bookmark'][k] for k in ('id', 'url')}
         return result

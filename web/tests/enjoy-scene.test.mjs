@@ -24,10 +24,17 @@ test('all collections clears folder scope; category and search survive a mode ro
   assert.equal(all.has('include_children'), false);
   assert.equal(all.get('q'), state.query);
 });
-test('management keeps descendant folders, tags and pending/trash filters', () => {
+test('pending ignores a remembered directory while other management views retain their scope', () => {
   const params = bookmarkQuery({ ...state, mode: 'manage' });
-  assert.deepEqual(Object.fromEntries(params), { q: state.query, mode: 'keyword', trash: 'false', pending: 'true', folder_id: '23', include_children: 'true', tag: 'work' });
-  assert.equal(bookmarkQuery({ ...state, page: 'trash', mode: 'manage' }).get('trash'), 'true');
+  assert.deepEqual(Object.fromEntries(params), { q: state.query, mode: 'keyword', trash: 'false', pending: 'true', tag: 'work' });
+  for (const page of ['library', 'trash']) {
+    const scoped = bookmarkQuery({ ...state, page, mode: 'manage' });
+    assert.equal(scoped.get('folder_id'), '23');
+    assert.equal(scoped.get('include_children'), 'true');
+    assert.equal(scoped.get('tag'), 'work');
+    assert.equal(scoped.get('pending'), 'false');
+    assert.equal(scoped.get('trash'), String(page === 'trash'));
+  }
 });
 
 test('lightweight management pages retain complete selection IDs while enjoy stays continuous', () => {
@@ -36,7 +43,8 @@ test('lightweight management pages retain complete selection IDs while enjoy sta
   assert.equal(managing.get('page_size'), '10');
   assert.equal(managing.get('view'), 'summary');
   assert.equal(managing.get('include_ids'), 'true');
-  assert.equal(managing.get('include_children'), 'true');
+  assert.equal(managing.has('folder_id'), false);
+  assert.equal(managing.has('include_children'), false);
   assert.equal(managing.get('pending'), 'true');
   const enjoy = bookmarkQuery({ ...state, mode: 'enjoy', listPage: 3, pageSize: 10 });
   assert.equal(enjoy.get('view'), 'summary');

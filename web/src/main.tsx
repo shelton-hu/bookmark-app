@@ -40,6 +40,7 @@ import {
   CheckCircle2,
   FolderPlus,
   FolderInput,
+  Inbox,
 } from "lucide-react";
 import {
   api,
@@ -101,8 +102,8 @@ type DialogState =
       action: () => Promise<void>;
     };
 const pageNames: Record<Page, string> = {
-  library: "书签管理",
-  pending: "书签整理",
+  library: "全部书签",
+  pending: "待整理箱",
   trash: "书签回收",
   jobs: "任务中心",
   transfer: "导入导出",
@@ -329,6 +330,7 @@ function App() {
     "keyword",
   );
   const [folderId, setFolderId] = useState(readFolderPreference);
+  const scopeFolderId = managing && page === "pending" ? "" : folderId;
   const rememberedFolder = useRef(folderId);
   const selectFolder = (id: string) => {
     rememberedFolder.current = id;
@@ -340,7 +342,7 @@ function App() {
   const selectionAfterReload = useRef<number[] | null>(null);
   const [pagination, setPagination] = useState({ scope: "", page: 1, size: 20 });
   const listPanelRef = useRef<HTMLElement>(null);
-  const resultScope = JSON.stringify([mode, page, query, searchMode, folderId, tag]);
+  const resultScope = JSON.stringify([mode, page, query, searchMode, scopeFolderId, tag]);
   const requestedPage = managing && pagination.scope === resultScope ? pagination.page : 1;
   const paged = pageInfo(total, requestedPage, pagination.size);
   const visibleItems = items;
@@ -460,7 +462,7 @@ function App() {
     if (selectionAfterReload.current === null) setSelected([]);
     const timer = setTimeout(async () => {
       try {
-        const params = bookmarkQuery({ mode, page, query, searchMode, folderId, tag,
+        const params = bookmarkQuery({ mode, page, query, searchMode, folderId: scopeFolderId, tag,
           listPage: requestedPage, pageSize: pagination.size, searchId });
         const data = await api<BookmarkListResult>("/bookmarks?" + params, { signal: controller.signal });
         if (request === listRequest.current) {
@@ -706,7 +708,7 @@ function App() {
       );
     else
       void run("检查分类范围", async () => {
-        const data = await api<{ items: Bookmark[] }>("/bookmarks?view=summary");
+        const data = await api<{ items: Bookmark[] }>(page === "pending" ? "/bookmarks?view=summary&pending=true" : "/bookmarks?view=summary");
         const eligible = data.items.filter(
           (b) =>
             !b.manual_classification &&
@@ -826,7 +828,7 @@ function App() {
             className={page === "pending" ? "nav-item active" : "nav-item"}
             onClick={() => navigate("pending")}
           >
-            <Sparkles size={19} />
+            <Inbox size={19} />
             {pageNames.pending}
           </button>
           {managing && <>
@@ -934,8 +936,8 @@ function App() {
                   ? page === "trash"
                     ? "删除的书签会保留 30 天，你可以随时恢复。"
                     : page === "pending"
-                      ? "为尚未归档的内容找到合适的位置。"
-                      : folderId ? `显示目录「${folderPath(Number(folderId), folders)}」及其子目录中的网址。` : "搜索、编辑和整理你的书签。"
+                      ? "集中处理尚未归入目录的书签；插件新收藏会先保存在这里。"
+                      : folderId ? `显示目录「${folderPath(Number(folderId), folders)}」及其子目录中的网址。` : "浏览全部收藏，包括待整理书签和已归档书签。"
                   : page === "jobs"
                     ? "让整理在后台继续，随时掌握每一步。"
                     : page === "settings"
@@ -1020,7 +1022,7 @@ function App() {
                   </div>
                 </div>
                 <div className="filter-row">
-                  <ClowCatalog variant="compact" folders={folders} selected={folderId} onSelect={selectFolder} />
+                  {page !== "pending" && <ClowCatalog variant="compact" folders={folders} selected={folderId} onSelect={selectFolder} />}
                   <label>
                     <span className="hash">#</span>
                     <input
@@ -1038,7 +1040,7 @@ function App() {
                         ))}
                     </datalist>
                   </label>
-                  {(query || folderId || tag) && (
+                  {(query || scopeFolderId || tag) && (
                     <button
                       className="text-button"
                       onClick={() => {
@@ -1146,7 +1148,7 @@ function App() {
                         onClick={() => requestJob("classify")}
                       >
                         <Sparkles size={16} />
-                        {selected.length ? "分类所选" : "整理待分类"}
+                        {selected.length ? "AI 整理所选" : "AI 整理"}
                       </button>
                       {selected.length > 0 && (
                         <button
@@ -1182,21 +1184,21 @@ function App() {
               ) : items.length === 0 ? (
                 <Empty
                   title={
-                    query || tag || folderId
+                    query || tag || scopeFolderId
                       ? "没有找到匹配的书签"
                       : page === "trash"
                         ? "回收站是空的"
                         : page === "pending"
-                          ? "所有收藏都已安排妥当"
+                          ? "待整理箱已清空"
                           : "从一个好链接开始"
                   }
                   description={
-                    query || tag || folderId
+                    query || tag || scopeFolderId
                       ? managing ? "试试更短的关键词，或调整目录和标签筛选。" : "试试更短的关键词，或清除搜索重新浏览。"
                       : page === "trash"
                         ? "删除的书签会暂存在这里，30 天后自动清理。"
                         : page === "pending"
-                          ? "新收藏或未分类的书签会出现在这里。"
+                          ? "插件新收藏会先进入这里；归入目录后会从此列表移出。"
                           : managing ? "粘贴一个网址，或从浏览器导入已有书签。" : "切换到管理模式，添加或导入你的第一份收藏。"
                   }
                 >
@@ -1557,7 +1559,7 @@ function App() {
             <BookmarkForm
               bookmark={dialog.bookmark}
               folders={folders}
-              currentFolder={folderId}
+              currentFolder={scopeFolderId}
               busy={busy}
               cancel={() => setDialog(null)}
               save={(body) =>

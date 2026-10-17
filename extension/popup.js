@@ -60,8 +60,8 @@ $('confirm').addEventListener('click', async () => {
     if (!response?.ok) throw new Error(response?.error || '扩展未响应，请重新加载扩展');
     const status = response.result?.status;
     if (status === 'duplicate') finish('已经收藏', '该网址已存在，原分类和备注保持不变。');
-    else if (status === 'queued') finish('已加入队列', response.result?.configured === false ? '已保存到本机，并打开设置页面。' : '网络恢复后会自动同步。');
-    else finish('收藏成功', '页面已保存到拾页。');
+    else if (status === 'queued') finish('已加入待同步', response.result?.configured === false ? '已保存到本机，并打开设置页面；连接后会同步到「待整理箱」。' : '网络恢复后会自动同步到「待整理箱」。');
+    else finish('已加入待整理', '可在拾页的「待整理箱」中归档，或启动 AI 整理。');
   } catch (error) {
     setBusy(false);
     showStatus(userError(error), true);

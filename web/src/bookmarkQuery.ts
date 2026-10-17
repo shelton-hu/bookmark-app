@@ -8,7 +8,7 @@ export function bookmarkQuery({ mode, page, query, searchMode, folderId, tag, li
   const managing = mode === "manage";
   const params = new URLSearchParams({ q: query, mode: searchMode, trash: String(managing && page === "trash"), pending: String(managing && page === "pending") });
   // Folder scope is visible in both modes; only management exposes tags and private lists.
-  if (folderId) { params.set("folder_id", folderId); params.set("include_children", "true"); }
+  if (folderId && !(managing && page === "pending")) { params.set("folder_id", folderId); params.set("include_children", "true"); }
   if (managing && tag.trim()) params.set("tag", tag.trim());
   // Callers opting into the lightweight list get server pagination in management only.
   if (listPage !== undefined) {
