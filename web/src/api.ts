@@ -135,6 +135,7 @@ function detailMessage(detail: unknown): string {
       .join("；");
   return detail ? JSON.stringify(detail) : "请求失败，请稍后重试。";
 }
+let readRequestSequence = 0;
 export async function api<T>(
   path: string,
   options: RequestInit = {},
@@ -150,7 +151,15 @@ export async function api<T>(
   if (options.signal?.aborted) abort();
   options.signal?.addEventListener("abort", abort, { once: true });
   try {
-    const response = await fetch("/api" + path, {
+    const method = (options.method ?? "GET").toUpperCase();
+    let url = "/api" + path;
+    if (method === "GET" || method === "HEAD") {
+      // Forced proxy caches can ignore no-store. A fresh, nonsecret URL also
+      // bypasses entries created before the proxy configuration was corrected.
+      const key = `${Date.now().toString(36)}-${++readRequestSequence}-${Math.random().toString(36).slice(2)}`;
+      url += `${url.includes("?") ? "&" : "?"}_fresh=${key}`;
+    }
+    const response = await fetch(url, {
       ...options,
       // Lists and account data must not reuse a response from before a mutation.
       cache: "no-store",

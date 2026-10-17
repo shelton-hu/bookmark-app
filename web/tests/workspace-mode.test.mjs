@@ -113,3 +113,57 @@ test("identical list URLs bypass stored responses after delete and restore", asy
   await post("/bookmarks/1/restore");
   assert.deepEqual((await api(url)).ids, [1, 2]);
 });
+
+test("folder reads bypass a proxy that caches by URL despite no-store", async () => {
+  mode.setWorkspaceMode("manage");
+  const path = "/bookmarks?q=&folder_id=7&include_children=true&view=summary&page=1&page_size=20&include_ids=true";
+  const snapshot = (ids) => JSON.stringify({ ids: [...ids], total: ids.length });
+  let liveIds = [1, 2];
+  const proxyCache = new Map([["/api" + path, snapshot(liveIds)]]);
+  const reads = [];
+  globalThis.fetch = async (url, options) => {
+    assert.equal(options.cache, "no-store");
+    if (options.method === "DELETE") {
+      assert.equal(url, "/api/bookmarks/1");
+      liveIds = [2];
+      return ok();
+    }
+    if (options.method === "POST") {
+      assert.equal(url, "/api/bookmarks/1/restore");
+      liveIds = [1, 2];
+      return ok();
+    }
+    reads.push(url);
+    const parsed = new URL(url, "https://example.test");
+    assert.equal(parsed.searchParams.get("folder_id"), "7");
+    assert.equal(parsed.searchParams.get("include_children"), "true");
+    // Deliberately ignore Fetch cache mode and cache-control request headers,
+    // just as a forced reverse-proxy cache does.
+    if (!proxyCache.has(url)) proxyCache.set(url, snapshot(liveIds));
+    return new Response(proxyCache.get(url), {
+      headers: { "Cache-Control": "no-store" },
+    });
+  };
+  assert.deepEqual(await api(path), { ids: [1, 2], total: 2 });
+  await api("/bookmarks/1", { method: "DELETE" });
+  assert.deepEqual(await api(path), { ids: [2], total: 1 });
+  await post("/bookmarks/1/restore");
+  assert.deepEqual(await api(path), { ids: [1, 2], total: 2 });
+  assert.equal(new Set(reads).size, 3);
+});
+
+test("account and directory reads also bypass a forced URL cache", async () => {
+  let loggedIn = false;
+  const proxyCache = new Map();
+  globalThis.fetch = async (url, options) => {
+    if (options.method === "POST") { loggedIn = true; return ok(); }
+    if (!proxyCache.has(url)) proxyCache.set(url, JSON.stringify({ authenticated: loggedIn }));
+    return new Response(proxyCache.get(url));
+  };
+  for (const path of ["/auth/status", "/folders", "/bookmarks/1"]) {
+    loggedIn = false;
+    assert.equal((await api(path)).authenticated, false);
+    await post("/auth/login", { username: "example", password: "synthetic" });
+    assert.equal((await api(path)).authenticated, true);
+  }
+});
