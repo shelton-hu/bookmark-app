@@ -1,18 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <title>拾页 · 封印之书</title>
-  <defs>
-    <linearGradient id="cover" x1="0" y1="0" x2="1" y2="1">
-      <stop stop-color="#784052"/>
-      <stop offset="1" stop-color="#492536"/>
-    </linearGradient>
-    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
-      <stop stop-color="#efdbab"/>
-      <stop offset=".55" stop-color="#cba56c"/>
-      <stop offset="1" stop-color="#e6cd99"/>
-    </linearGradient>
-  </defs>
-  <path d="M19 9h29a3 3 0 0 1 3 3v42.5H19a5.5 5.5 0 0 1-5.5-5.5V14.5A5.5 5.5 0 0 1 19 9Z" fill="url(#cover)" stroke="url(#gold)" stroke-width="1.35" stroke-linejoin="round"/>
-  <path d="M19 49h31.3v5.5H19a2.75 2.75 0 0 1 0-5.5Z" fill="#d7bc8730"/>
-  <path d="M50.3 49H19a2.75 2.75 0 0 0 0 5.5h31.3M21.5 10v37.7" fill="none" stroke="url(#gold)" stroke-width="1.05" stroke-linecap="round"/>
-  <path d="m35 18.8 2.2 6.3 6.7.3-5.2 4.1 1.8 6.4-5.5-3.8-5.5 3.8 1.8-6.4-5.2-4.1 6.7-.3Z" fill="#ecd4a0" stroke="#ecd4a0" stroke-width=".35" stroke-linejoin="round"/>
+  <title>拾页 · 叠页拾光</title>
+  <path id="back-page" d="M21 6h25l10 10v32a4 4 0 0 1-4 4H21Z" fill="#D6B466" transform="rotate(5 38.5 29)"/>
+  <path d="M12 10h28l12 12v32a4 4 0 0 1-4 4H12a4 4 0 0 1-4-4V14a4 4 0 0 1 4-4Z" fill="#642F43"/>
+  <path d="M40 10v9a3 3 0 0 0 3 3h9Z" fill="#F2D99E"/>
+  <path d="M25 21c1.35 5.65 3.35 7.65 9 9-5.65 1.35-7.65 3.35-9 9-1.35-5.65-3.35-7.65-9-9 5.65-1.35 7.65-3.35 9-9Z" fill="#F2D99E"/>
 </svg>

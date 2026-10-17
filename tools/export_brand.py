@@ -1,4 +1,4 @@
-"""Export extension icons from the restored transparent sealed-book master.
+"""Export the shared tab favicon and extension icons from the extension master.
 
 Run from any directory: python tools/export_brand.py
 Requires Pillow and librsvg's rsvg-convert.
@@ -13,8 +13,8 @@ from PIL import Image, ImageDraw, ImageFont
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / "web/public/brand/sealed-book-transparent.svg"
-EXTENSION_SVG = ROOT / "extension/icons/bookmark.svg"
+SOURCE = ROOT / "extension/icons/bookmark.svg"
+FAVICON = ROOT / "web/public/favicon.svg"
 RENDERER = shutil.which("rsvg-convert")
 
 if not RENDERER:
@@ -31,8 +31,8 @@ for element in root.iter():
     if element.attrib.get("width") == "64" and element.attrib.get("height") == "64":
         raise SystemExit("Brand master must remain transparent; remove the full-canvas rectangle.")
 
-# The web favicon uses the separately committed simplified online artwork.
-EXTENSION_SVG.write_text(master, encoding="utf-8")
+# Keep the browser tab and the installed extension on the same artwork.
+FAVICON.write_text(master, encoding="utf-8")
 
 
 def raster(size: int) -> Image.Image:
@@ -69,8 +69,8 @@ for x, color, label in (
     text_color = "#493B35" if color == "#FFFDFC" else "#F4E4BE"
     draw.text((x + 78, 255), label, font=body, fill=text_color)
 
-draw.text((640, 45), "拾页 · 封印之书", font=heading, fill="#512638")
-draw.text((640, 95), "透明底 / 酒红书封 / 古金星月", font=body, fill="#756354")
+draw.text((640, 45), "拾页 · 叠页拾光", font=heading, fill="#512638")
+draw.text((640, 95), "透明底 / 酒红叠页 / 古金星光", font=body, fill="#756354")
 for x, size in ((645, 64), (770, 48), (875, 32), (960, 16)):
     icon = raster(size)
     preview.paste(icon, (x, 165), icon)
@@ -83,9 +83,9 @@ draw.text((720, 355), "拾页", font=heading, fill="#493B35")
 draw.text((830, 365), "个人书签库", font=body, fill="#756354")
 
 draw.text((640, 490), "所有导出资源共享同一透明主稿", font=heading, fill="#512638")
-draw.text((640, 545), "16px 仍保留书封与星月轮廓。", font=body, fill="#756354")
+draw.text((640, 545), "16px 仍保留叠页与星光轮廓。", font=body, fill="#756354")
 
-output = ROOT / ".test-data/design-previews/logo/sealed-book-preview.png"
+output = ROOT / ".test-data/design-previews/logo/layered-pages-preview.png"
 output.parent.mkdir(parents=True, exist_ok=True)
 preview.save(output)
 print(output)

@@ -90,3 +90,26 @@ test("authentication reset revokes writes even while an earlier write settles", 
   finish(); // completion is idempotent
   assert.equal(mode.setWorkspaceMode("enjoy"), true);
 });
+
+test("identical list URLs bypass stored responses after delete and restore", async () => {
+  mode.setWorkspaceMode("manage");
+  let liveIds = [1, 2];
+  const storedIds = [...liveIds];
+  globalThis.fetch = async (path, options) => {
+    if (options.method === "DELETE") liveIds = liveIds.filter(id => id !== 1);
+    else if (options.method === "POST") liveIds = [1, ...liveIds];
+    else {
+      const ids = options.cache === "no-store" ? liveIds : storedIds;
+      return new Response(JSON.stringify({ ids: [...ids] }), { status: 200 });
+    }
+    return ok();
+  };
+  const url = "/bookmarks?view=summary&page=1&include_ids=true";
+  assert.deepEqual((await api(url)).ids, [1, 2]);
+  await api("/bookmarks/1", { method: "DELETE" });
+  assert.deepEqual((await api(url)).ids, [2]);
+  // The private API boundary must also override a caller's cache preference.
+  assert.deepEqual((await api(url, { cache: "force-cache" })).ids, [2]);
+  await post("/bookmarks/1/restore");
+  assert.deepEqual((await api(url)).ids, [1, 2]);
+});

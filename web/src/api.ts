@@ -152,6 +152,8 @@ export async function api<T>(
   try {
     const response = await fetch("/api" + path, {
       ...options,
+      // Lists and account data must not reuse a response from before a mutation.
+      cache: "no-store",
       headers,
       credentials: "same-origin",
       signal: controller.signal,

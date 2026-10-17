@@ -219,6 +219,14 @@ def create_app(data_dir=None, start_worker=True):
                     return Response(json.dumps({'detail': 'Cross-origin request blocked'}), status_code=403, media_type='application/json')
         return await call_next(request)
 
+    @app.middleware('http')
+    async def api_cache_policy(request, call_next):
+        response = await call_next(request)
+        if request.url.path.startswith('/api/'):
+            # Includes Origin/auth failures as well as successful private reads.
+            response.headers['Cache-Control'] = 'no-store'
+        return response
+
     def identity(request: Request, bearer=False):
         cookie = request.cookies.get('bookmark_session')
         session = store.one('SELECT * FROM sessions WHERE hash=? AND expires>?', (digest(cookie), now())) if cookie else None

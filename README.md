@@ -87,6 +87,8 @@ make IMAGE=ghcr.io/your-github-username/bookmark-app TAG=v1.0.0
 
 书签列表通过数据库批量查询并先筛选目录、标签和关键词。管理版按每页10／20／50条从服务端读取，显示完整结果总数；全选本页后可选择当前筛选范围的全部结果，不需要下载全部正文。删除或恢复后会重新读取并补齐当前页，末页为空时自动回到有效页，失败或冲突记录继续保留选中。纯享版仍使用完整的连续牌列，两种模式都只在翻阅详情或打开编辑／刷新表单时读取完整内容。详情请求失败可重试，关闭后取消尚未完成的读取。同一次语义搜索翻页可短暂复用查询向量，修改搜索条件或主动刷新会发起新搜索；目录、记录和排名仍按当前数据库读取。
 
+动态 API 不使用 HTTP 缓存：网页请求统一采用 `cache: "no-store"`，后端所有 `/api/` 响应（包括登录状态、列表和错误）均返回 `Cache-Control: no-store`。删除、恢复或刷新后，即使列表地址相同，也会重新读取当前数据。反向代理应遵守该响应头，不应强制缓存 `/api/`；静态图片、样式和脚本仍可正常缓存。
+
 ## 设置模型
 
 先切换到管理模式，再进入 Web 的设置页面，分别填写分类模型和 Embedding 模型的兼容 OpenAI API 地址（例如 `https://供应商地址/v1`）、API Key 和模型名称。地址应填写 API 基础地址，不包含 `/chat/completions` 或 `/embeddings`。分类提示词可修改。密钥保存在服务端，页面只显示是否已配置，留空保留旧密钥；清除密钥需要显式操作。
@@ -108,9 +110,9 @@ make IMAGE=ghcr.io/your-github-username/bookmark-app TAG=v1.0.0
 
 ## 统一品牌图标
 
-网页标识使用「封印之书」：正式品牌资源为 `web/public/brand/sealed-book.svg` 与 `sealed-book-transparent.svg`，favicon 使用对应的简化图。侧栏、页头和藏书册使用透明版；登录页沿用线上带底色版本。旧叠页标识不包含在公开源码或生产包中。
+页面内的「封印之书」资源为 `web/public/brand/sealed-book.svg` 与 `sealed-book-transparent.svg`，用于侧栏、页头、藏书册和登录页。浏览器标签页与 Chrome 扩展统一使用酒红叠页、古金星光图标，SVG 母版为 `extension/icons/bookmark.svg`，网页副本为 `web/public/favicon.svg`。
 
-`tools/export_brand.py` 可从透明封印之书母版生成扩展图标；它不会覆盖独立的网页 favicon。扩展图标的重新生成和发布需单独执行。
+`tools/export_brand.py` 从扩展 SVG 母版生成扩展 PNG 图标，并同步网页 favicon；标签页图标更新时需要同步修改 `web/index.html` 中的图标版本参数，以刷新浏览器缓存。扩展图标的重新生成和发布需单独执行。
 
 已加载的开发版扩展更新源码后，在 `chrome://extensions` 找到「拾页 · 智能收藏夹」并点击重新加载；若原来加载的是另一个目录的副本，应先更新该副本。无需卸载扩展，避免丢失本地配置和待同步队列。网页刷新即可获取新的 favicon 地址。
 
