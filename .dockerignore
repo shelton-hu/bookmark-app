@@ -5,6 +5,7 @@
 !.env.example
 data
 .test-data
+.release
 **/__pycache__
 **/.pytest_cache
 web/node_modules

@@ -1,21 +1,31 @@
-.DEFAULT_GOAL := publish
+.DEFAULT_GOAL := release
 
+# Local registry settings are deliberately excluded from Git and Docker contexts.
+-include .env.release
+
+PYTHON ?= python3
 REGISTRY ?= ghcr.io
 IMAGE ?= $(REGISTRY)/your-github-username/bookmark-app
 PLATFORMS ?= linux/amd64,linux/arm64
 BUILDER ?= bookmark-app-multiarch-serial
 BUILDKIT_CONFIG ?= buildkitd.toml
 
-export TAG IMAGE PLATFORMS BUILDER BUILDKIT_CONFIG
+export TAG IMAGE REGISTRY PLATFORMS BUILDER BUILDKIT_CONFIG BUMP
 
-.PHONY: publish login help
+.PHONY: release publish release-plan _publish login help
 
-publish:
+release publish:
+	@$(PYTHON) tools/release.py
+
+release-plan:
+	@$(PYTHON) tools/release.py --dry-run
+
+# Invoked by release.py inside an isolated snapshot of committed source.
+_publish:
 	@set -eu; \
 	tag="$${TAG:-}"; \
 	if [ -z "$$tag" ]; then \
-		printf '请输入镜像 tag（例如 v1.0.0）: '; \
-		IFS= read -r tag; \
+		printf '错误: 内部发布步骤需要显式 TAG。请运行 make release。\n' >&2; exit 2; \
 	fi; \
 	case "$$tag" in \
 		[A-Za-z0-9_]*) ;; \
@@ -47,6 +57,7 @@ publish:
 			--builder "$$BUILDER" \
 			--platform "$$platform" \
 			--provenance=false \
+			--label "org.opencontainers.image.version=$$tag" \
 			--tag "$$platform_image" \
 			--push \
 			.; \
@@ -57,15 +68,17 @@ publish:
 		exit 2; \
 	fi; \
 	printf '创建多平台镜像 %s\n' "$$image"; \
-	docker buildx imagetools create --tag "$$image" "$$@"; \
+	docker buildx imagetools create --tag "$$image" --annotation "index:org.opencontainers.image.version=$$tag" "$$@"; \
 	docker buildx imagetools inspect "$$image"
 
 login:
-	docker login $(REGISTRY)
+	@docker login "$$REGISTRY"
 
 help:
 	@printf '%s\n' \
-		'make                 交互输入 tag，构建并推送双架构镜像' \
-		'make TAG=v1.0.0      使用指定 tag 构建并推送' \
+		'make release         自动递增补丁版本，推送版本镜像并更新 latest（make 默认入口）' \
+		'make release-plan    只核对仓库和下一版本，不构建、不上传' \
+		'make release BUMP=minor  递增次版本（也支持 major）' \
+		'make release TAG=v1.0.0  显式指定更高的版本号' \
 		'make login           登录镜像仓库' \
-		'make PLATFORMS=linux/amd64 TAG=v1.0.0  只构建指定平台'
+		'make release PLATFORMS=linux/amd64  只构建指定平台'

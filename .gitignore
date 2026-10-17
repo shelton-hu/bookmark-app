@@ -26,6 +26,7 @@
 node_modules/
 data/
 .test-data/
+.release/
 __pycache__/
 *.pyc
 *.tsbuildinfo
@@ -35,6 +36,7 @@ __pycache__/
 .env.*
 !/.env.example
 !/.env.deploy.example
+!/.env.release.example
 .envrc
 .netrc
 .npmrc

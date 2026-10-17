@@ -44,18 +44,43 @@ docker compose --env-file .env.deploy -f compose.deploy.yaml ps
 
 ## 构建并推送镜像
 
-以 GitHub Container Registry 为例，先把下列 `your-github-username` 替换为自己的账号或组织名，再登录并发布镜像：
+发布需要 Git、Python 3.9+、Make，以及带 Buildx 插件的 Docker。首次使用时，复制本机发布配置并填写实际仓库域名和镜像路径，再登录该仓库：
 
 ```sh
-make login REGISTRY=ghcr.io
-make IMAGE=ghcr.io/your-github-username/bookmark-app
-# 或显式传入版本号
-make IMAGE=ghcr.io/your-github-username/bookmark-app TAG=v1.0.0
+cp .env.release.example .env.release
+# 修改 .env.release 中的 REGISTRY 和 IMAGE，二者必须指向同一个仓库。
+make login
 ```
 
-`REGISTRY` 默认是 `ghcr.io`，`IMAGE` 默认使用占位名称，必须先替换后才能发布；也可以设置为其他有权限的镜像仓库。默认构建 `linux/amd64` 和 `linux/arm64`。首次运行会创建并复用独立的 `bookmark-app-multiarch-serial` Buildx builder。`buildkitd.toml` 将单个仓库连接数限制为 1；各平台依次推送 `<tag>-amd64`、`<tag>-arm64`，最后合成为 `<tag>` 多平台镜像，同时关闭 Buildx 的 provenance 附加清单。这个串行流程适合连接数受限的镜像代理。
+`.env.release` 和 `.release/` 中的发布记录只保存在本机，不进入 Git 或镜像构建上下文。账号密码由 `docker login` 管理，发布配置中不保存凭据。
 
-如只需要一个平台，可附加 `PLATFORMS=linux/amd64`。tag 必须以字母、数字或下划线开头，且只能包含字母、数字、点、下划线和连字符。
+完成代码提交后，运行一个命令即可自动生成下一版本并上传：
+
+```sh
+make release
+# 直接运行 make 或 make publish 也是同一个入口。
+```
+
+默认递增补丁版本，例如 `v0.0.5 → v0.0.6`，并同时发布版本标签与 `latest`。下一版本参考该镜像的本机成功记录和远端 `latest` 的版本注解，取较新的版本作为基准；遇到已经存在的版本会继续递增，显式指定的版本已存在时则停止。不同镜像仓库的发布记录独立保存。首次发布且没有历史记录时从 `v0.0.1` 开始；接管没有版本注解的既有 `latest` 时，首次需要显式指定新版本。
+
+```sh
+make release-plan           # 只查询下一版本和目标仓库，不构建、不上传
+make release BUMP=minor      # 例如 v0.0.6 → v0.1.0
+make release BUMP=major      # 例如 v0.0.6 → v1.0.0
+make release TAG=v1.2.3      # 显式指定更高的新版本，格式为 v主版本.次版本.补丁版本
+```
+
+发布只使用已提交的 Git 源码快照；存在尚未提交或未跟踪的代码时会停止，避免漏发新文件或夹带本地变更。数据、凭据、截图、依赖和其他被忽略的文件不会进入快照。默认构建 `linux/amd64` 和 `linux/arm64`，也可指定 `PLATFORMS=linux/amd64` 或 `PLATFORMS=linux/arm64`。
+
+首次构建会创建并复用独立的 `bookmark-app-multiarch-serial` Buildx builder。`buildkitd.toml` 将单个仓库连接数限制为 1；各平台依次推送 `<tag>-amd64`、`<tag>-arm64`，最后合成为带版本注解的 `<tag>` 多平台镜像，并关闭 provenance 附加清单。远端架构和版本校验通过后，才让 `latest` 指向同一份镜像；两者摘要一致后再原子写入成功记录。本机同时只能运行一个发布任务。
+
+构建或验证失败不会写入成功记录。版本镜像已上传、但更新 `latest` 失败时，已有版本镜像会保留；下次发布会跳过已占用的版本。发布命令不会自动修改 NAS 的运行容器。
+
+发布命令的隔离与故障测试可以单独运行：
+
+```sh
+python3 -m unittest discover -s tools/tests -v
+```
 
 ## 纯享模式与管理模式
 
