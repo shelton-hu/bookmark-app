@@ -33,6 +33,7 @@ test("read-only blocks every write path before fetch, including delayed callback
     ["/bookmarks/1/restore", "POST"], ["/folders", "POST"], ["/folders/bulk-delete", "POST"],
     ["/settings", "PUT"], ["/tokens/1", "DELETE"], ["/import/confirm", "POST"], ["/jobs", "POST"],
     ["/assistant/apply", "POST"], ["/folders/organize-apply", "POST"],
+    ["/folders/move-bookmarks-preview", "POST"], ["/folders/move-bookmarks", "POST"],
     ["/trash/delete-preview", "POST"], ["/trash/delete", "POST"], ["/trash/restore", "POST"]];
   mode.setWorkspaceMode("manage");
   const delayedSave = () => post("/bookmarks", { title: "stale" });

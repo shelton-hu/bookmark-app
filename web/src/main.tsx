@@ -39,6 +39,7 @@ import {
   Play,
   CheckCircle2,
   FolderPlus,
+  FolderInput,
 } from "lucide-react";
 import {
   api,
@@ -87,6 +88,7 @@ type Page =
 type DialogState =
   | { type: "bookmark"; bookmark?: Bookmark }
   | { type: "folder"; folder?: Folder }
+  | { type: "folder-move"; folder?: Folder }
   | { type: "refresh"; bookmark: Bookmark }
   | { type: "organize"; preview: Preview }
   | { type: "classification-assistant"; bookmarkIds: number[] }
@@ -1365,6 +1367,14 @@ function App() {
                 <div className="button-row">
                   <button
                     className="secondary"
+                    disabled={Boolean(busy) || folders.length < 2}
+                    title={folders.length < 2 ? "至少需要两个目录才能迁移书签" : undefined}
+                    onClick={() => open({ type: "folder-move" })}
+                  >
+                    <FolderInput size={17} />迁移书签
+                  </button>
+                  <button
+                    className="secondary"
                     disabled={
                       Boolean(busy) || !modelReady(settings?.classification)
                     }
@@ -1447,32 +1457,42 @@ function App() {
                         </label>
                         <FolderIcon size={21} />
                         <span>{folderPath(folder.id, folders)}</span>
-                        <button
-                          className="secondary"
-                          onClick={() => open({ type: "folder", folder })}
-                        >
-                          <Pencil size={15} />
-                          编辑
-                        </button>
-                        <button
-                          className="icon-button danger"
-                          aria-label={`删除目录 ${folder.name}`}
-                          onClick={() =>
-                            confirm(
-                              "删除目录？",
-                              `删除“${folder.name}”后，目录内的书签会移到未归档。子目录由服务安全处理。`,
-                              async () => {
-                                await api("/folders/" + folder.id, {
-                                  method: "DELETE",
-                                });
-                                setDialog(null);
-                                updated("目录已删除");
-                              },
-                            )
-                          }
-                        >
-                          <Trash2 size={18} />
-                        </button>
+                        <div className="folder-row-actions">
+                          <button
+                            className="secondary"
+                            disabled={Boolean(busy) || folders.length < 2}
+                            aria-label={`迁移目录 ${folderPath(folder.id, folders)} 的书签`}
+                            onClick={() => open({ type: "folder-move", folder })}
+                          >
+                            <FolderInput size={15} />迁移书签
+                          </button>
+                          <button
+                            className="secondary"
+                            onClick={() => open({ type: "folder", folder })}
+                          >
+                            <Pencil size={15} />
+                            编辑
+                          </button>
+                          <button
+                            className="icon-button danger"
+                            aria-label={`删除目录 ${folder.name}`}
+                            onClick={() =>
+                              confirm(
+                                "删除目录？",
+                                `删除“${folder.name}”后，目录内的书签会移到未归档。子目录由服务安全处理。`,
+                                async () => {
+                                  await api("/folders/" + folder.id, {
+                                    method: "DELETE",
+                                  });
+                                  setDialog(null);
+                                  updated("目录已删除");
+                                },
+                              )
+                            }
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
                       </div>
                     ))}
                 </div>
@@ -1496,6 +1516,8 @@ function App() {
                 ? dialog.folder
                   ? "编辑目录"
                   : "新建目录"
+                : dialog.type === "folder-move"
+                  ? "迁移目录书签"
                 : dialog.type === "refresh"
                   ? "刷新书签内容"
                   : dialog.type === "classification-assistant"
@@ -1585,6 +1607,21 @@ function App() {
                   },
                 )
               }
+            />
+          )}
+          {dialog.type === "folder-move" && (
+            <FolderMoveForm
+              source={dialog.folder}
+              folders={folders}
+              busy={busy}
+              run={run}
+              cancel={() => setDialog(null)}
+              moved={(count) => {
+                setSelected([]);
+                setSelectedFolders([]);
+                setDialog(null);
+                updated(`已迁移 ${count} 条书签，目录结构已保留`);
+              }}
             />
           )}
           {dialog.type === "refresh" && (
@@ -1970,6 +2007,85 @@ function BookmarkForm({
         </button>
         <button className="primary" disabled={Boolean(busy)}>
           {busy ? "正在保存…" : "保存书签"}
+        </button>
+      </div>
+    </form>
+  );
+}
+type FolderMovePreview = {
+  bookmarks_to_move: number;
+  already_in_target: number;
+  folders_included: number;
+  snapshot: string;
+};
+function FolderMoveForm({ source, folders, busy, run, cancel, moved }: {
+  source?: Folder;
+  folders: Folder[];
+  busy: string;
+  run: (label: string, action: () => Promise<void>) => Promise<void>;
+  cancel: () => void;
+  moved: (count: number) => void;
+}) {
+  const [sourceId, setSourceId] = useState(source ? String(source.id) : "");
+  const [targetId, setTargetId] = useState("");
+  const [includeChildren, setIncludeChildren] = useState(true);
+  const [preview, setPreview] = useState<FolderMovePreview | null>(null);
+  const sorted = [...folders].sort((a, b) => folderPath(a.id, folders).localeCompare(folderPath(b.id, folders), "zh-CN"));
+  const valid = sourceId !== targetId && folders.some((f) => String(f.id) === sourceId) && folders.some((f) => String(f.id) === targetId);
+  const selection = { source_folder_id: Number(sourceId), target_folder_id: Number(targetId), include_children: includeChildren };
+  const submit = () => {
+    if (!valid || busy) return;
+    if (!preview) {
+      void run("预览书签迁移", async () => {
+        setPreview(await post<FolderMovePreview>("/folders/move-bookmarks-preview", selection));
+      });
+    } else if (preview.bookmarks_to_move) {
+      void run("迁移目录书签", async () => {
+        try {
+          const result = await post<{ moved: number }>("/folders/move-bookmarks", { ...selection, snapshot: preview.snapshot });
+          moved(result.moved);
+        } catch (error) {
+          setPreview(null);
+          throw error;
+        }
+      });
+    }
+  };
+  return (
+    <form onSubmit={(e) => { e.preventDefault(); submit(); }}>
+      <p className="modal-description">将所选范围内的正常书签统一迁入目标目录。原目录结构、书签内容和回收站记录会保留。</p>
+      <fieldset className="folder-move-fields" disabled={Boolean(busy)}>
+        <Field label="来源目录">
+          <select required value={sourceId} onChange={(e) => {
+            setSourceId(e.target.value);
+            if (targetId === e.target.value) setTargetId("");
+            setPreview(null);
+          }}>
+            <option value="">选择要迁出的目录</option>
+            {sorted.map((f) => <option key={f.id} value={f.id}>{folderPath(f.id, folders)}</option>)}
+          </select>
+        </Field>
+        <Field label="目标目录">
+          <select required value={targetId} onChange={(e) => { setTargetId(e.target.value); setPreview(null); }}>
+            <option value="">选择要迁入的目录</option>
+            {sorted.filter((f) => String(f.id) !== sourceId).map((f) => <option key={f.id} value={f.id}>{folderPath(f.id, folders)}</option>)}
+          </select>
+        </Field>
+        <label className="folder-move-children">
+          <input type="checkbox" checked={includeChildren} onChange={(e) => { setIncludeChildren(e.target.checked); setPreview(null); }} />
+          包含子目录中的书签
+        </label>
+      </fieldset>
+      {preview && <div className="folder-move-preview" role="status" aria-live="polite">
+        <strong>{preview.bookmarks_to_move ? `将迁移 ${preview.bookmarks_to_move} 条书签` : "所选范围没有可迁移的书签"}</strong>
+        <p>从「{folderPath(Number(sourceId), folders)}」迁入「{folderPath(Number(targetId), folders)}」。</p>
+        <p>{includeChildren ? `包含来源及子目录，共 ${preview.folders_included} 个目录中的书签。` : "仅迁移来源目录直接收录的书签，子目录中的书签保留原位置。"}</p>
+        {preview.already_in_target > 0 && <p>其中 {preview.already_in_target} 条已在目标目录，将自动跳过。</p>}
+      </div>}
+      <div className="modal-actions">
+        <button type="button" className="secondary" disabled={Boolean(busy)} onClick={cancel}>取消</button>
+        <button className="primary" disabled={Boolean(busy) || !valid || preview?.bookmarks_to_move === 0}>
+          {busy || (preview ? `确认迁移 ${preview.bookmarks_to_move} 条` : "预览迁移")}
         </button>
       </div>
     </form>

@@ -145,6 +145,16 @@ class FolderSelection(Input):
     folder_ids: list[BookmarkID] = Field(min_length=1, max_length=5000)
 
 
+class FolderMove(Input):
+    source_folder_id: BookmarkID
+    target_folder_id: BookmarkID
+    include_children: bool = Field(default=True, strict=True)
+
+
+class FolderMoveApply(FolderMove):
+    snapshot: str = Field(pattern=r'^[a-f0-9]{64}$')
+
+
 class ApplyInput(Input):
     preview_id: str
 
@@ -579,6 +589,48 @@ def create_app(data_dir=None, start_worker=True):
         folder = tree[identifier]
         store.execute('UPDATE folders SET name=?,parent_id=? WHERE id=?', (folder['name'],folder['parent_id'],identifier))
         return folder
+
+    def folder_move_plan(data):
+        tree = {row['id']: row for row in store.rows('SELECT * FROM folders')}
+        if data.source_folder_id not in tree or data.target_folder_id not in tree:
+            raise HTTPException(404, 'Folder not found; refresh the directory list')
+        if data.source_folder_id == data.target_folder_id:
+            raise HTTPException(422, '来源目录和目标目录不能相同。')
+        scope = sorted(folder_descendants(data.source_folder_id, folder_children(tree.values()))
+                       if data.include_children else [data.source_folder_id])
+        rows = store.rows('''SELECT id,folder_id,updated_at FROM bookmarks
+            WHERE deleted_at IS NULL AND folder_id IN (SELECT value FROM json_each(?)) ORDER BY id''',
+            (json.dumps(scope),))
+        ids = [row['id'] for row in rows if row['folder_id'] != data.target_folder_id]
+        counts = {'bookmarks_to_move': len(ids), 'already_in_target': len(rows) - len(ids),
+                  'folders_included': len(scope)}
+        snapshot = digest(json.dumps({
+            'source': data.source_folder_id, 'target': tree[data.target_folder_id],
+            'include_children': data.include_children, 'folders': [tree[i] for i in scope],
+            'bookmarks': rows,
+        }, ensure_ascii=False, sort_keys=True))
+        return ids, counts, snapshot
+
+    @app.post('/api/folders/move-bookmarks-preview')
+    def folders_move_preview(data: FolderMove, user=Depends(auth)):
+        with store.transaction():
+            _, counts, snapshot = folder_move_plan(data)
+        return {**counts, 'snapshot': snapshot}
+
+    @app.post('/api/folders/move-bookmarks')
+    def folders_move_bookmarks(data: FolderMoveApply, user=Depends(auth)):
+        with store.transaction():
+            ids, counts, snapshot = folder_move_plan(data)
+            if not hmac.compare_digest(snapshot, data.snapshot):
+                raise HTTPException(409, '目录或书签已变化，本次未迁移任何书签，请重新预览范围和数量。')
+            if ids:
+                # Match manual filing protection; content and its text vectors do not change.
+                store.execute('''UPDATE bookmarks SET folder_id=?,manual_classification=1,
+                    classification_status='done',error=NULL,updated_at=?
+                    WHERE id IN (SELECT value FROM json_each(?))''',
+                    (data.target_folder_id, now(), json.dumps(ids)))
+        return {'moved': counts['bookmarks_to_move'], 'already_in_target': counts['already_in_target'],
+                'folders_included': counts['folders_included']}
 
     def folder_delete_plan(identifiers):
         ids = sorted(set(identifiers))
