@@ -199,6 +199,7 @@ function Modal({
     dialog?.showModal();
     return () => dialog?.close();
   }, []);
+  // Keep editing drafts open when a click or text selection ends on the backdrop.
   return (
     <dialog
       ref={ref}
@@ -207,9 +208,6 @@ function Modal({
       onCancel={(e) => {
         e.preventDefault();
         close();
-      }}
-      onClick={(e) => {
-        if (e.target === ref.current) close();
       }}
     >
       <div className="modal-head">
