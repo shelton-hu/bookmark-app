@@ -68,7 +68,7 @@ export default function ClowBookmark({ managing, hand, bookmark: b, folders, sel
   const launching = useRef(false);
   const title = b.title || b.url;
   const drawn = Boolean(hand && hand.activeIndex === hand.index);
-  const centered = Boolean(hand && hand.index === (hand.centerIndex ?? Math.floor((hand.count - 1) / 2)));
+  const centered = Boolean(hand && hand.index === (hand.centerIndex ?? Math.floor(hand.count / 2)));
   const safeUrl = bookmarkTarget(b.url);
   const card = cardForBookmark(b.id);
   const open = (blocked = false) => {

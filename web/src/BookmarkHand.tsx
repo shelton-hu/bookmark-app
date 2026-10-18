@@ -4,6 +4,12 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export type HandPosition = { index: number; count: number; activeIndex: number | null; centerIndex?: number };
 
+/** Input rank stays in reading/Tab order; visual slots expand center, left, right. */
+export function rankToHandSlot(rank: number, count: number): number {
+  const center = Math.floor(count / 2);
+  return center + (rank % 2 ? -Math.ceil(rank / 2) : rank / 2);
+}
+
 /** Stable slots own pointer targeting; only the card faces move. */
 export function BookmarkHand<T extends { id: number }>({ items, children }: {
   items: T[];
@@ -12,7 +18,9 @@ export function BookmarkHand<T extends { id: number }>({ items, children }: {
   const [hovered, setHovered] = useState<number | null>(null);
   const [focused, setFocused] = useState<number | null>(null);
   const [edges, setEdges] = useState({ left: false, right: false });
-  const [centerIndex, setCenterIndex] = useState(Math.floor((items.length - 1) / 2));
+  const firstSlot = rankToHandSlot(0, items.length);
+  const lastSlot = rankToHandSlot(Math.max(0, items.length - 1), items.length);
+  const [centerIndex, setCenterIndex] = useState(firstSlot);
   const railId = useId();
   const railRef = useRef<HTMLDivElement>(null);
   const handRef = useRef<HTMLDivElement>(null);
@@ -34,15 +42,21 @@ export function BookmarkHand<T extends { id: number }>({ items, children }: {
       const viewportCenter = rail.getBoundingClientRect().left + rail.clientLeft + rail.clientWidth / 2;
       return { step, width, viewportCenter, start: hand.getBoundingClientRect().left };
     };
-    const middle = Math.max(0, Math.floor((items.length - 1) / 2));
-    const initial = geometry();
-    rail.scrollTo({ left: rail.scrollLeft + initial.start + middle * initial.step + initial.width / 2 - initial.viewportCenter, behavior: "instant" });
+    let visibleCenter = firstSlot;
+    const align = (index: number) => {
+      const { start, step, width, viewportCenter } = geometry();
+      rail.scrollTo({ left: rail.scrollLeft + start + index * step + width / 2 - viewportCenter, behavior: "instant" });
+    };
+    align(firstSlot);
     const updateEdges = () => {
       const left = rail.scrollLeft > 1;
       const right = rail.scrollLeft + rail.clientWidth < rail.scrollWidth - 1;
       setEdges((previous) => previous.left === left && previous.right === right ? previous : { left, right });
       const { step, width, viewportCenter, start } = geometry();
-      if (step) setCenterIndex(Math.max(0, Math.min(items.length - 1, Math.round((viewportCenter - start - width / 2) / step))));
+      if (step) {
+        visibleCenter = Math.max(0, Math.min(items.length - 1, Math.round((viewportCenter - start - width / 2) / step)));
+        setCenterIndex(visibleCenter);
+      }
     };
     const wheel = (event: WheelEvent) => {
       if (event.ctrlKey || event.shiftKey || Math.abs(event.deltaX) >= Math.abs(event.deltaY)) return;
@@ -52,7 +66,7 @@ export function BookmarkHand<T extends { id: number }>({ items, children }: {
       event.preventDefault();
       rail.scrollLeft = next;
     };
-    const observer = new ResizeObserver(updateEdges);
+    const observer = new ResizeObserver(() => { align(visibleCenter); updateEdges(); });
     observer.observe(rail);
     if (handRef.current) observer.observe(handRef.current);
     rail.addEventListener("scroll", updateEdges, { passive: true });
@@ -88,7 +102,7 @@ export function BookmarkHand<T extends { id: number }>({ items, children }: {
     rail.scrollBy({ left: direction * Math.max(200, rail.clientWidth * .75), behavior: scrollBehavior() });
   };
   const focusCard = (index: number) => {
-    const slot = handRef.current?.children[index] as HTMLElement | undefined;
+    const slot = handRef.current?.querySelector<HTMLElement>(`[data-hand-slot="${index}"]`);
     slot?.querySelector<HTMLButtonElement>(".clow-art")?.focus({ preventScroll: true });
     const rail = railRef.current;
     const card = slot?.querySelector<HTMLElement>(".hand-card");
@@ -105,10 +119,10 @@ export function BookmarkHand<T extends { id: number }>({ items, children }: {
     <div className="hand-caption">
       <span>全部 {items.length} 张 · 左右滑动浏览</span>
       <div className="hand-navigation" role="group" aria-label="牌列导航">
-        <button type="button" aria-label="跳到第一张书签" aria-controls={railId} disabled={!edges.left} onClick={() => focusCard(0)}>首张</button>
+        <button type="button" aria-label="跳到第一张书签" aria-controls={railId} disabled={!items.length || (activeIndex ?? centerIndex) === firstSlot} onClick={() => focusCard(firstSlot)}>首张</button>
         <button type="button" aria-label="向左浏览书签" aria-controls={railId} disabled={!edges.left} onClick={() => scroll(-1)}><ChevronLeft size={18} /></button>
         <button type="button" aria-label="向右浏览书签" aria-controls={railId} disabled={!edges.right} onClick={() => scroll(1)}><ChevronRight size={18} /></button>
-        <button type="button" aria-label="跳到最后一张书签" aria-controls={railId} disabled={!edges.right} onClick={() => focusCard(items.length - 1)}>末张</button>
+        <button type="button" aria-label="跳到最后一张书签" aria-controls={railId} disabled={!items.length || (activeIndex ?? centerIndex) === lastSlot} onClick={() => focusCard(lastSlot)}>末张</button>
       </div>
     </div>
     <div ref={railRef} id={railId} className="hand-rail" tabIndex={0} role="region" aria-label="书签牌列，可左右滑动或使用左右方向键，Home 到首张，End 到末张"
@@ -151,7 +165,7 @@ export function BookmarkHand<T extends { id: number }>({ items, children }: {
         const index = slot ? Number(slot.dataset.handSlot) : activeIndex ?? centerIndex;
         if (["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key) && !event.altKey && !event.metaKey && !event.ctrlKey) {
           event.preventDefault();
-          const next = event.key === "Home" ? 0 : event.key === "End" ? items.length - 1
+          const next = event.key === "Home" ? firstSlot : event.key === "End" ? lastSlot
             : index === null ? 0 : index + (event.key === "ArrowRight" ? 1 : -1);
           focusCard(Math.max(0, Math.min(items.length - 1, next)));
         } else if (event.key === "Escape") { setHovered(null); setFocused(null); }
@@ -167,15 +181,19 @@ export function BookmarkHand<T extends { id: number }>({ items, children }: {
       }}>
       <div ref={handRef} className="bookmark-hand" data-active-index={activeIndex ?? ""} data-center-index={centerIndex}
         style={{ "--hand-count": items.length } as CSSProperties}>
-        {items.map((item, index) => <div className="hand-slot" data-hand-slot={index} key={item.id}>
-          {children(item, { index, count: items.length, activeIndex, centerIndex })}
-        </div>)}
+        {items.map((item, rank) => {
+          const index = rankToHandSlot(rank, items.length);
+          return <div className="hand-slot" data-hand-slot={index} data-bookmark-rank={rank + 1}
+            style={{ gridColumn: index + 1, gridRow: 1 }} key={item.id}>
+            {children(item, { index, count: items.length, activeIndex, centerIndex })}
+          </div>;
+        })}
       </div>
     </div>
   </section>;
 }
 
-export function handPose({ index, count, activeIndex, centerIndex = Math.floor((count - 1) / 2) }: HandPosition, selected: boolean): CSSProperties {
+export function handPose({ index, count, activeIndex, centerIndex = Math.floor(count / 2) }: HandPosition, selected: boolean): CSSProperties {
   const active = index === activeIndex;
   const distance = activeIndex === null ? 0 : index - activeIndex;
   const proximity = distance ? Math.max(0, 1 - (Math.abs(distance) - 1) * 0.18) : 0;
