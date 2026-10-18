@@ -64,6 +64,7 @@ import type {
   BookmarkListResult,
 } from "./api";
 import ClassificationAssistant from "./ClassificationAssistant";
+import FolderAiOrganizer from "./FolderAiOrganizer";
 import { FolderSummary, FolderDeleteForm } from "./FolderManagement";
 import { SortableFolders } from "./DragOrder";
 import { folderEntries, folderSiblings, reorderedIds } from "./ordering";
@@ -98,6 +99,7 @@ type DialogState =
   | { type: "bookmark"; bookmark?: Bookmark }
   | { type: "folder"; folder?: Folder }
   | { type: "folder-move"; folder?: Folder }
+  | { type: "folder-ai"; folder?: Folder }
   | { type: "folder-delete"; folderIds: number[]; names: string[]; preview: FolderDeletePreview }
   | { type: "refresh"; bookmark: Bookmark }
   | { type: "organize"; preview: Preview }
@@ -1422,24 +1424,17 @@ function App() {
                   <button
                     className="secondary"
                     disabled={
-                      Boolean(busy) || !modelReady(settings?.classification)
+                      Boolean(busy) || folderSortMode || !folders.length
                     }
                     title={
                       !modelReady(settings?.classification)
                         ? "请先配置分类模型"
                         : undefined
                     }
-                    onClick={() =>
-                      void run("生成整理预览", async () => {
-                        const preview = await post<Preview>(
-                          "/folders/organize-preview",
-                        );
-                        open({ type: "organize", preview });
-                      })
-                    }
+                    onClick={() => open({ type: "folder-ai" })}
                   >
                     <Sparkles size={17} />
-                    {busy === "生成整理预览" ? "正在生成…" : "AI 整理预览"}
+                    AI 整理
                   </button>
                   <button
                     className="primary"
@@ -1499,6 +1494,11 @@ function App() {
                         <FolderIcon size={21} />
                         <FolderSummary folder={folder} path={folderPath(folder.id, folders)} />
                         <div className="folder-row-actions">
+                          <button className="secondary" disabled={Boolean(busy) || folderSortMode}
+                            aria-label={`AI 整理目录 ${folderPath(folder.id, folders)}`}
+                            onClick={() => open({ type: "folder-ai", folder })}>
+                            <Sparkles size={15} />AI 整理
+                          </button>
                           <button
                             className="secondary"
                             disabled={Boolean(busy) || folderSortMode || folders.length < 2}
@@ -1549,6 +1549,8 @@ function App() {
                   ? dialog.folderIds.length === 1 ? "删除目录？" : `删除所选 ${dialog.preview.folders_deleted} 个目录？`
                 : dialog.type === "folder-move"
                   ? "迁移目录书签"
+                : dialog.type === "folder-ai"
+                  ? "AI 整理目录"
                 : dialog.type === "refresh"
                   ? "刷新书签内容"
                   : dialog.type === "classification-assistant"
@@ -1597,6 +1599,17 @@ function App() {
               }}
             />
           )}
+          {dialog.type === "folder-ai" && <FolderAiOrganizer
+            folders={folders} initialFolder={dialog.folder}
+            modelConfigured={modelReady(settings?.classification)}
+            onBusy={value => setBusy(value ? "AI 目录整理" : "")}
+            cancel={() => { setDialog(null); setBusy(""); }}
+            openSettings={() => { setDialog(null); navigate("settings"); }}
+            onApplied={counts => {
+              setDialog(null);
+              updated(`已更新 ${counts.folders_renamed} 个目录名称、${counts.bookmarks_renamed} 个书签名称，调整 ${counts.bookmarks_moved} 条书签归属${counts.folders_created ? `，新建 ${counts.folders_created} 个子目录` : ""}`);
+            }}
+          />}
           {dialog.type === "bookmark" && (
             <BookmarkForm
               bookmark={dialog.bookmark}
@@ -2026,9 +2039,9 @@ function BookmarkForm({
           <Field label="目录">
             <select value={folder} onChange={(e) => setFolder(e.target.value)}>
               <option value="">未归档</option>
-              {folderEntries(folders).map(({ folder: f, depth }) => (
+              {folderEntries(folders).map(({ folder: f }) => (
                 <option key={f.id} value={f.id}>
-                  {"　".repeat(Math.min(depth, 8))}{depth > 0 ? "↳ " : ""}{f.name}
+                  {folderPath(f.id, folders)}
                 </option>
               ))}
             </select>
@@ -2182,11 +2195,11 @@ function FolderForm({
       <Field label="上级目录">
         <select value={parent} onChange={(e) => setParent(e.target.value)}>
           <option value="">顶层目录</option>
-            {folderEntries(folders)
-              .filter(({ folder: f }) => !isDescendant(f.id))
-              .map(({ folder: f, depth }) => (
+          {folderEntries(folders)
+            .filter(({ folder: f }) => !isDescendant(f.id))
+            .map(({ folder: f }) => (
               <option key={f.id} value={f.id}>
-                  {"　".repeat(Math.min(depth, 8))}{depth > 0 ? "↳ " : ""}{f.name}
+                {folderPath(f.id, folders)}
               </option>
             ))}
         </select>

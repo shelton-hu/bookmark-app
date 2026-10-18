@@ -1,0 +1,28 @@
+.modal:has(.folder-ai-organizer) { width: min(900px, calc(100vw - 32px)); max-width: 900px; }
+.folder-ai-organizer > .modal-actions { position: sticky; bottom: 0; padding: 16px 0; background: var(--surface); z-index: 1; flex-wrap: wrap; }
+.folder-ai-options { border: 0; padding: 0; margin: 0; min-width: 0; }
+.folder-ai-options .field { display: grid; gap: 8px; margin: 16px 0; }
+.folder-ai-check, .folder-ai-operation-list label { display: flex; align-items: flex-start; gap: 12px; }
+.folder-ai-organizer input[type="checkbox"] { flex: 0 0 auto; width: 18px; height: 18px; margin-top: 3px; }
+.folder-ai-operation-list { display: grid; gap: 14px; padding: 18px; margin-top: 18px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface-raised); }
+.folder-ai-operation-list span { display: grid; gap: 3px; }
+.folder-ai-operation-list strong { font-size: 15px; font-weight: 600; }
+.folder-ai-operation-list small, .folder-ai-change small { color: var(--muted); line-height: 1.6; }
+.folder-ai-preview { margin-top: 24px; border-top: 1px solid var(--border); padding-top: 20px; scroll-margin-top: 90px; }
+.folder-ai-preview-heading { display: flex; gap: 16px; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.folder-ai-preview-heading h3 { margin: 0 0 6px; font-size: 18px; overflow-wrap: anywhere; }
+.folder-ai-preview-heading p { margin: 0; font-size: 13px; color: var(--muted); }
+.folder-ai-review { display: grid; gap: 10px; }
+.folder-ai-change { display: flex; align-items: flex-start; gap: 12px; border: 1px solid var(--border); padding: 16px; border-radius: 10px; }
+.folder-ai-change.is-selected { background: var(--surface-raised); }
+.folder-ai-change-body { display: grid; gap: 8px; min-width: 0; flex: 1; overflow-wrap: anywhere; }
+.folder-ai-kind { font-size: 12px; color: var(--primary); }
+.folder-ai-comparison { display: grid; grid-template-columns: minmax(0,1fr) auto minmax(0,1fr); gap: 14px; align-items: baseline; font-size: 15px; }
+.folder-ai-comparison > span:first-child { color: var(--muted); }
+.folder-ai-comparison strong { font-weight: 600; }
+.folder-ai-error { color: var(--danger); padding: 12px 0; }
+@media (max-width: 620px) {
+  .folder-ai-comparison { grid-template-columns: 1fr; gap: 6px; }
+  .folder-ai-preview-heading { align-items: flex-start; }
+  .folder-ai-change { padding: 12px; }
+}

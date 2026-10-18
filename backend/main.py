@@ -20,6 +20,7 @@ from .bookmark_query import ORDER, QueryVectors, read_bookmarks
 from .version import VersionCheck
 from .worker import Worker, text_for, safe_error
 from . import services, importing
+from .folder_ai import register_folder_ai
 from starlette.concurrency import run_in_threadpool
 
 
@@ -1204,6 +1205,7 @@ def create_app(data_dir=None, start_worker=True):
             return FileResponse(root/'index.html')
         raise HTTPException(404,'Frontend is not built')
 
+    register_folder_ai(app, store, auth)
     return app
 
 

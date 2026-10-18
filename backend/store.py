@@ -59,6 +59,7 @@ class Store:
             CREATE TABLE IF NOT EXISTS staged(job_id INTEGER,bookmark_id INTEGER,vector TEXT,PRIMARY KEY(job_id,bookmark_id));
             CREATE TABLE IF NOT EXISTS previews(id TEXT PRIMARY KEY,changes TEXT,created_at TEXT);
             CREATE TABLE IF NOT EXISTS import_previews(id TEXT PRIMARY KEY,payload TEXT NOT NULL,expires_at TEXT NOT NULL,result TEXT);
+            CREATE TABLE IF NOT EXISTS folder_ai_previews(id TEXT PRIMARY KEY,payload TEXT NOT NULL,expires_at TEXT NOT NULL,result TEXT);
             ''')
             staged_columns = {r['name'] for r in db.execute('PRAGMA table_info(staged)')}
             if 'revision' not in staged_columns:
