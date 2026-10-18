@@ -75,11 +75,17 @@ class Store:
             if legacy_url_unique:
                 if not db.in_transaction:
                     db.execute('BEGIN IMMEDIATE')
-                db.execute('''CREATE TABLE bookmarks_separated(id INTEGER PRIMARY KEY,url TEXT NOT NULL,title TEXT,description TEXT,excerpt TEXT,summary TEXT,notes TEXT,folder_id INTEGER REFERENCES folders(id),tags TEXT,source_folder TEXT,classification_status TEXT,manual_classification INTEGER,deleted_at TEXT,created_at TEXT,updated_at TEXT,error TEXT,preserve_import_folder INTEGER DEFAULT 0)''')
+                db.execute('''CREATE TABLE bookmarks_separated(id INTEGER PRIMARY KEY,url TEXT NOT NULL,title TEXT,description TEXT,excerpt TEXT,summary TEXT,notes TEXT,folder_id INTEGER REFERENCES folders(id),tags TEXT,source_folder TEXT,classification_status TEXT,manual_classification INTEGER,deleted_at TEXT,created_at TEXT,updated_at TEXT,error TEXT,preserve_import_folder INTEGER DEFAULT 0,sort_order INTEGER)''')
                 names = ','.join('"' + row['name'].replace('"', '""') + '"' for row in db.execute('PRAGMA table_info(bookmarks)'))
                 db.execute(f'INSERT INTO bookmarks_separated({names}) SELECT {names} FROM bookmarks')
                 db.execute('DROP TABLE bookmarks')
                 db.execute('ALTER TABLE bookmarks_separated RENAME TO bookmarks')
+            # Nullable positions preserve legacy ordering until the first drag.
+            for table in ('bookmarks', 'folders'):
+                if 'sort_order' not in {r['name'] for r in db.execute('PRAGMA table_info(' + table + ')')}:
+                    db.execute('ALTER TABLE ' + table + ' ADD COLUMN sort_order INTEGER')
+            db.execute('CREATE INDEX IF NOT EXISTS bookmarks_manual_order ON bookmarks((sort_order IS NOT NULL),sort_order,created_at DESC,id) WHERE deleted_at IS NULL')
+            db.execute('CREATE INDEX IF NOT EXISTS bookmarks_folder_manual_order ON bookmarks(folder_id,(sort_order IS NOT NULL),sort_order,created_at DESC,id) WHERE deleted_at IS NULL')
             db.execute('CREATE UNIQUE INDEX IF NOT EXISTS bookmarks_active_url ON bookmarks(url) WHERE deleted_at IS NULL')
             db.execute('CREATE INDEX IF NOT EXISTS bookmarks_active_order ON bookmarks(created_at DESC,id) WHERE deleted_at IS NULL')
             db.execute('CREATE INDEX IF NOT EXISTS bookmarks_active_folder_order ON bookmarks(folder_id,created_at DESC,id) WHERE deleted_at IS NULL')

@@ -16,7 +16,7 @@ from fastapi.responses import FileResponse
 from typing import Annotated, Literal
 from pydantic import BaseModel, Field, ConfigDict, StrictInt, field_validator, model_validator
 from .store import Store, now
-from .bookmark_query import QueryVectors, read_bookmarks
+from .bookmark_query import ORDER, QueryVectors, read_bookmarks
 from .version import VersionCheck
 from .worker import Worker, text_for, safe_error
 from . import services, importing
@@ -146,6 +146,21 @@ class FolderSelection(Input):
     folder_ids: list[BookmarkID] = Field(min_length=1, max_length=5000)
 
 
+class FolderDelete(FolderSelection):
+    # Optional for older clients; the management UI always confirms a snapshot.
+    snapshot: str | None = Field(default=None, pattern=r'^[a-f0-9]{64}$')
+
+
+class FolderOrder(FolderSelection):
+    parent_id: BookmarkID | None = None
+
+
+class BookmarkOrder(Input):
+    bookmark_id: BookmarkID
+    target_id: BookmarkID
+    placement: Literal['before', 'after']
+
+
 class FolderMove(Input):
     source_folder_id: BookmarkID
     target_folder_id: BookmarkID
@@ -162,6 +177,12 @@ class ApplyInput(Input):
 
 def digest(value):
     return hashlib.sha256(value.encode()).hexdigest()
+
+
+def validate_backup_order(row):
+    value = row.get('sort_order')
+    if value is not None and (type(value) is not int or not 0 <= value <= 9007199254740991):
+        raise ValueError('Invalid backup sort_order')
 
 
 def password_hash(password, salt=None):
@@ -342,6 +363,8 @@ def create_app(data_dir=None, start_worker=True):
                 return {'bookmark': store.bookmark(previous['id']), 'duplicate': True}
             raise HTTPException(422, 'Invalid bookmark')
         store.execute('UPDATE bookmarks SET preserve_import_folder=? WHERE id=?', (int(bool((restore or {}).get('preserve_import_folder', False))), identifier))
+        if restore and restore.get('sort_order') is not None:
+            store.execute('UPDATE bookmarks SET sort_order=? WHERE id=?', (restore['sort_order'], identifier))
         store.invalidate_index()
         cfg = store.settings()['classification']
         if auto_classify and not imported and not manual and cfg.get('model') and cfg.get('api_key'):
@@ -452,6 +475,20 @@ def create_app(data_dir=None, start_worker=True):
             result['warning'] = warning
         return result
 
+    @app.post('/api/bookmarks/reorder')
+    def bookmark_reorder(data: BookmarkOrder, user=Depends(auth)):
+        with store.transaction() as db:
+            identifiers = [row['id'] for row in db.execute(f'SELECT b.id FROM bookmarks b WHERE b.deleted_at IS NULL ORDER BY {ORDER}')]
+            if data.bookmark_id not in identifiers or data.target_id not in identifiers:
+                raise HTTPException(409, '书签已被删除或移入回收站，请刷新后重新排序。')
+            if data.bookmark_id != data.target_id:
+                identifiers.remove(data.bookmark_id)
+                index = identifiers.index(data.target_id) + (data.placement == 'after')
+                identifiers.insert(index, data.bookmark_id)
+                # Only display positions change; content revisions and in-flight jobs stay valid.
+                db.executemany('UPDATE bookmarks SET sort_order=? WHERE id=?', enumerate(identifiers))
+        return {'reordered': True}
+
     @app.get('/api/bookmarks/{identifier}')
     def bookmark_detail(identifier: int, user=Depends(auth)):
         return existing(identifier)
@@ -547,7 +584,19 @@ def create_app(data_dir=None, start_worker=True):
         rows = store.rows('SELECT * FROM folders ORDER BY name,id')
         children = folder_children(rows)
         counts = {row['folder_id']: row['bookmark_count'] for row in store.rows('SELECT folder_id,COUNT(*) AS bookmark_count FROM bookmarks WHERE deleted_at IS NULL GROUP BY folder_id')}
-        return [{**row, 'bookmark_count': sum(counts.get(identifier, 0) for identifier in folder_descendants(row['id'], children))} for row in rows]
+        return [{**row, 'direct_bookmark_count': counts.get(row['id'], 0),
+                 'bookmark_count': sum(counts.get(identifier, 0) for identifier in folder_descendants(row['id'], children))} for row in rows]
+
+    @app.post('/api/folders/reorder')
+    def folder_reorder(data: FolderOrder, user=Depends(auth)):
+        with store.transaction() as db:
+            current = {row['id'] for row in db.execute('SELECT id FROM folders WHERE parent_id IS ?', (data.parent_id,))}
+            if len(data.folder_ids) != len(set(data.folder_ids)):
+                raise HTTPException(422, '排序目录不能重复。')
+            if set(data.folder_ids) != current:
+                raise HTTPException(409, '同级目录已发生变化，请刷新后重新排序。')
+            db.executemany('UPDATE folders SET sort_order=? WHERE id=?', enumerate(data.folder_ids))
+        return {'reordered': True}
 
     def check_tree(changes):
         tree = {r['id']: dict(r) for r in store.rows('SELECT * FROM folders')}
@@ -595,8 +644,9 @@ def create_app(data_dir=None, start_worker=True):
         change = {'folder_id': identifier, **data.model_dump(exclude_unset=True)}
         tree = check_tree([change])
         folder = tree[identifier]
-        store.execute('UPDATE folders SET name=?,parent_id=? WHERE id=?', (folder['name'],folder['parent_id'],identifier))
-        return folder
+        store.execute('UPDATE folders SET name=?,parent_id=?,sort_order=CASE WHEN parent_id IS ? THEN sort_order ELSE NULL END WHERE id=?',
+                      (folder['name'],folder['parent_id'],folder['parent_id'],identifier))
+        return store.one('SELECT * FROM folders WHERE id=?', (identifier,))
 
     def folder_move_plan(data):
         tree = {row['id']: row for row in store.rows('SELECT * FROM folders')}
@@ -657,25 +707,36 @@ def create_app(data_dir=None, start_worker=True):
                 seen.add(parent)
                 parent = tree[parent]['parent_id']
             reparent.append((parent, folder['id']))
-        placeholders = ','.join('?' for _ in ids)
-        count = store.one(f'SELECT COUNT(*) AS total FROM bookmarks WHERE folder_id IN ({placeholders})', ids)['total']
-        return ids, reparent, {'folders_deleted': len(ids), 'bookmarks_affected': count,
-                              'children_reparented': len(reparent)}
+        children = folder_children(list(tree.values()))
+        scope = sorted({identifier for selected_id in ids for identifier in folder_descendants(selected_id, children)})
+        books = store.rows('''SELECT id,folder_id,deleted_at,updated_at FROM bookmarks
+            WHERE folder_id IN (SELECT value FROM json_each(?)) ORDER BY id''', (json.dumps(scope),))
+        affected = [book for book in books if book['folder_id'] in selected]
+        active = sum(book['deleted_at'] is None for book in affected)
+        counts = {'folders_deleted': len(ids), 'bookmarks_affected': len(affected),
+                  'active_bookmarks_affected': active, 'trashed_bookmarks_affected': len(affected) - active,
+                  'descendant_bookmarks_preserved': sum(book['folder_id'] not in selected and book['deleted_at'] is None for book in books),
+                  'children_reparented': len(reparent)}
+        snapshot = digest(json.dumps({'ids': ids, 'folders': [tree[i] for i in scope],
+                                      'bookmarks': books}, sort_keys=True))
+        return ids, reparent, counts, snapshot
 
     @app.post('/api/folders/delete-preview')
     def folders_delete_preview(data: FolderSelection, user=Depends(auth)):
         with store.transaction():
-            _, _, counts = folder_delete_plan(data.folder_ids)
-        return counts
+            _, _, counts, snapshot = folder_delete_plan(data.folder_ids)
+        return {**counts, 'snapshot': snapshot}
 
     @app.post('/api/folders/bulk-delete')
-    def folders_bulk_delete(data: FolderSelection, user=Depends(auth)):
+    def folders_bulk_delete(data: FolderDelete, user=Depends(auth)):
         with store.transaction():
-            ids, reparent, counts = folder_delete_plan(data.folder_ids)
+            ids, reparent, counts, snapshot = folder_delete_plan(data.folder_ids)
+            if data.snapshot is not None and not hmac.compare_digest(snapshot, data.snapshot):
+                raise HTTPException(409, '目录或书签已变化，本次未删除任何目录。请重新核对数量后再确认。')
             placeholders = ','.join('?' for _ in ids)
             store.execute(f"UPDATE bookmarks SET folder_id=NULL,classification_status='pending',updated_at=? WHERE folder_id IN ({placeholders})", (now(), *ids))
             for parent, identifier in reparent:
-                store.execute('UPDATE folders SET parent_id=? WHERE id=?', (parent, identifier))
+                store.execute('UPDATE folders SET parent_id=?,sort_order=NULL WHERE id=?', (parent, identifier))
             store.execute(f'DELETE FROM folders WHERE id IN ({placeholders})', ids)
         return counts
 
@@ -686,7 +747,7 @@ def create_app(data_dir=None, start_worker=True):
             raise HTTPException(404, 'Folder not found')
         with store.connect() as db:
             db.execute("UPDATE bookmarks SET folder_id=NULL,classification_status='pending',updated_at=? WHERE folder_id=?", (now(),identifier))
-            db.execute('UPDATE folders SET parent_id=? WHERE parent_id=?', (folder['parent_id'],identifier))
+            db.execute('UPDATE folders SET parent_id=?,sort_order=NULL WHERE parent_id=?', (folder['parent_id'],identifier))
             db.execute('DELETE FROM folders WHERE id=?', (identifier,))
         return {'status': 'ok'}
 
@@ -725,7 +786,8 @@ def create_app(data_dir=None, start_worker=True):
         tree = check_tree(changes)
         with store.connect() as db:
             for folder in tree.values():
-                db.execute('UPDATE folders SET name=?,parent_id=? WHERE id=?', (folder['name'],folder['parent_id'],folder['id']))
+                db.execute('UPDATE folders SET name=?,parent_id=?,sort_order=CASE WHEN parent_id IS ? THEN sort_order ELSE NULL END WHERE id=?',
+                           (folder['name'],folder['parent_id'],folder['parent_id'],folder['id']))
             for change in changes:
                 if 'merge_into' in change:
                     db.execute('UPDATE bookmarks SET folder_id=?,updated_at=? WHERE folder_id=?', (change['merge_into'],now(),change['folder_id']))
@@ -1067,6 +1129,7 @@ def create_app(data_dir=None, start_worker=True):
                 raise ValueError('Duplicate folder IDs')
             for f in folders_data:
                 FolderInput(name=f['name'],parent_id=f.get('parent_id'))
+                validate_backup_order(f)
                 visited = {f['id']}
                 parent = f.get('parent_id')
                 by_id = {x['id']:x for x in folders_data}
@@ -1077,6 +1140,7 @@ def create_app(data_dir=None, start_worker=True):
                     parent = by_id[parent].get('parent_id')
             for b in data['bookmarks']:
                 Save.model_validate({k:v for k,v in b.items() if k in Save.model_fields})
+                validate_backup_order(b)
                 services.normalize_url(b['url'])
                 tags_check(b.get('tags') or [])
                 for field, maximum in (('summary',5000),('source_folder',5000)):
@@ -1115,6 +1179,8 @@ def create_app(data_dir=None, start_worker=True):
                     parent = mapping.get(f.get('parent_id'))
                     previous = store.one('SELECT id FROM folders WHERE name=? AND parent_id IS ?', (f['name'],parent))
                     mapping[f['id']] = previous['id'] if previous else store.execute('INSERT INTO folders(name,parent_id) VALUES(?,?)',(f['name'],parent))
+                    if not previous and f.get('sort_order') is not None:
+                        store.execute('UPDATE folders SET sort_order=? WHERE id=?', (f['sort_order'], mapping[f['id']]))
                     todo.remove(f)
             for b in data['bookmarks']:
                 row = dict(b)

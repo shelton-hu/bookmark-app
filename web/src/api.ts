@@ -38,6 +38,17 @@ export interface Folder {
   name: string;
   parent_id: number | null;
   bookmark_count?: number;
+  direct_bookmark_count?: number;
+  sort_order?: number | null;
+}
+export interface FolderDeletePreview {
+  folders_deleted: number;
+  bookmarks_affected: number;
+  active_bookmarks_affected: number;
+  trashed_bookmarks_affected: number;
+  descendant_bookmarks_preserved: number;
+  children_reparented: number;
+  snapshot: string;
 }
 export interface ModelConfig {
   base_url: string;

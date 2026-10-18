@@ -7,12 +7,16 @@ import { BookmarkHand } from "./BookmarkHand";
 import type { HandPosition } from "./BookmarkHand";
 import type { BookmarkCardProps } from "./ClowBookmark";
 import { useBookmarkDetails } from "./bookmarkDetails";
+import { SortableBookmarks } from "./DragOrder";
+import type { BookmarkOrderingScope } from "./DragOrder";
 
 /** Keep the same result scope and actions while changing only the presentation. */
-export function BookmarkResults({ managing, items, children }: {
+export function BookmarkResults({ managing, items, order, children }: {
   managing: boolean; items: Bookmark[];
+  order?: BookmarkOrderingScope;
   children: (bookmark: Bookmark, hand?: HandPosition) => ReactNode;
 }) {
+  if (managing && order) return <SortableBookmarks {...order}>{bookmark => children(bookmark)}</SortableBookmarks>;
   return managing
     ? <div className="bookmark-rows" role="list" aria-label="逐条书签">{items.map((bookmark) => children(bookmark))}</div>
     : <div className="bookmark-hands"><BookmarkHand items={items}>{children}</BookmarkHand></div>;

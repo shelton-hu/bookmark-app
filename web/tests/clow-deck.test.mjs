@@ -15,7 +15,7 @@ async function moduleUrl(name) {
   }).outputText;
   for (const match of [...output.matchAll(/from "([^"]+)"/g)]) {
     const dependency = match[1];
-    const url = dependency.startsWith('./') ? await moduleUrl(`${dependency.slice(2)}${['./BookmarkHand', './CardDepartureOverlay'].includes(dependency) ? '.tsx' : '.ts'}`) : import.meta.resolve(dependency);
+    const url = dependency.startsWith('./') ? await moduleUrl(`${dependency.slice(2)}${['./BookmarkHand', './CardDepartureOverlay', './DragOrder'].includes(dependency) ? '.tsx' : '.ts'}`) : import.meta.resolve(dependency);
     output = output.replace(match[0], `from ${JSON.stringify(url)}`);
   }
   const url = `data:text/javascript;base64,${Buffer.from(output).toString('base64')}`;
@@ -25,6 +25,29 @@ async function moduleUrl(name) {
 const { clowDeck, cardForBookmark } = await import(await moduleUrl('clowDeck.ts'));
 const { default: Card, CardFace } = await import(await moduleUrl('ClowBookmark.tsx'));
 const { default: Row, BookmarkResults } = await import(await moduleUrl('BookmarkList.tsx'));
+const { SortableFolders } = await import(await moduleUrl('DragOrder.tsx'));
+
+test('bookmark sorting occupies the original list rather than a dialog or another layout', () => {
+  const html = renderToStaticMarkup(createElement(BookmarkResults, { managing: true, items: [],
+    order: {folderId: '', pending: false, setSaving() {}, saved() {}}, children() { return null; },
+  }));
+  assert.match(html, /inline-bookmark-sort/);
+  assert.match(html, /role="list" aria-label="逐条书签（拖拽排序）" aria-busy="true"/);
+  assert.doesNotMatch(html, /<dialog|bookmark-sort-title|bookmark-sort-row|bookmark-sort-list|clow-face/);
+});
+
+test('directory handles appear only after entering sort mode while hierarchy and labels stay visible', () => {
+  const folders = [{id:1,name:'工作',parent_id:null}, {id:2,name:'个人',parent_id:null}, {id:3,name:'后端',parent_id:1}];
+  const render = active => renderToStaticMarkup(createElement(SortableFolders, {folders, active, disabled:false, async move() {},
+    children: (folder, handle) => createElement('div', {className:'folder-row'}, handle, folder.name),
+  }));
+  const normal = render(false), sorting = render(true);
+  assert.doesNotMatch(normal, /data-sort-handle|sort-instructions/);
+  assert.match(normal, /工作/); assert.match(normal, /后端/); assert.match(normal, /folder-sort-children/);
+  assert.equal((sorting.match(/data-sort-handle=/g) || []).length, 3);
+  assert.match(sorting, /目录仅在同级内排序/);
+  assert.ok(sorting.indexOf('data-sort-id="1"') < sorting.indexOf('data-sort-id="3"'));
+});
 
 test('all 52 distinct faces repeat without changing when results are filtered or sorted', () => {
   assert.equal(clowDeck.length, 52);

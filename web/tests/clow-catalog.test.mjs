@@ -14,7 +14,11 @@ async function load(name) {
   }).outputText;
   for (const match of [...output.matchAll(/from "([^"]+)"/g)]) {
     const dependency = match[1];
-    const url = dependency.startsWith('./') ? await load(`${dependency.slice(2)}.tsx`) : import.meta.resolve(dependency);
+    let url;
+    if (dependency.startsWith('./')) {
+      try { url = await load(`${dependency.slice(2)}.tsx`); }
+      catch (error) { if (error.code !== 'ENOENT') throw error; url = await load(`${dependency.slice(2)}.ts`); }
+    } else url = import.meta.resolve(dependency);
     output = output.replace(match[0], `from ${JSON.stringify(url)}`);
   }
   const url = `data:text/javascript;base64,${Buffer.from(output).toString('base64')}`;
@@ -66,7 +70,7 @@ test('both catalog appearances collapse unrelated branches and expose one way to
     assert.match(unrelated, /aria-label="展开 个人" aria-expanded="false"/);
   }
 });
-test('pending directories follow their siblings without changing other directory order or hierarchy', () => {
+test('default sibling names sort in Chinese order while pending directories stay last', () => {
   const entries = [
     { id: 1, name: '开发与工具', parent_id: null },
     { id: 2, name: '待整理（空目录）', parent_id: null },
@@ -82,9 +86,17 @@ test('pending directories follow their siblings without changing other directory
   for (const variant of ['book', 'compact']) {
     const html = renderToStaticMarkup(createElement(Catalog, { folders: entries, selected: '', variant, onSelect() {} }));
     const names = [...html.matchAll(/class="catalog-select"[^>]*><span>([^<]+)<\/span>/g)].map(match => match[1]);
-    assert.deepEqual(names, ['开发与工具', '灵感与设计', '设计素材', '待整理', '阅读与学习', '待整理资料', '待整理（空目录）', '待整理', '待整理 (稍后归档)']);
+    assert.deepEqual(names, ['待整理资料', '开发与工具', '灵感与设计', '设计素材', '待整理', '阅读与学习', '待整理', '待整理 (稍后归档)', '待整理（空目录）']);
   }
   assert.deepEqual(entries, original);
+});
+test('both catalog appearances honor the same explicit manual sibling order', () => {
+  const ordered = folders.map(folder => ({...folder, sort_order: folder.id === 4 ? 0 : 1}));
+  for (const variant of ['book', 'compact']) {
+    const html = renderToStaticMarkup(createElement(Catalog, {folders: ordered, selected: '', variant, onSelect() {}}));
+    assert.ok(html.indexOf('<span>工作</span>') < html.indexOf('<span>个人</span>'));
+    assert.ok(html.indexOf('<span>个人</span>') < html.indexOf('<span>NAS 管理</span>'));
+  }
 });
 test('enjoy search displays category scope and one destination action outside its options popover', () => {
   const props = { inputRef: { current: null }, folders, folderId: '2', query: 'pansou', searchMode: 'keyword', busy: false,

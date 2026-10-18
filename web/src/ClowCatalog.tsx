@@ -3,10 +3,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { BookOpen, ChevronDown, ChevronLeft, ChevronRight, X } from "lucide-react";
 import type { Folder } from "./api";
 import BrandMark from "./BrandMark";
-
-function isPendingFolder(folder: Folder): boolean {
-  return /^待整理(?:\s*(?:（[^）]*）|\([^)]*\)))?$/.test(folder.name.trim());
-}
+import { folderSiblings } from "./ordering";
 
 export function categoryTrail(folders: Folder[], selected: string): Folder[] {
   const trail: Folder[] = [];
@@ -57,8 +54,7 @@ export default function ClowCatalog({ folders, selected, onSelect, variant = "bo
     return () => window.removeEventListener("resize", reposition);
   }, [compact]);
   const render = (parent: number | null, level: number, seen: number[]): ReactNode => {
-    const entries = folders.filter((folder) => folder.parent_id === parent && !seen.includes(folder.id))
-      .sort((a, b) => Number(isPendingFolder(a)) - Number(isPendingFolder(b)));
+    const entries = folderSiblings(folders, parent).filter(folder => !seen.includes(folder.id));
     if (!entries.length) return null;
     return <ul className="catalog-branches">
       {entries.map((folder) => {

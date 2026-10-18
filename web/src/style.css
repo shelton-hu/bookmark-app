@@ -1252,6 +1252,18 @@ main#main {
   overflow-wrap: anywhere;
   min-width: 0;
 }
+.folder-row-summary { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.folder-row-path { display: block; font-size: 14px; }
+.folder-row-counts { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; margin-top: 5px; font-size: 12px; color: var(--muted); }
+.folder-row-counts strong { font-size: 13px; font-weight: 600; color: var(--primary); }
+.folder-delete-names { padding-left: 20px; margin: 0 0 16px; color: var(--text); overflow-wrap: anywhere; }
+.folder-delete-names li + li { margin-top: 5px; }
+.folder-delete-impact { padding: 12px 16px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-raised); }
+.folder-delete-impact p { margin: 5px 0; line-height: 1.7; }
+.folder-delete-impact strong { color: var(--primary); }
+.folder-delete-ack { display: flex; align-items: flex-start; gap: 10px; padding: 14px 0; min-height: 44px; line-height: 1.6; cursor: pointer; }
+.folder-delete-ack input { width: 18px; height: 18px; margin-top: 3px; flex: 0 0 auto; accent-color: var(--primary); }
+.folder-delete-form .modal-actions { flex-wrap: wrap; }
 .folder-row .secondary {
   font-size: 12px;
   padding: 7px 12px;

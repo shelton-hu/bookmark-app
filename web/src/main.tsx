@@ -41,6 +41,7 @@ import {
   FolderPlus,
   FolderInput,
   Inbox,
+  GripVertical,
 } from "lucide-react";
 import {
   api,
@@ -63,6 +64,11 @@ import type {
   BookmarkListResult,
 } from "./api";
 import ClassificationAssistant from "./ClassificationAssistant";
+import { FolderSummary, FolderDeleteForm } from "./FolderManagement";
+import { SortableFolders } from "./DragOrder";
+import { folderEntries, folderSiblings, reorderedIds } from "./ordering";
+import type { Placement } from "./ordering";
+import type { FolderDeletePreview } from "./api";
 import TransferPage from "./TransferPage";
 import VersionPanel, { useVersion, VersionFooter, BrandVersion } from "./VersionPanel";
 import "./style.css";
@@ -76,6 +82,7 @@ import "./bookmark-list.css";
 import "./brand.css";
 import "./card-departure.css";
 import "./transfer-page.css";
+import "./drag-order.css";
 import { accessiblePage, getWorkspaceMode, resetWorkspaceMode, setWorkspaceMode } from "./workspaceMode";
 import type { WorkspaceMode } from "./workspaceMode";
 
@@ -91,6 +98,7 @@ type DialogState =
   | { type: "bookmark"; bookmark?: Bookmark }
   | { type: "folder"; folder?: Folder }
   | { type: "folder-move"; folder?: Folder }
+  | { type: "folder-delete"; folderIds: number[]; names: string[]; preview: FolderDeletePreview }
   | { type: "refresh"; bookmark: Bookmark }
   | { type: "organize"; preview: Preview }
   | { type: "classification-assistant"; bookmarkIds: number[] }
@@ -307,7 +315,9 @@ function App() {
   }, [page, drawerOpen]);
   const [folders, setFolders] = useState<Folder[]>([]);
   const [selectedFolders, setSelectedFolders] = useState<number[]>([]);
-  useEffect(() => { setSelectedFolders([]); }, [page]);
+  const [folderSortMode, setFolderSortMode] = useState(false);
+  const canSortFolders = new Set(folders.map(folder => folder.parent_id)).size < folders.length;
+  useEffect(() => { setSelectedFolders([]); setFolderSortMode(false); }, [page, mode]);
   useEffect(() => {
     const available = new Set(folders.map((folder) => folder.id));
     setSelectedFolders((current) => {
@@ -341,6 +351,9 @@ function App() {
   const [pagination, setPagination] = useState({ scope: "", page: 1, size: 20 });
   const listPanelRef = useRef<HTMLElement>(null);
   const resultScope = JSON.stringify([mode, page, query, searchMode, scopeFolderId, tag]);
+  const [bookmarkSortScope, setBookmarkSortScope] = useState<string | null>(null);
+  const sortingBookmarks = managing && bookmarkSortScope === resultScope;
+  useEffect(() => { setBookmarkSortScope(null); }, [resultScope]);
   const requestedPage = managing && pagination.scope === resultScope ? pagination.page : 1;
   const paged = pageInfo(total, requestedPage, pagination.size);
   const visibleItems = items;
@@ -563,6 +576,24 @@ function App() {
     setError("");
     setDialog(state);
   };
+  const moveFolder = async (id: number, target: number, placement: Placement) => {
+    if (busy) return;
+    const folder = folders.find(entry => entry.id === id);
+    if (!folder) return;
+    const ids = folderSiblings(folders, folder.parent_id).map(entry => entry.id);
+    const ordered = reorderedIds(ids, id, target, placement);
+    if (ordered.every((value, index) => value === ids[index])) return;
+    setBusy("保存目录顺序"); setError("");
+    try {
+      await post("/folders/reorder", { parent_id: folder.parent_id, folder_ids: ordered });
+      setFolders(await api<Folder[]>("/folders"));
+      setToast("目录顺序已保存，所有目录入口同步生效。");
+    } catch (e) {
+      setError(message(e));
+      try { setFolders(await api<Folder[]>("/folders")); } catch { /* Preserve the error for retry. */ }
+      throw e;
+    } finally { setBusy(""); }
+  };
   const openBookmarkAction = (type: "bookmark" | "refresh", bookmark: Bookmark) => {
     if (bookmark.details_loaded !== false) { open({ type, bookmark }); return; }
     void run("读取书签", async () => {
@@ -575,26 +606,17 @@ function App() {
     description: string,
     action: () => Promise<void>,
   ) => open({ type: "confirm", title, description, action });
-  const requestDeleteFolders = () => {
-    const ids = [...selectedFolders];
+  const requestDeleteFolders = (identifiers: number[] = selectedFolders) => {
+    const ids = [...identifiers];
     if (!ids.length || busy) return;
     void run("统计所选目录", async () => {
-      const counts = await post<{ folders_deleted: number; bookmarks_affected: number; children_reparented: number }>(
-        "/folders/delete-preview", { folder_ids: ids },
-      );
-      confirm(
-        `删除所选 ${counts.folders_deleted} 个目录？`,
-        `所选目录内的 ${counts.bookmarks_affected} 条书签（含回收站记录）会保留，并移到未归档；回收站记录仍留在回收站。未选中的子目录会提升到最近保留的上级，共 ${counts.children_reparented} 个。此操作只删除目录。`,
-        async () => {
-          const result = await post<{ folders_deleted: number; bookmarks_affected: number }>(
-            "/folders/bulk-delete", { folder_ids: ids },
-          );
-          setSelectedFolders([]);
-          setFolderId("");
-          setDialog(null);
-          updated(`已删除 ${result.folders_deleted} 个目录，保留 ${result.bookmarks_affected} 条书签`);
-        },
-      );
+      const [preview, currentFolders] = await Promise.all([
+        post<FolderDeletePreview>("/folders/delete-preview", { folder_ids: ids }),
+        api<Folder[]>("/folders"),
+      ]);
+      setFolders(currentFolders);
+      open({ type: "folder-delete", folderIds: ids,
+        names: ids.map(id => folderPath(id, currentFolders)), preview });
     });
   };
   const requestPurge = (ids?: number[]) => {
@@ -918,7 +940,7 @@ function App() {
             <WorkspaceModeSwitch mode={mode} busy={Boolean(busy)} onChange={switchMode} />
             {managing && <button className="icon-button settings-toggle" aria-label="设置" aria-current={page === "settings" ? "page" : undefined} onClick={() => navigate("settings")}><SettingsIcon size={19} /></button>}
             <button ref={navToggleRef} className="icon-button navigation-toggle mobile-only" aria-label="打开导航与目录" aria-expanded={drawerOpen} onClick={() => setMobileNav(true)}><Menu size={21} /></button>
-            {managing && libraryPage && page !== "trash" && <button className="primary action-add" onClick={() => open({ type: "bookmark" })}><Plus size={17} />添加网址</button>}
+            {managing && libraryPage && page !== "trash" && <button className="primary action-add" disabled={sortingBookmarks || Boolean(busy)} onClick={() => open({ type: "bookmark" })}><Plus size={17} />添加网址</button>}
           </div>
         </header>}
         <main id="main" className={libraryPage ? "library-main" : page === "transfer" ? "transfer-main" : undefined} tabIndex={-1}>
@@ -1081,9 +1103,10 @@ function App() {
                   <span>{warning}</span>
                 </div>
               )}
-              <section ref={listPanelRef} tabIndex={-1} className="library-panel" aria-label="书签列表">
-              {managing && <div className={`list-toolbar${selected.length ? " has-selection" : ""}`}>
+              <section ref={listPanelRef} tabIndex={-1} className={`library-panel${sortingBookmarks ? " is-sorting" : ""}`} aria-label="书签列表">
+              {managing && <div className={`list-toolbar${selected.length ? " has-selection" : ""}${sortingBookmarks ? " is-sorting" : ""}`}>
               {managing && <div className="results-toolbar">
+                {sortingBookmarks && <span className="sort-mode-label">排序模式 · {total} 条书签</span>}
                 <div className="list-selection-summary">
                   <label className="page-select-all">
                     <span className="page-select-box"><input
@@ -1122,6 +1145,16 @@ function App() {
                   </>}
                   {page !== "trash" && (
                     <>
+                      <button className="secondary sort-mode-toggle" aria-pressed={sortingBookmarks}
+                        disabled={Boolean(busy) || (!sortingBookmarks && (loading || total < 2 || Boolean(query || tag)))}
+                        title={query || tag ? "请清除搜索和标签筛选后调整顺序" : "拖拽调整当前范围的书签顺序"}
+                        onClick={() => {
+                          setSelected([]);
+                          setBookmarkSortScope(sortingBookmarks ? null : resultScope);
+                          if (sortingBookmarks) listPanelRef.current?.scrollIntoView({ block: "start" });
+                        }}>
+                        {sortingBookmarks ? <Check size={16} /> : <GripVertical size={16} />}{sortingBookmarks ? "完成排序" : "拖拽排序"}
+                      </button>
                       {selected.length > 0 && (
                         <button
                           className="secondary danger"
@@ -1163,7 +1196,7 @@ function App() {
                 </div>
               </div>}
               </div>}
-              {loading ? (
+              {loading && !sortingBookmarks ? (
                 <div
                   className={managing ? "bookmark-row-skeletons skeletons" : "bookmark-grid skeletons"}
                   data-columns={3}
@@ -1219,7 +1252,10 @@ function App() {
                   )}
                 </Empty>
               ) : (
-                <BookmarkResults managing={managing} items={visibleItems} key={`${mode}:${page}:${folderId}:${query}:${tag}:${searchMode}:${managing ? paged.page : 0}`}>
+                <BookmarkResults managing={managing} items={visibleItems}
+                  order={sortingBookmarks ? { folderId: scopeFolderId, pending: page === "pending",
+                    setSaving: saving => setBusy(saving ? "保存书签顺序" : ""), saved: () => updated("书签顺序已保存") } : undefined}
+                  key={`${mode}:${page}:${folderId}:${query}:${tag}:${searchMode}:${sortingBookmarks ? "sorting" : managing ? paged.page : 0}`}>
                    {(bookmark, hand) => (
                      <BookmarkView
                       managing={managing}
@@ -1252,12 +1288,12 @@ function App() {
                       }
                       restore={() => void run("恢复书签", () => restoreTrash([bookmark.id]))}
                       filterTag={(t) => { if (managing) setTag(t); else setQuery(t); }}
-                      busy={Boolean(busy)}
+                      busy={Boolean(busy) || sortingBookmarks}
                     />
                    )}
                 </BookmarkResults>
               )}
-              {managing && <nav className="bookmark-pagination" aria-label="书签分页">
+              {managing && !sortingBookmarks && <nav className="bookmark-pagination" aria-label="书签分页">
                 <span className="page-range" role="status">{loading ? "正在加载…" : `第 ${paged.start}–${paged.end} 条，共 ${total} 条`}</span>
                 <label className="page-size">每页
                   <select value={pagination.size} disabled={Boolean(busy) || loading}
@@ -1363,13 +1399,18 @@ function App() {
               </div>
             ))}
           {managing && page === "folders" && (
-            <section className="panel">
+            <section className={`panel directory-panel${folderSortMode ? " is-sorting" : ""}`}>
               <div className="section-heading">
                 <div>
                   <h2>目录结构</h2>
                   <p>自动分类最多三级，手动目录可按需扩展。</p>
                 </div>
                 <div className="button-row">
+                  <button className="secondary sort-mode-toggle" aria-pressed={folderSortMode}
+                    disabled={Boolean(busy) || (!folderSortMode && !canSortFolders)}
+                    onClick={() => { setSelectedFolders([]); setFolderSortMode(value => !value); }}>
+                    {folderSortMode ? <Check size={17} /> : <GripVertical size={17} />}{folderSortMode ? "完成排序" : "拖拽排序"}
+                  </button>
                   <button
                     className="secondary"
                     disabled={Boolean(busy) || folders.length < 2}
@@ -1421,8 +1462,8 @@ function App() {
                   description="创建第一个目录，或配置 AI 让新书签自动归档。"
                 />
               ) : (
-                <div className="folder-list">
-                  <div className="folder-bulk-toolbar">
+                <div className={`folder-list${folderSortMode ? " is-sorting" : ""}`}>
+                  {!folderSortMode && <div className="folder-bulk-toolbar">
                     <label className="folder-select-all">
                       <input
                         type="checkbox"
@@ -1436,21 +1477,16 @@ function App() {
                     <span role="status">已选 {selectedFolders.length} / {folders.length} 个目录</span>
                     <div className="button-row">
                       <button className="secondary" disabled={Boolean(busy) || !selectedFolders.length} onClick={() => setSelectedFolders([])}>取消选择</button>
-                      <button className="secondary danger" disabled={Boolean(busy) || !selectedFolders.length} onClick={requestDeleteFolders}>
+                      <button className="secondary danger" disabled={Boolean(busy) || !selectedFolders.length} onClick={() => requestDeleteFolders()}>
                         <Trash2 size={17} />
                         {busy === "统计所选目录" ? "正在统计…" : "删除所选"}
                       </button>
                     </div>
-                  </div>
-                  {[...folders]
-                    .sort((a, b) =>
-                      folderPath(a.id, folders).localeCompare(
-                        folderPath(b.id, folders),
-                        "zh-CN",
-                      ),
-                    )
-                    .map((folder) => (
+                  </div>}
+                  <SortableFolders folders={folders} active={folderSortMode} disabled={Boolean(busy)} move={moveFolder}>
+                    {(folder, handle) => (
                       <div className={`folder-row${selectedFolders.includes(folder.id) ? " folder-row-selected" : ""}`} key={folder.id}>
+                        {handle}
                         <label className="folder-checkbox">
                           <input
                             type="checkbox"
@@ -1461,11 +1497,11 @@ function App() {
                           />
                         </label>
                         <FolderIcon size={21} />
-                        <span>{folderPath(folder.id, folders)}</span>
+                        <FolderSummary folder={folder} path={folderPath(folder.id, folders)} />
                         <div className="folder-row-actions">
                           <button
                             className="secondary"
-                            disabled={Boolean(busy) || folders.length < 2}
+                            disabled={Boolean(busy) || folderSortMode || folders.length < 2}
                             aria-label={`迁移目录 ${folderPath(folder.id, folders)} 的书签`}
                             onClick={() => open({ type: "folder-move", folder })}
                           >
@@ -1473,6 +1509,7 @@ function App() {
                           </button>
                           <button
                             className="secondary"
+                            disabled={folderSortMode || Boolean(busy)}
                             onClick={() => open({ type: "folder", folder })}
                           >
                             <Pencil size={15} />
@@ -1480,26 +1517,16 @@ function App() {
                           </button>
                           <button
                             className="icon-button danger"
-                            aria-label={`删除目录 ${folder.name}`}
-                            onClick={() =>
-                              confirm(
-                                "删除目录？",
-                                `删除“${folder.name}”后，目录内的书签会移到未归档。子目录由服务安全处理。`,
-                                async () => {
-                                  await api("/folders/" + folder.id, {
-                                    method: "DELETE",
-                                  });
-                                  setDialog(null);
-                                  updated("目录已删除");
-                                },
-                              )
-                            }
+                            disabled={Boolean(busy) || folderSortMode}
+                            aria-label={`删除目录 ${folderPath(folder.id, folders)}`}
+                            onClick={() => requestDeleteFolders([folder.id])}
                           >
                             <Trash2 size={18} />
                           </button>
                         </div>
                       </div>
-                    ))}
+                    )}
+                  </SortableFolders>
                 </div>
               )}
             </section>
@@ -1518,6 +1545,8 @@ function App() {
                 ? dialog.folder
                   ? "编辑目录"
                   : "新建目录"
+                : dialog.type === "folder-delete"
+                  ? dialog.folderIds.length === 1 ? "删除目录？" : `删除所选 ${dialog.preview.folders_deleted} 个目录？`
                 : dialog.type === "folder-move"
                   ? "迁移目录书签"
                 : dialog.type === "refresh"
@@ -1536,6 +1565,21 @@ function App() {
           }}
           error={error}
         >
+          {dialog.type === "folder-delete" && <FolderDeleteForm
+            key={dialog.preview.snapshot}
+            preview={dialog.preview} names={dialog.names} busy={Boolean(busy)}
+            cancel={() => setDialog(null)}
+            recheck={() => requestDeleteFolders(dialog.folderIds)}
+            confirm={() => void run("删除目录", async () => {
+              const result = await post<{ folders_deleted: number }>("/folders/bulk-delete", {
+                folder_ids: dialog.folderIds, snapshot: dialog.preview.snapshot,
+              });
+              setSelectedFolders([]);
+              setFolderId("");
+              setDialog(null);
+              updated(`已删除 ${result.folders_deleted} 个目录，书签均已保留`);
+            })}
+          />}
           {dialog.type === "classification-assistant" && (
             <ClassificationAssistant
               bookmarkIds={dialog.bookmarkIds}
@@ -1982,9 +2026,9 @@ function BookmarkForm({
           <Field label="目录">
             <select value={folder} onChange={(e) => setFolder(e.target.value)}>
               <option value="">未归档</option>
-              {folders.map((f) => (
+              {folderEntries(folders).map(({ folder: f, depth }) => (
                 <option key={f.id} value={f.id}>
-                  {folderPath(f.id, folders)}
+                  {"　".repeat(Math.min(depth, 8))}{depth > 0 ? "↳ " : ""}{f.name}
                 </option>
               ))}
             </select>
@@ -2032,7 +2076,7 @@ function FolderMoveForm({ source, folders, busy, run, cancel, moved }: {
   const [targetId, setTargetId] = useState("");
   const [includeChildren, setIncludeChildren] = useState(true);
   const [preview, setPreview] = useState<FolderMovePreview | null>(null);
-  const sorted = [...folders].sort((a, b) => folderPath(a.id, folders).localeCompare(folderPath(b.id, folders), "zh-CN"));
+  const sorted = folderEntries(folders).map(entry => entry.folder);
   const valid = sourceId !== targetId && folders.some((f) => String(f.id) === sourceId) && folders.some((f) => String(f.id) === targetId);
   const selection = { source_folder_id: Number(sourceId), target_folder_id: Number(targetId), include_children: includeChildren };
   const submit = () => {
@@ -2138,11 +2182,11 @@ function FolderForm({
       <Field label="上级目录">
         <select value={parent} onChange={(e) => setParent(e.target.value)}>
           <option value="">顶层目录</option>
-          {folders
-            .filter((f) => !isDescendant(f.id))
-            .map((f) => (
+            {folderEntries(folders)
+              .filter(({ folder: f }) => !isDescendant(f.id))
+              .map(({ folder: f, depth }) => (
               <option key={f.id} value={f.id}>
-                {folderPath(f.id, folders)}
+                  {"　".repeat(Math.min(depth, 8))}{depth > 0 ? "↳ " : ""}{f.name}
               </option>
             ))}
         </select>

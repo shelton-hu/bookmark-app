@@ -11,7 +11,8 @@ from .store import decode_bookmark
 SUMMARY_COLUMNS = ('id', 'url', 'title', 'folder_id', 'tags', 'source_folder',
                    'classification_status', 'manual_classification', 'deleted_at',
                    'created_at', 'updated_at', 'preserve_import_folder')
-ORDER = 'b.created_at DESC,b.id'
+DEFAULT_ORDER = 'b.created_at DESC,b.id'
+ORDER = '(b.sort_order IS NOT NULL),b.sort_order,b.created_at DESC,b.id'
 
 
 class QueryVectors:
@@ -64,6 +65,7 @@ def read_bookmarks(store, *, q='', folder_id=None, include_children=False,
     ids = None
     total = None
     warning = None
+    order = DEFAULT_ORDER if trash else ORDER
     with store.connect() as db:
         # Count, selection IDs and page contents must describe the same snapshot.
         db.execute('BEGIN')
@@ -74,7 +76,7 @@ def read_bookmarks(store, *, q='', folder_id=None, include_children=False,
             ranked = []
             missing = False
             rows = db.execute(f'''SELECT b.id,e.vector FROM bookmarks b
-                LEFT JOIN embeddings e ON e.bookmark_id=b.id WHERE {where} ORDER BY {ORDER}''', params)
+                LEFT JOIN embeddings e ON e.bookmark_id=b.id WHERE {where} ORDER BY {order}''', params)
             for row in rows:
                 other = json.loads(row['vector']) if row['vector'] is not None else None
                 missing |= other is None
@@ -90,7 +92,7 @@ def read_bookmarks(store, *, q='', folder_id=None, include_children=False,
             if missing:
                 warning = 'Some bookmarks are not indexed; rebuild the semantic index.'
         elif include_ids or view == 'ids':
-            ids = [row['id'] for row in db.execute(f'SELECT b.id FROM bookmarks b WHERE {where} ORDER BY {ORDER}', params)]
+            ids = [row['id'] for row in db.execute(f'SELECT b.id FROM bookmarks b WHERE {where} ORDER BY {order}', params)]
         if ids is not None:
             total = len(ids)
         elif page is not None:
@@ -113,7 +115,7 @@ def read_bookmarks(store, *, q='', folder_id=None, include_children=False,
             else:
                 pagination = '' if page is None else ' LIMIT ? OFFSET ?'
                 page_params = params if page is None else [*params, page_size, offset]
-                rows = db.execute(f'SELECT {columns} FROM bookmarks b WHERE {where} ORDER BY {ORDER}' + pagination, page_params)
+                rows = db.execute(f'SELECT {columns} FROM bookmarks b WHERE {where} ORDER BY {order}' + pagination, page_params)
             items = [decode_bookmark(row) for row in rows]
             if view == 'summary':
                 for item in items:

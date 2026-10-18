@@ -1,0 +1,33 @@
+.sort-instructions, .sort-scope-note { color: var(--muted); font-size: 13px; line-height: 1.6; margin: 8px 0; }
+.sort-scope-note { margin-top: 0; }
+.sort-item { position: relative; }
+.sort-item::before, .sort-item::after { position: absolute; left: 0; right: 0; height: 3px; border-radius: 2px; background: var(--primary); pointer-events: none; z-index: 2; }
+.sort-item.drop-before::before { content: ""; top: -2px; }
+.sort-item.drop-after::after { content: ""; bottom: -2px; }
+.sort-item.is-dragging { opacity: .5; background: var(--surface-raised); }
+.clarity-shell .sort-handle { display: inline-flex; flex: 0 0 36px; align-items: center; justify-content: center; width: 36px; min-width: 36px; height: 44px; min-height: 44px; padding: 0; border: 1px solid transparent; background: transparent; box-shadow: none; border-radius: 6px; color: var(--muted); touch-action: none; user-select: none; cursor: grab; }
+.sort-handle:active { cursor: grabbing; }
+.clarity-shell .sort-handle:hover, .sort-handle[aria-pressed="true"] { color: var(--primary); background: var(--surface-raised); border-color: var(--border); }
+.sort-handle:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.sort-handle:disabled { opacity: .3; cursor: default; }
+.folder-sort-children { margin-left: 24px; border-left: 1px solid var(--border); padding-left: 14px; }
+.clarity-shell.mode-manage .library-panel.is-sorting { overflow: clip; }
+.clarity-shell.mode-manage .list-toolbar.is-sorting { position: sticky; top: 0; z-index: 5; }
+.directory-panel.is-sorting { overflow: clip; }
+.directory-panel.is-sorting > .section-heading { position: sticky; top: 0; z-index: 5; background: inherit; }
+.list-toolbar.is-sorting .list-selection-summary,
+.list-toolbar.is-sorting .toolbar-actions > :not(.sort-mode-toggle),
+.directory-panel.is-sorting > .section-heading .button-row > :not(.sort-mode-toggle),
+.folder-list.is-sorting .folder-checkbox { display: none; }
+.sort-mode-label { color: var(--primary); font-size: 14px; }
+.sort-mode-toggle[aria-pressed="true"] { border-color: var(--primary); color: var(--primary); }
+.inline-sort-status { padding: 8px 18px; border-bottom: 1px solid var(--border); }
+.inline-bookmark-sort .bookmark-rows > .sort-item:not(:last-child) { border-bottom: 1px solid #eeeae6; }
+.inline-bookmark-sort .sort-item > .sort-handle { position: absolute; left: 8px; top: 12px; z-index: 1; }
+.inline-bookmark-sort .bookmark-row-select { visibility: hidden; }
+.inline-bookmark-sort > .error-box { margin: 12px 18px; }
+@media (max-width: 640px) {
+  .folder-sort-children { margin-left: 12px; padding-left: 8px; }
+  .inline-bookmark-sort .sort-item > .sort-handle { left: 4px; top: 8px; }
+  .inline-sort-status { padding: 8px 12px; }
+}
