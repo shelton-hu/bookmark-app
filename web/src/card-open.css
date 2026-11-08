@@ -22,9 +22,31 @@
 }
 .card-open::backdrop { background: #120a1eb8; }
 .card-open-face {
-  position: absolute; left: 50%; top: 50%; overflow: hidden; border-radius: 12px;
-  background: #efdbaa; box-shadow: 0 14px 42px #0006; will-change: transform; pointer-events: none;
+  position: absolute; left: 50%; top: 50%; perspective: 1400px;
+  will-change: transform; pointer-events: none;
 }
+.card-open-flipper { position: absolute; inset: 0; transform-style: preserve-3d; will-change: transform; }
+.card-open-front, .card-open-back {
+  position: absolute; inset: 0; overflow: hidden; border-radius: 12px; background: #efdbaa;
+  box-shadow: 0 14px 42px #0006; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+}
+.card-open-back {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; padding: 20px;
+  transform: rotateY(180deg); border: 1px solid #c7a368; color: #f3dfb5;
+  background: radial-gradient(ellipse at 10% 0, #75435365, transparent 70%), linear-gradient(135deg, #492b3c, #2c2030 80%);
+  font-family: Georgia, "Songti SC", "Noto Serif SC", serif;
+}
+.card-open-back::before { content: ""; position: absolute; inset: 7px; border: 1px solid #d8ba8160; border-radius: 7px; }
+.card-open-edition { font-size: 12px; }
+.card-open-seal {
+  display: grid; place-items: center; flex: 0 0 auto; width: 86px; height: 86px;
+  border: 1px solid #d8ba8180; border-radius: 50%; background: #38223380; font-size: 48px;
+}
+.card-open-title {
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden;
+  width: 100%; font-size: 18px; font-weight: 600; line-height: 1.5; text-align: center; overflow-wrap: anywhere;
+}
+.card-open-name { font-size: 13px; }
 .card-open-face .clow-face-image { position: absolute; inset: 0; width: 100%; height: 100%; }
 .card-open-cancel {
   position: absolute; top: max(16px, env(safe-area-inset-top)); right: 20px; width: 44px; height: 44px;

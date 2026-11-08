@@ -1,6 +1,6 @@
 # 交接：管理版界面整理 + 纯享版召唤特效
 
-**最新方向见第 14 节：用户已否定 v0.0.18 的人物召唤与预加载，当前改为 0.6 秒原卡旋转放大后打开网页。第 8–13 节仅是历史。**
+**最新方向见第 14 节：用户已否定 v0.0.18 的人物召唤与预加载，当前改为 0.6 秒原卡绕竖轴快速转两圈并放大后打开网页。第 8–13 节仅是历史。**
 
 交接日期：2026-11-07。本轮已继续处理下列待办，结果见第 7 节。工作区里的后端排序、管理版界面和召唤特效仍未提交，提交拆分仍需用户确认。
 
@@ -231,7 +231,7 @@ TypeScript、81 项前端测试和构建通过；Chrome 检查单选、全选、
 
 工作目录 `/Users/ranklier/code/gitlab/ranklier/bookmark-app/.worktrees/card-open-simple`，分支 `feat/card-open-simple`，基线 `f49d575`。按本会话既有“更新代码、推送镜像”授权，验证后合入 main 并发布；最终版本、修订、摘要以 `.release/state.json` 和对应 verification 记录为准。NAS 运行容器不自动更新。
 
-- `CardOpenOverlay.tsx` 只复制当前卡面，使用浏览器原生 transform 动画，600ms 内旋转 360°、居中并放大，完成后沿用正常新标签页打开。没有 JS 逐帧绘制、Canvas、额外人物图片、模糊纹理、粒子、碎裂或冲屏闪光。动画事件未到时 900ms 保底结束；系统减少动态效果直接打开。
+- `CardOpenOverlay.tsx` 只复制当前卡面，使用浏览器原生 transform 动画，600ms 内绕竖轴快速旋转 720°（两圈）、先快后慢地停回正面，居中并放大，完成后沿用正常新标签页打开。没有 JS 逐帧绘制、Canvas、额外人物图片、模糊纹理、粒子、碎裂或冲屏闪光。动画事件未到时 900ms 保底结束；系统减少动态效果直接打开。
 - 移除 App 中的预加载服务、进度、就绪门禁和牌列预加载回调。普通页面不再访问召唤 IndexedDB 或下载 `/spirits/`；已存的旧文件不主动读取或改动。
 - 人物 PNG 和旧模块保留在源码中作为历史参考，Vite 生产复制和 Docker 上下文排除 `web/public/spirits/`。移除主入口的旧预览动态 import，`?summon-preview=...` 不再激活旧召唤。产物约从 85.54 MiB 降为 6.26 MiB。
 - 保留原牌型、书签排序、纯享版地面背景和独立“翻阅”详情。旧样式文件中共享的翻阅按钮、44px 点击区域、原卡隐藏／恢复和高对比度规则移到 `card-open.css`，避免移除旧碎裂样式时误伤详情。
@@ -240,3 +240,12 @@ TypeScript、81 项前端测试和构建通过；Chrome 检查单选、全选、
 当前验证脚本为 `docs/handoff/scripts/verify-card-open.py`。旧 `verify-preload.py`、召唤／原画预览脚本只对应历史实现，不适用于新的正常入口；`verify.py --only layout` 的管理版布局检查仍可按需使用。真实浏览器验证必须使用隔离 DATA_DIR，并在演示库加入指向测试服务器 `/api/health?animation-check=1` 的“本地打开验证”书签，避免实际打开外部网站。
 
 验证完成：TypeScript、84 项前端测试和生产构建通过。产物 6,564,641 字节（约 6.26 MiB），52 张原卡面保留，`spirits` 目录、相关缓存与召唤代码均未进入生产输出。Chrome／WebKit 在 1280×900、390×844、320×568、844×390 四个视口确认旋转放大、无需加载门禁，Canvas 调用、IndexedDB 访问和人物素材请求均为 0；Esc、关闭、跳过、改变窗口、切后台、动画事件保底、减少动态效果和详情打开／关闭／焦点返回均通过。真实新标签页打开实测 Chrome 4 倍 CPU 降速约 666ms，WebKit 约 640ms，非真机帧率验收。同步修复了 WebKit 关闭详情时卡牌尚未恢复可见，导致焦点无法回到翻阅按钮的时序。核验报告位于 `/Users/ranklier/.codex/visualizations/2026/11/07/01a1b638-4a9a-71d3-a3f2-d1e070f85bd7/card-open-simple/verification.json`。
+
+
+### 14.1 快速旋转方向纠正（2026-11-08）
+
+用户指出 v0.0.19 的平面转圈理解错误，要求“之前那个版本的旋转，快速旋转”。沿用第 14 节轻量打开流程，把旋转改为原 `summonSequence.ts`／`CardSummonOverlay.tsx` 开篇的竖轴两圈：0→720°，四次方 ease-out 的先快后慢曲线，伴随原有轻微抬起／倾斜，压缩至 600ms。只在初始化生成 31 个 transform 关键帧，由浏览器原生动画播放，外层位移放大与内层 rotateY 分开；没有恢复旧召唤的逐帧绘制或素材工作。
+
+旋转时使用 DOM／CSS 牌背，保留紫金配色、封印字样、牌字、书签标题和牌名，正反面隐藏背面；不生成 Canvas 牌背或额外下载图片。原有 900ms 保底、取消／跳过、减少动态效果、弹窗拦截兜底继续保留。验证脚本会等待可见卡面解码，再冻结截图时间，避免 lazy 图片未解码造成测试截图空白。
+
+TypeScript、84 项前端测试和生产构建通过；Chrome／WebKit 在 1280×900、390×844、320×568、844×390 的正反面、竖轴两圈、快速起转、放大及取消检查通过；关闭、跳过、resize、pagehide、保底结束、播放中改变减少动态效果、直接打开和详情焦点恢复通过。Canvas、IndexedDB 和 `/spirits/` 请求均为 0。真实新标签页打开实测 Chrome 4 倍 CPU 降速约 668ms、WebKit 约 743ms；这不是低端手机真机帧率验收。核验报告在 `/Users/ranklier/.codex/visualizations/2026/11/07/01a1b638-4a9a-71d3-a3f2-d1e070f85bd7/card-open-fast-spin/verification.json`。后端未修改。沿用既有代码和镜像发布授权，实际版本与摘要见主仓库 `.release/state.json` 及对应 verification 记录；不自动更新 NAS 容器。

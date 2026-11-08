@@ -117,7 +117,7 @@ export default function ClowBookmark({ managing, hand, bookmark: b, folders, sel
       <CardFace id={b.id} title={title} />
     </button>
     <button ref={detailsTrigger} className="clow-details-seal" aria-label={`翻牌查看 ${title} 的详情`} aria-haspopup="dialog" aria-expanded={Boolean(origin)} title="只查看详情，不打开网站" disabled={busy} onClick={() => open()}><BookOpen size={14} aria-hidden="true" /><span>翻阅</span></button>
-    {departure && <CardOpenOverlay title={title} origin={departure} front={<CardFace id={b.id} title={title} />} onFinish={finishVisit} onCancel={restoreCard} />}
+    {departure && <CardOpenOverlay title={title} glyph={card.glyph} name={card.name} origin={departure} front={<CardFace id={b.id} title={title} />} onFinish={finishVisit} onCancel={restoreCard} />}
     {origin && <FlipDetail title={title} bookmarkId={b.id} origin={origin} trigger={trigger} returnFocus={readerFocus} onClosed={() => setOrigin(null)}>
       {(close) => <>
         <div className="clow-detail-heading">
