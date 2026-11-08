@@ -108,7 +108,7 @@ async def animation(browser, name, results):
     assert len(ctx.pages) == 1 and await page.locator('.clow-summon').count() == 0
 
     await page.clock.install()
-    await page.clock.pause_at(await page.evaluate('Date.now()') + 100)
+    await page.clock.pause_at(await page.evaluate('new Date(Date.now() + 100).toISOString()'))
     await summon(page)
     for elapsed in [800, 1100, 1450]:
         await page.clock.run_for(elapsed - (0 if elapsed == 800 else (800 if elapsed == 1100 else 1100)))
@@ -157,10 +157,13 @@ async def retry_artwork(browser, results):
     await login(page)
     await enjoy(page)
     first_card = await page.locator('.hand-card.is-centered .clow-art').get_attribute('aria-label')
-    await summon(page)
-    await page.wait_for_timeout(300)
+    # If neither artwork can load, opening falls back to the normal details link.
+    await page.evaluate('window.open = () => null')
+    await page.locator('.hand-card.is-centered .clow-art').click()
+    await page.locator('.clow-popup-notice').wait_for()
     assert await page.evaluate('window.__figureRuns.length') == 0
     await page.keyboard.press('Escape')
+    await expect(page.locator('.clow-reader[open]')).to_have_count(0)
     await ctx.unroute('**/clow-deck/*.webp')
     await ctx.unroute('**/spirits/*-restored-v*.png')
     await summon(page)

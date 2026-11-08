@@ -5,6 +5,8 @@
  * One clock drives every layer, so a late frame can never desynchronise them.
  */
 export const SUMMON_TOTAL_MS = 1800;
+/** Hold before the artwork leaves the card if its image is still loading. */
+export const SUMMON_ARTWORK_HOLD_MS = 700;
 /** Two full turns: the spin always comes to rest on the card's face. */
 export const SUMMON_TURNS = 2;
 
@@ -60,19 +62,26 @@ export function summonFrame(time: number): SummonFrame {
 }
 
 /** Finish only after drawing the last frame; cancelling leaves no late navigation. */
-export function beginSummon({ reducedMotion, onFrame, onFinish, clock = {
+export function beginSummon({ reducedMotion, onFrame, onFinish, artworkReady = () => true, clock = {
   request: (callback: FrameRequestCallback) => requestAnimationFrame(callback),
   cancel: (id: number) => cancelAnimationFrame(id),
 } }: {
   reducedMotion: boolean; onFrame: (frame: SummonFrame) => void; onFinish: () => void;
+  artworkReady?: () => boolean;
   clock?: { request: (callback: FrameRequestCallback) => number; cancel: (id: number) => void };
 }): () => void {
   let active = true, frame = 0;
   let start: number | undefined;
+  let holding = false;
   const draw = (time: number) => {
     if (!active) return;
     start ??= time;
-    const elapsed = time - start;
+    // Rebase on every held frame, including the first frame after loading.
+    // Even a long decoding stall must resume here instead of skipping the spirit.
+    if (holding) start = time - SUMMON_ARTWORK_HOLD_MS;
+    let elapsed = time - start;
+    holding = elapsed >= SUMMON_ARTWORK_HOLD_MS && !artworkReady();
+    if (holding) elapsed = SUMMON_ARTWORK_HOLD_MS;
     onFrame(summonFrame(elapsed));
     if (!active) return;
     if (elapsed >= SUMMON_TOTAL_MS) { active = false; onFinish(); }

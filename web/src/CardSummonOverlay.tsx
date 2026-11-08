@@ -4,7 +4,7 @@ import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { cardForBookmark } from "./clowDeck";
 import { createBackTexture } from "./departureCanvas";
-import { beginSummon, spiritPalette, summonFrame } from "./summonSequence";
+import { beginSummon, spiritPalette, summonFrame, SUMMON_ARTWORK_HOLD_MS } from "./summonSequence";
 import type { SpiritPalette, SummonFrame } from "./summonSequence";
 import { restoredSpirits } from "./spiritArtwork";
 import type { ArtWindow } from "./spiritArtwork";
@@ -100,73 +100,6 @@ function loadFigure(cardKey: string, palette: SpiritPalette): Promise<Figure | n
 
 type Stage = { width: number; height: number; cx: number; cy: number; cardW: number; cardH: number };
 
-function spiritPosition(s: Stage, f: SummonFrame) {
-  const risen = s.cy - s.cardH * .14 * f.emerge;
-  return { x: s.cx, y: risen + (s.cy - risen) * f.rush };
-}
-
-/** An original light sprite: head, slender body, two pairs of beating wings and a swaying tail. */
-function drawSprite(ctx: CanvasRenderingContext2D, u: number, form: number, time: number, palette: SpiritPalette, alpha: number) {
-  const beat = Math.sin(time * 15);
-  // Tail: a tapering ribbon that sways behind the body.
-  ctx.lineCap = "round"; ctx.strokeStyle = palette.trail;
-  let previous: [number, number] = [0, u * .42];
-  for (let i = 1; i <= 26; i++) {
-    const k = i / 26;
-    const point: [number, number] = [Math.sin(time * 5 - i * .32) * u * .38 * k, u * (.42 + k * 1.7 * form)];
-    ctx.globalAlpha = alpha * form * (1 - k) * .9;
-    ctx.lineWidth = Math.max(.6, u * .13 * (1 - k));
-    ctx.beginPath(); ctx.moveTo(previous[0], previous[1]); ctx.lineTo(point[0], point[1]); ctx.stroke();
-    previous = point;
-  }
-  // Wings: upper pair long and raised, lower pair short; both beat, slightly out of phase.
-  const wing = (length: number, width: number, angle: number) => {
-    ctx.save();
-    ctx.rotate(angle);
-    const fill = ctx.createLinearGradient(0, 0, length, 0);
-    fill.addColorStop(0, palette.core + "dd"); fill.addColorStop(.6, palette.trail + "66"); fill.addColorStop(1, palette.glow + "18");
-    ctx.fillStyle = fill; ctx.strokeStyle = palette.trail; ctx.lineWidth = Math.max(.6, u * .025);
-    ctx.beginPath();
-    ctx.moveTo(0, 0);
-    ctx.bezierCurveTo(length * .3, -width, length * .85, -width * .8, length, 0);
-    ctx.bezierCurveTo(length * .8, width * .55, length * .3, width * .45, 0, 0);
-    ctx.globalAlpha = alpha * form * .95; ctx.fill();
-    ctx.globalAlpha = alpha * form * .8; ctx.stroke();
-    ctx.globalAlpha = alpha * form * .45;
-    ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(length * .5, -width * .35, length * .92, -width * .05); ctx.stroke();
-    ctx.restore();
-  };
-  for (const side of [-1, 1]) {
-    ctx.save();
-    ctx.scale(side, 1);
-    wing(u * 1.55 * form, u * .62, -.62 - beat * .38 * form);
-    wing(u * 1.05 * form, u * .4, .38 + beat * .28 * form);
-    ctx.restore();
-  }
-  // Body and head.
-  const body = ctx.createRadialGradient(0, 0, 0, 0, 0, u * .55);
-  body.addColorStop(0, "#ffffff"); body.addColorStop(.6, palette.core); body.addColorStop(1, palette.glow + "00");
-  ctx.globalAlpha = alpha; ctx.fillStyle = body;
-  ctx.beginPath();
-  ctx.moveTo(0, -u * .3);
-  ctx.bezierCurveTo(u * .2, -u * .22, u * .14, u * .3, 0, u * .5);
-  ctx.bezierCurveTo(-u * .14, u * .3, -u * .2, -u * .22, 0, -u * .3);
-  ctx.fill();
-  const head = ctx.createRadialGradient(0, -u * .5, 0, 0, -u * .5, u * .26);
-  head.addColorStop(0, "#ffffff"); head.addColorStop(.55, palette.core); head.addColorStop(1, palette.glow + "00");
-  ctx.fillStyle = head;
-  ctx.beginPath(); ctx.arc(0, -u * .5, u * .26, 0, Math.PI * 2); ctx.fill();
-  // Two fine antennae with bright tips.
-  ctx.strokeStyle = palette.trail; ctx.lineWidth = Math.max(.5, u * .025); ctx.globalAlpha = alpha * form;
-  for (const side of [-1, 1]) {
-    const sway = Math.sin(time * 3 + side) * u * .05;
-    ctx.beginPath(); ctx.moveTo(side * u * .06, -u * .68);
-    ctx.quadraticCurveTo(side * u * .12, -u * .95, side * u * .28 + sway, -u * 1.02); ctx.stroke();
-    ctx.fillStyle = palette.core;
-    ctx.beginPath(); ctx.arc(side * u * .28 + sway, -u * 1.02, Math.max(1, u * .045), 0, Math.PI * 2); ctx.fill();
-  }
-}
-
 function figurePlacement(s: Stage, f: SummonFrame, window = ART_WINDOW) {
   const w = s.cardW * window.w, h = s.cardH * window.h;
   const homeX = s.cx - s.cardW / 2 + s.cardW * window.x + w / 2, homeY = s.cy - s.cardH / 2 + s.cardH * window.y + h / 2;
@@ -178,7 +111,7 @@ function figurePlacement(s: Stage, f: SummonFrame, window = ART_WINDOW) {
 function drawOver(ctx: CanvasRenderingContext2D, s: Stage, f: SummonFrame, palette: SpiritPalette, figure: Figure | null) {
   ctx.clearRect(0, 0, s.width, s.height);
   const time = f.elapsed / 1000, place = figurePlacement(s, f, figure?.window);
-  const spirit = figure ? { x: place.x, y: place.y } : spiritPosition(s, f);
+  const spirit = { x: place.x, y: place.y };
   const left = s.cx - s.cardW / 2, top = s.cy - s.cardH / 2;
   ctx.save();
   ctx.globalCompositeOperation = "lighter";
@@ -231,31 +164,6 @@ function drawOver(ctx: CanvasRenderingContext2D, s: Stage, f: SummonFrame, palet
       ctx.beginPath(); ctx.arc(sx, sy, spark.size * 1.2, 0, Math.PI * 2); ctx.fill();
     }
   }
-  // Fallback while the artwork is unavailable: a ball of light that unfolds into a winged sprite.
-  if (!figure && f.emerge > 0) {
-    const r = s.cardW * .27 * (.3 + .7 * f.emerge) * (1 + 10 * f.rush);
-    const form = Math.min(1, Math.max(0, (f.emerge - .3) / .7));
-    const bob = Math.sin(time * 4.2) * r * .06 * (1 - f.rush);
-    const halo = ctx.createRadialGradient(spirit.x, spirit.y, 0, spirit.x, spirit.y, r * 3.2);
-    halo.addColorStop(0, palette.glow + "99"); halo.addColorStop(.4, palette.glow + "2a"); halo.addColorStop(1, palette.glow + "00");
-    ctx.globalAlpha = f.emerge; ctx.fillStyle = halo;
-    ctx.beginPath(); ctx.arc(spirit.x, spirit.y, r * 3.2, 0, Math.PI * 2); ctx.fill();
-    for (const spark of sparks) {
-      const d = r * (spark.radius + ((time * spark.speed) % 1) * 1.2), a = spark.angle + time * spark.speed;
-      ctx.globalAlpha = f.emerge * (1 - ((time * spark.speed) % 1)) * .8;
-      ctx.fillStyle = palette.core;
-      ctx.beginPath(); ctx.arc(spirit.x + Math.cos(a) * d, spirit.y + Math.sin(a) * d, spark.size, 0, Math.PI * 2); ctx.fill();
-    }
-    ctx.save();
-    ctx.translate(spirit.x, spirit.y + bob);
-    if (form > 0) drawSprite(ctx, r, form, time, palette, f.emerge);
-    ctx.restore();
-    // The ball of light it starts as fades while the body takes shape.
-    const orb = ctx.createRadialGradient(spirit.x, spirit.y, 0, spirit.x, spirit.y, r * 1.1);
-    orb.addColorStop(0, "#ffffff"); orb.addColorStop(.45, palette.core); orb.addColorStop(1, palette.glow + "00");
-    ctx.globalAlpha = f.emerge * (1 - form * .85); ctx.fillStyle = orb;
-    ctx.beginPath(); ctx.arc(spirit.x, spirit.y, r * 1.1, 0, Math.PI * 2); ctx.fill();
-  }
   ctx.restore();
   // Closing flash hands off to the website.
   if (f.flash > 0) {
@@ -285,6 +193,7 @@ export default function CardSummon({ bookmarkId, title, origin, front, onFinish,
   const ground = useRef<HTMLDivElement>(null);
   const circle = useRef<HTMLImageElement>(null);
   const over = useRef<HTMLCanvasElement>(null);
+  const status = useRef<HTMLParagraphElement>(null);
   const stop = useRef<() => void>(() => {});
   const settled = useRef(false);
   const finishRef = useRef<() => void>(() => {});
@@ -296,10 +205,11 @@ export default function CardSummon({ bookmarkId, title, origin, front, onFinish,
   };
   useLayoutEffect(() => {
     const dialog = modal.current, element = flight.current, flip = flipper.current, backCanvas = back.current;
-    const wash = light.current, hollowEl = hollow.current, groundPlane = ground.current, circleImage = circle.current, overCanvas = over.current;
-    if (!dialog || !element || !flip || !backCanvas || !wash || !hollowEl || !groundPlane || !circleImage || !overCanvas) return;
+    const wash = light.current, hollowEl = hollow.current, groundPlane = ground.current, circleImage = circle.current, overCanvas = over.current, statusLine = status.current;
+    if (!dialog || !element || !flip || !backCanvas || !wash || !hollowEl || !groundPlane || !circleImage || !overCanvas || !statusLine) return;
     settled.current = false;
     dialog.showModal();
+    dialog.dataset.artwork = "loading";
     const overflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const card = cardForBookmark(bookmarkId), palette = spiritPalette(card.key);
@@ -324,11 +234,24 @@ export default function CardSummon({ bookmarkId, title, origin, front, onFinish,
     const x = origin.left + origin.width / 2 - stage.cx, y = origin.top + origin.height / 2 - stage.cy;
     const scale = origin.width / cardW;
     let figure: Figure | null = null;
+    let stopTimeline = () => {};
+    let artworkTimeout: number | undefined;
+    stop.current = () => { stopTimeline(); window.clearTimeout(artworkTimeout); };
     void loadFigure(card.key, palette).then(loaded => {
-      if (!settled.current) { figure = loaded; dialog.dataset.artwork = loaded?.window ? 'restored' : 'extracted'; }
+      if (settled.current) return;
+      window.clearTimeout(artworkTimeout);
+      // If both the repaired artwork and original card fail, honour the user's
+      // open action without substituting an unrelated character.
+      if (!loaded) { finishRef.current(); return; }
+      figure = loaded;
+      dialog.dataset.artwork = loaded.window ? 'restored' : 'extracted';
     });
     const faces = [flip.firstElementChild, backCanvas].filter((face): face is HTMLElement => face instanceof HTMLElement);
     const render = (f: SummonFrame) => {
+      const waiting = !figure && f.elapsed >= SUMMON_ARTWORK_HOLD_MS;
+      dialog.dataset.phase = waiting ? "preparing" : "summoning";
+      const label = `${waiting ? "正在准备原画" : "正在召唤"} ${title} · 点击任意处直接打开`;
+      if (statusLine.textContent !== label) statusLine.textContent = label;
       const travel = f.travel, size = scale + (1 - scale) * travel;
       // Let the card shrink into light around its foot, keeping it on the seal.
       const dissolveDrop = cardH * size * .03 * f.dissolve;
@@ -359,9 +282,11 @@ export default function CardSummon({ bookmarkId, title, origin, front, onFinish,
       onFinish();
     };
     finishRef.current = finish;
+    // Unreachable artwork must not leave an indefinitely blocked dialog.
+    artworkTimeout = window.setTimeout(() => { if (!figure) finish(); }, 8_000);
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const frame = requestAnimationFrame(() => {
-      stop.current = beginSummon({ reducedMotion: motion.matches || !overCtx, onFrame: render, onFinish: finish });
+      stopTimeline = beginSummon({ reducedMotion: motion.matches || !overCtx, onFrame: render, onFinish: finish, artworkReady: () => figure !== null });
     });
     const hidden = () => { if (document.hidden) cancel(); };
     const reduce = () => { if (motion.matches) finish(); };
@@ -396,6 +321,6 @@ export default function CardSummon({ bookmarkId, title, origin, front, onFinish,
     </div>
     <canvas ref={over} className="clow-summon-layer" aria-hidden="true" />
     <button className="clow-summon-cancel" autoFocus onClick={event => { event.stopPropagation(); cancel(); }} aria-label="取消打开网页"><X size={20} /></button>
-    <p className="clow-summon-status" role="status">正在召唤 {title} · 点击任意处直接打开</p>
+    <p ref={status} className="clow-summon-status" role="status">正在召唤 {title} · 点击任意处直接打开</p>
   </dialog>, document.body);
 }

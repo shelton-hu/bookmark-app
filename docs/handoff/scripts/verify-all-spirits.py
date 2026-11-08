@@ -22,25 +22,33 @@ async def main():
     async with async_playwright() as p:
         browser = await (p.chromium.launch(channel='chrome') if args.engine == 'chrome' else p.webkit.launch())
         context = await browser.new_context(viewport={'width': 1280, 'height': 900})
+        artwork_ready = {key: asyncio.Event() for key in keys}
+        async def hold_artwork(route):
+            key = route.request.url.rsplit('/', 1)[-1].split('-restored-v')[0]
+            await artwork_ready[key].wait()
+            await route.continue_()
+        # Intercept before the preview can warm its own image cache.
+        await context.route('**/spirits/*-restored-v*.png', hold_artwork)
         page = await context.new_page()
         page.on('pageerror', lambda error: report['errors'].append(str(error)))
-        await page.goto(args.base_url + '/?summon-preview=all')
+        await page.goto(args.base_url + '/?summon-preview=all', wait_until='domcontentloaded')
         select = page.get_by_role('combobox', name='选择卡牌')
-        assert await select.locator('option').count() == 52
+        await expect(select.locator('option')).to_have_count(52)
         await page.clock.install()
-        await page.clock.pause_at(await page.evaluate('Date.now()') + 100)
+        await page.clock.pause_at(await page.evaluate('new Date(Date.now() + 100).toISOString()'))
         for key in keys:
             await select.select_option(key)
             await expect(page.locator('.rain-art-original img')).to_have_attribute('src', f'/clow-deck/{key}.webp')
             source = await page.locator('.rain-art-character image').get_attribute('href')
             assert source and source.startswith('/spirits/' + key + '-restored-v'), (key, source)
-            await page.evaluate('''async source => {
-                const img = new Image(); img.src = source; await img.decode();
-                if (!img.naturalWidth || !img.naturalHeight) throw Error('empty restored image');
-            }''', source)
             await page.get_by_role('button', name='播放召唤').click()
-            await expect(page.locator('.clow-summon')).to_have_attribute('data-artwork', 'restored')
             await page.clock.run_for(1150)
+            await expect(page.locator('.clow-summon')).to_have_attribute('data-phase', 'preparing')
+            await expect(page.locator('.clow-summon')).to_have_attribute('data-artwork', 'loading')
+            await expect(page.locator('.clow-summon-hollow')).to_have_css('opacity', '0')
+            artwork_ready[key].set()
+            await expect(page.locator('.clow-summon')).to_have_attribute('data-artwork', 'restored')
+            await page.clock.run_for(500)
             circle = await page.locator('.clow-summon-ground').bounding_box()
             card = await page.locator('.clow-summon-flight').bounding_box()
             assert circle and card
@@ -50,7 +58,7 @@ async def main():
                 await page.screenshot(path=str(args.out / f'{key}-summon.png'))
             await page.clock.run_for(900)
             await expect(page.locator('.clow-summon')).to_have_count(0)
-            report['cards'].append({'key': key, 'artwork': source, 'restored': True, 'card_at_circle_centre': True, 'completed': True})
+            report['cards'].append({'key': key, 'artwork': source, 'cold_load_waited': True, 'restored': True, 'card_at_circle_centre': True, 'completed': True})
         await select.select_option('earthy')
         await page.get_by_role('button', name='下一张牌').click()
         await expect(select).to_have_value('windy')
@@ -73,7 +81,7 @@ async def main():
     assert not report['errors'], report['errors']
     assert len(report['cards']) == 52
     (args.out / f'{args.engine}-all-spirits.json').write_text(json.dumps(report, ensure_ascii=False, indent=2))
-    print(f'{args.engine}: all 52 restored subjects loaded, summoned at circle centre and completed; picker, mobile and cancellation passed.')
+    print(f'{args.engine}: all 52 cold artwork loads held the intact card, then summoned the correct subject at circle centre and completed; picker, mobile and cancellation passed.')
 
 
 asyncio.run(main())

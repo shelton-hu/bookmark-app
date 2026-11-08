@@ -34,7 +34,7 @@ async def main():
         await page.screenshot(path=str(args.out / f'{args.engine}-overlay.png'))
         await page.get_by_role('button', name='退出叠加对照').click()
         await page.clock.install()
-        await page.clock.pause_at(await page.evaluate('Date.now()') + 100)
+        await page.clock.pause_at(await page.evaluate('new Date(Date.now() + 100).toISOString()'))
         await page.get_by_role('button', name='播放召唤').click()
         await expect(page.locator('.clow-summon')).to_have_attribute('data-artwork', 'restored')
         circle = page.locator('.clow-summon-circle')

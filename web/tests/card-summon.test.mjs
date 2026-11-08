@@ -5,7 +5,7 @@ import ts from 'typescript';
 
 const source = await readFile(new URL('../src/summonSequence.ts', import.meta.url), 'utf8');
 const output = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText;
-const { summonFrame, beginSummon, spiritPalette, SUMMON_TOTAL_MS, SUMMON_TURNS } = await import(`data:text/javascript;base64,${Buffer.from(output).toString('base64')}`);
+const { summonFrame, beginSummon, spiritPalette, SUMMON_TOTAL_MS, SUMMON_TURNS, SUMMON_ARTWORK_HOLD_MS } = await import(`data:text/javascript;base64,${Buffer.from(output).toString('base64')}`);
 const deckSource = await readFile(new URL('../src/clowDeck.ts', import.meta.url), 'utf8');
 const { clowDeck } = await import(`data:text/javascript;base64,${Buffer.from(ts.transpileModule(deckSource, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } }).outputText).toString('base64')}`);
 
@@ -59,4 +59,40 @@ test('every card in the deck has a spirit colour', () => {
     const palette = spiritPalette(card.key);
     for (const colour of Object.values(palette)) assert.match(colour, /^#[0-9a-f]{6}$/);
   }
+});
+
+test('a cold artwork load holds the intact card, then resumes without skipping the spirit', () => {
+  const clock = frameClock(), frames = [], opened = [];
+  let ready = false;
+  beginSummon({ reducedMotion: false, clock, artworkReady: () => ready,
+    onFrame: frame => frames.push(frame), onFinish: () => opened.push('open') });
+  for (const time of [0, 500, 900, 5000]) clock.tick(time);
+  assert.equal(frames.at(-1).elapsed, SUMMON_ARTWORK_HOLD_MS);
+  for (const f of frames) {
+    assert.equal(f.emerge, 0); assert.equal(f.empty, 0);
+    assert.equal(f.dissolve, 0); assert.equal(f.rush, 0); assert.equal(f.flash, 0);
+  }
+  assert.deepEqual(opened, []);
+  ready = true;
+  clock.tick(10000);
+  assert.equal(frames.at(-1).elapsed, SUMMON_ARTWORK_HOLD_MS, 'a long decode stall must not jump to the ending');
+  clock.tick(10100);
+  assert.ok(frames.at(-1).emerge > 0);
+  clock.tick(10000 + SUMMON_TOTAL_MS - SUMMON_ARTWORK_HOLD_MS - 1);
+  assert.deepEqual(opened, []);
+  clock.tick(10000 + SUMMON_TOTAL_MS - SUMMON_ARTWORK_HOLD_MS);
+  assert.deepEqual(opened, ['open']); assert.equal(clock.pending, 0);
+});
+
+test('cancelling while artwork loads prevents late navigation; reduced motion bypasses the wait', () => {
+  const clock = frameClock(), opened = [];
+  let ready = false;
+  const cancel = beginSummon({ reducedMotion: false, clock, artworkReady: () => ready,
+    onFrame() {}, onFinish: () => opened.push('open') });
+  clock.tick(0); clock.tick(3000); cancel(); ready = true; clock.tick(10000);
+  assert.deepEqual(opened, []); assert.equal(clock.pending, 0);
+  const reduced = frameClock();
+  beginSummon({ reducedMotion: true, clock: reduced, artworkReady: () => false,
+    onFrame() { assert.fail('reduced motion must not draw frames'); }, onFinish: () => opened.push('open') });
+  assert.deepEqual(opened, ['open']); assert.equal(reduced.pending, 0);
 });
