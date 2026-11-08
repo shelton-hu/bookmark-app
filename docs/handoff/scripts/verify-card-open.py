@@ -59,11 +59,38 @@ async def paused_open(page):
     await page.locator('.card-open[open]').wait_for()
     frame = await page.locator('.card-open-face').evaluate('''card => {
       const animations = card.getAnimations({subtree:true});
-      for (const animation of animations) { animation.pause(); animation.currentTime = 300; }
+      for (const animation of animations) { animation.pause(); animation.currentTime = 1000; }
       const travel = card.getAnimations()[0];
       const spin = card.querySelector('.card-open-flipper').getAnimations()[0];
       const frames = spin.effect.getKeyframes();
+      // Measure the actual interpolated rotation, unwrapping the matrix angle.
+      // This catches fast turns being compressed into an imperceptible burst.
+      const duration = spin.effect.getTiming().duration;
+      const trajectory = [], steps = [];
+      let previous = 0, total = 0;
+      for (let time = 0; time <= duration; time += 20) {
+        spin.currentTime = Math.min(time, duration - .01);
+        const matrix = new DOMMatrixReadOnly(getComputedStyle(card.querySelector('.card-open-flipper')).transform);
+        const angle = Math.atan2(matrix.m31, matrix.m11) * 180 / Math.PI;
+        let delta = angle - previous;
+        if (delta < -180) delta += 360;
+        if (delta > 180) delta -= 360;
+        total += delta; previous = angle;
+        trajectory.push({time, angle: total});
+        if (time) steps.push(delta);
+      }
+      const crosses = [360, 720].map(target => {
+        const index = trajectory.findIndex(sample => sample.angle >= target);
+        const before = trajectory[index - 1], after = trajectory[index];
+        return before.time + (target - before.angle) / (after.angle - before.angle) * (after.time - before.time);
+      });
+      const quarters = trajectory.filter(sample => sample.time % 300 === 0).map(sample => sample.angle);
+      spin.currentTime = 1000;
       return { duration: spin.effect.getTiming().duration, spin_end: frames.at(-1).transform,
+        total_degrees: total,
+        turn_ms: [crosses[0], crosses[1] - crosses[0], duration - crosses[1]].map(Math.round),
+        quarter_degrees: quarters.slice(1).map((angle, index) => Math.round(angle - quarters[index])),
+        continuously_slowing: steps.every((step, index) => step >= 0 && (!index || step <= steps[index - 1] + .01)),
         travel_end: travel.effect.getKeyframes().at(-1).transform,
         front_backfaces: getComputedStyle(card.querySelector('.card-open-front')).backfaceVisibility,
         back_backfaces: getComputedStyle(card.querySelector('.card-open-back')).backfaceVisibility,
@@ -84,15 +111,19 @@ async def main():
             context, page, requests, errors = await session(browser, {'width': width, 'height': height})
             await mocked_open(page)
             frame = await paused_open(page)
-            assert frame['duration'] == 600 and frame['images'] == 1 and frame['canvases'] == 0
+            assert frame['duration'] == 1200 and frame['images'] == 1 and frame['canvases'] == 0
             assert 'rotateY(1080deg)' in frame['spin_end'], frame
             assert 'rotate(' not in frame['spin_end'] and 'rotate(' not in frame['travel_end']
-            assert frame['first_half_turn_ms'] <= 100, frame
+            assert frame['first_half_turn_ms'] <= 140, frame
+            assert abs(frame['total_degrees'] - 1080) < .05 and frame['continuously_slowing'], frame
+            first, second, third = frame['turn_ms']
+            assert 180 <= first <= 260 and first < second < 400 and third > 600, frame
+            assert all(a > b for a, b in zip(frame['quarter_degrees'], frame['quarter_degrees'][1:])), frame
             assert frame['front_backfaces'] == frame['back_backfaces'] == 'hidden'
             assert frame['back_turn'].startswith('matrix3d(-1,'), frame
             assert not frame['travel_end'].endswith('scale(1)')
             await page.screenshot(path=str(args.out / f'{args.engine}-{width}x{height}-opening.png'))
-            await page.locator('.card-open-face').evaluate('card => card.getAnimations({subtree:true}).forEach(animation => animation.currentTime = 30)')
+            await page.locator('.card-open-face').evaluate('card => card.getAnimations({subtree:true}).forEach(animation => animation.currentTime = 120)')
             await page.screenshot(path=str(args.out / f'{args.engine}-{width}x{height}-back.png'))
             await page.keyboard.press('Escape')
             await page.clock.run_for(2000)
@@ -100,7 +131,9 @@ async def main():
             assert await page.evaluate('window.__opens') == 0
             assert await page.evaluate('window.__canvasCalls + window.__storageCalls') == 0
             assert not requests and not errors, (requests, errors)
-            results['viewports'].append({'width': width, 'height': height, 'duration_ms': 600, 'vertical_spin_degrees': 1080,
+            results['viewports'].append({'width': width, 'height': height, 'duration_ms': 1200, 'vertical_spin_degrees': 1080,
+                                        'turn_ms': frame['turn_ms'], 'quarter_degrees': frame['quarter_degrees'],
+                                        'continuously_slowing': frame['continuously_slowing'],
                                         'first_half_turn_ms': frame['first_half_turn_ms'], 'front_and_back': True, 'rotation_and_growth': True,
                                         'canvas_calls': 0, 'indexeddb_calls': 0, 'spirit_requests': 0, 'cancelled_without_opening': True})
             await context.close()
@@ -120,7 +153,7 @@ async def main():
                 await page.evaluate("window.dispatchEvent(new Event('pagehide'))")
             elif action == 'reduced-during-playback':
                 await page.emulate_media(reduced_motion='reduce')
-            # A deliberately paused native animation exercises the 900ms watchdog.
+            # A deliberately paused native animation exercises the 1500ms watchdog.
             await page.clock.run_for(2000)
             await expect(page.locator('.card-open')).to_have_count(0)
             opens = await page.evaluate('window.__opens')
@@ -166,7 +199,7 @@ async def main():
         await popup.wait_for_load_state('domcontentloaded')
         assert '/api/health?animation-check=1' in popup.url, popup.url
         elapsed = await page.evaluate('window.__openedAfter')
-        assert 500 <= elapsed < 2000, elapsed
+        assert 1100 <= elapsed < 2600, elapsed
         await expect(page.locator('.card-open')).to_have_count(0)
         assert not requests and not errors, (requests, errors)
         results['real_open'] = {'elapsed_ms': round(elapsed, 1), 'cpu_slowdown': 4 if args.engine == 'chrome' else 1,

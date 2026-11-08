@@ -3,12 +3,14 @@ import type { ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 
-// Sample the original summon's ease-out and lift once, extended to three turns. The browser runs
-// these transform keyframes; the opening has no JavaScript frame loop.
+const OPEN_MS = 1200;
+// Constant angular deceleration makes the three turns take about 0.22, 0.29 and
+// 0.69 seconds. Sample once; the browser plays them without a JavaScript frame loop.
 const spinFrames = Array.from({ length: 31 }, (_, index) => {
   const t = index / 30;
-  const lift = Math.sin(Math.PI * (1 - (1 - t) ** 2));
-  return { offset: t, transform: `translateZ(${lift * 90}px) rotateX(${lift * 8}deg) rotateY(${(1 - (1 - t) ** 4) * 1080}deg)` };
+  const progress = 1 - (1 - t) ** 2;
+  const lift = Math.sin(Math.PI * progress);
+  return { offset: t, transform: `translateZ(${lift * 90}px) rotateX(${lift * 8}deg) rotateY(${progress * 1080}deg)` };
 });
 
 /** Keep the old rapid vertical-axis spin, then open without the summoning scene. */
@@ -56,18 +58,18 @@ export default function CardOpenOverlay({ title, glyph, name, origin, front, onF
     else {
       try {
         animations.push(card.animate([{ transform: start }, { transform: end }], {
-          duration: 600, easing: 'cubic-bezier(.2,.65,.2,1)', fill: 'forwards',
+          duration: OPEN_MS, easing: 'cubic-bezier(.2,.65,.2,1)', fill: 'forwards',
         }));
-        const spin = flip.animate(spinFrames, { duration: 600, easing: 'linear', fill: 'forwards' });
+        const spin = flip.animate(spinFrames, { duration: OPEN_MS, easing: 'linear', fill: 'forwards' });
         animations.push(spin);
         spin.onfinish = () => settle(true);
         // Covers unavailable animation events without leaving a stuck modal.
-        timeout = window.setTimeout(() => settle(true), 900);
+        timeout = window.setTimeout(() => settle(true), OPEN_MS + 300);
       } catch {
         for (const animation of animations) { animation.onfinish = null; animation.cancel(); }
         card.style.transform = end;
         flip.style.transform = spinFrames[spinFrames.length - 1].transform;
-        timeout = window.setTimeout(() => settle(true), 600);
+        timeout = window.setTimeout(() => settle(true), OPEN_MS);
       }
     }
     return () => {

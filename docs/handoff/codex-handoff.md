@@ -1,6 +1,6 @@
 # 交接：管理版界面整理 + 纯享版召唤特效
 
-**最新方向见第 14、16 节：用户已否定 v0.0.18 的人物召唤与预加载，当前改为 0.6 秒原卡绕竖轴快速转三圈并放大后打开网页。本地预览已按第 15 节改为免输入密码。第 8–13 节仅是历史。**
+**最新方向见第 14、16、17 节：用户已否定 v0.0.18 的人物召唤与预加载，当前改为 1.2 秒原卡绕竖轴连续减速转三圈并放大后打开网页。本地预览已按第 15 节改为免输入密码。第 8–13 节仅是历史。**
 
 交接日期：2026-11-07。本轮已继续处理下列待办，结果见第 7 节。工作区里的后端排序、管理版界面和召唤特效仍未提交，提交拆分仍需用户确认。
 
@@ -231,7 +231,7 @@ TypeScript、81 项前端测试和构建通过；Chrome 检查单选、全选、
 
 工作目录 `/Users/ranklier/code/gitlab/ranklier/bookmark-app/.worktrees/card-open-simple`，分支 `feat/card-open-simple`，基线 `f49d575`。按本会话既有“更新代码、推送镜像”授权，验证后合入 main 并发布；最终版本、修订、摘要以 `.release/state.json` 和对应 verification 记录为准。NAS 运行容器不自动更新。
 
-- `CardOpenOverlay.tsx` 只复制当前卡面，使用浏览器原生 transform 动画，600ms 内绕竖轴快速旋转 1080°（三圈）、先快后慢地停回正面，居中并放大，完成后沿用正常新标签页打开。没有 JS 逐帧绘制、Canvas、额外人物图片、模糊纹理、粒子、碎裂或冲屏闪光。动画事件未到时 900ms 保底结束；系统减少动态效果直接打开。
+- `CardOpenOverlay.tsx` 只复制当前卡面，使用浏览器原生 transform 动画，1200ms 内绕竖轴连续减速旋转 1080°（三圈）、自然停回正面，居中并放大，完成后沿用正常新标签页打开。没有 JS 逐帧绘制、Canvas、额外人物图片、模糊纹理、粒子、碎裂或冲屏闪光。动画事件未到时 1500ms 保底结束；系统减少动态效果直接打开。
 - 移除 App 中的预加载服务、进度、就绪门禁和牌列预加载回调。普通页面不再访问召唤 IndexedDB 或下载 `/spirits/`；已存的旧文件不主动读取或改动。
 - 人物 PNG 和旧模块保留在源码中作为历史参考，Vite 生产复制和 Docker 上下文排除 `web/public/spirits/`。移除主入口的旧预览动态 import，`?summon-preview=...` 不再激活旧召唤。产物约从 85.54 MiB 降为 6.26 MiB。
 - 保留原牌型、书签排序、纯享版地面背景和独立“翻阅”详情。旧样式文件中共享的翻阅按钮、44px 点击区域、原卡隐藏／恢复和高对比度规则移到 `card-open.css`，避免移除旧碎裂样式时误伤详情。
@@ -268,3 +268,12 @@ TypeScript、84 项前端测试和生产构建通过；Chrome／WebKit 在 1280�
 工作分支 `feat/card-open-three-turns`，worktree `/Users/ranklier/code/gitlab/ranklier/bookmark-app/.worktrees/card-open-three-turns`。当前免输入密码的 18015 预览已切到该目录，继续使用原临时演示库。本轮沿用会话已有的源码与镜像推送授权；实际发布版本和摘要以主仓库 `.release/state.json` 为准。
 
 TypeScript、84 项前端测试、生产构建通过；Chrome／WebKit 四种视口确认竖轴终点为 1080°、正反面正常、打开和生命周期场景通过，真实新标签打开实测约 669ms（Chrome 4 倍 CPU 降速）和 653ms（WebKit）。Canvas、IndexedDB 和人物素材请求仍为 0。核验报告在 `/Users/ranklier/.codex/visualizations/2026/11/07/01a1b638-4a9a-71d3-a3f2-d1e070f85bd7/card-open-three-turns/verification.json`。后端未变更，本轮未重复后端测试，也未更新 NAS 运行容器。
+
+
+## 17. 三圈连续减速并自然停稳（2026-11-08）
+
+用户进一步明确速度应从快到慢，并确认“约 1.2 秒、三圈约 0.2／0.3／0.7 秒”的节奏。上一版四次方 ease-out 在 600ms 内把前两圈压缩至约 144ms，视觉上减速过程不清楚。当前把 `CardOpenOverlay.tsx` 的角度曲线改为二次方 ease-out，持续角减速，统一 1200ms 的旋转／位移放大；每圈约 220／287／693ms，停回正面后才打开网页。原生 transform 关键帧、31 次初始化采样及轻量正反面保留；保底结束相应改为 1500ms，减少动态效果直接打开。
+
+继续复用 `feat/card-open-three-turns` 和 `/Users/ranklier/code/gitlab/ranklier/bookmark-app/.worktrees/card-open-three-turns`，当前免密码 18015 预览已由新构建提供该效果。README 与浏览器验证脚本同步；第 16 节的 600ms 仅是旧版记录。沿用本会话已有代码与镜像发布授权；实际版本、修订和摘要见主仓库 `.release/state.json`。
+
+TypeScript、84 项前端测试、生产构建通过。Chrome／WebKit 四个视口均读取浏览器实际插值矩阵，连续采样并展开旋转角，确认总角度 1080°、角速度持续下降、三个整圈用时逐步拉长；每 300ms 分别约转 472／338／202／68°。正反面、完成打开、关闭／Esc／窗口变化／切后台取消、跳过、1500ms 保底、播放中改变减少动态效果及详情焦点恢复均通过；没有 Canvas、IndexedDB 或人物素材请求。真实新标签页实测约 1315ms（Chrome 4 倍 CPU）及 1352ms（WebKit），不作为真机帧率验收。报告在 `/Users/ranklier/.codex/visualizations/2026/11/07/01a1b638-4a9a-71d3-a3f2-d1e070f85bd7/card-open-deceleration/verification.json`。后端未修改，本轮未重复后端测试；未更新 NAS 运行容器。
