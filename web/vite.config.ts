@@ -19,6 +19,7 @@ function publishedAssets(): Plugin {
         recursive: true,
         async filter(source) {
           const parts = relative(publicDir, source).split(sep);
+          if (parts[0] === "spirits") return false;
           if (parts[0] === "clow-summoning") return false;
           if (parts[0] === "clow-scene" && parts[1] === "illuminated-frame.svg") return false;
           if (parts[0] === "brand" && parts[1] === "layered-pages.svg") return false;

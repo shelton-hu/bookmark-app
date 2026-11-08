@@ -15,7 +15,7 @@ async function moduleUrl(name) {
   }).outputText;
   for (const match of [...output.matchAll(/from "([^"]+)"/g)]) {
     const dependency = match[1];
-    const url = dependency.startsWith('./') ? await moduleUrl(`${dependency.slice(2)}${['./BookmarkHand', './CardDepartureOverlay', './CardSummonOverlay', './DragOrder'].includes(dependency) ? '.tsx' : '.ts'}`) : import.meta.resolve(dependency);
+    const url = dependency.startsWith('./') ? await moduleUrl(`${dependency.slice(2)}${['./BookmarkHand', './CardDepartureOverlay', './CardSummonOverlay', './CardOpenOverlay', './DragOrder'].includes(dependency) ? '.tsx' : '.ts'}`) : import.meta.resolve(dependency);
     output = output.replace(match[0], `from ${JSON.stringify(url)}`);
   }
   const url = `data:text/javascript;base64,${Buffer.from(output).toString('base64')}`;
@@ -112,11 +112,10 @@ test('ribbon titles fit two readable lines and retain complete graphemes', () =>
 
 const bookmark = { id: 1, title: 'Cashbook <script>alert(1)</script>', url: 'https://example.test/a', tags: [], folder_id: null };
 const props = { bookmark, managing: false, folders: [], selected: false, busy: false, toggle() {}, edit() {}, refresh() {}, remove() {}, restore() {}, filterTag() {} };
-test('startup resource preparation gates summoning while leaving details available', () => {
-  const html = renderToStaticMarkup(createElement(Card, { ...props, summonReady: false }));
+test('quick opening is available immediately without a summoning resource gate', () => {
+  const html = renderToStaticMarkup(createElement(Card, props));
   const buttons = [...html.matchAll(/<button[^>]*>/g)].map(match => match[0]);
-  assert.match(buttons[0], /aria-describedby="summon-preload-status"/);
-  assert.match(buttons[0], /disabled=""/);
+  assert.doesNotMatch(buttons[0], /disabled=|summon-preload-status/);
   assert.doesNotMatch(buttons[1], /disabled=/);
 });
 test('the card exposes distinct quick-open and details buttons with escaped titles', () => {

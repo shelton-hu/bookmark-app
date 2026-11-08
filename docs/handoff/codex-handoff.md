@@ -1,5 +1,7 @@
 # 交接：管理版界面整理 + 纯享版召唤特效
 
+**最新方向见第 14 节：用户已否定 v0.0.18 的人物召唤与预加载，当前改为 0.6 秒原卡旋转放大后打开网页。第 8–13 节仅是历史。**
+
 交接日期：2026-11-07。本轮已继续处理下列待办，结果见第 7 节。工作区里的后端排序、管理版界面和召唤特效仍未提交，提交拆分仍需用户确认。
 
 ## 1. 现状一览
@@ -222,3 +224,19 @@ TypeScript、81 项前端测试和构建通过；Chrome 检查单选、全选、
 ```
 
 本地预览 `http://127.0.0.1:18015/` 使用临时 DATA_DIR，账号“演示账号”／`demo-pass-123`，没有连接真实数据。核验报告在 `/Users/ranklier/.codex/visualizations/2026/11/07/01a1b638-4a9a-71d3-a3f2-d1e070f85bd7/summon-preload/startup-cache/verification.json`。正式发布时合入 main；版本镜像与 latest 均由发布脚本核验，并另存 `.release/verification-<版本>.json`。NAS 运行容器不由本发布流程更新。
+
+## 14. 用户要求轻量旋转放大打开（2026-11-08）
+
+用户在实际使用 v0.0.18 后反馈性能太差，明确要求“点击卡片以后，卡片旋转变大，然后新页面出现就可以”。这次要求取代第 9–13 节的人物召唤／素材预加载方案；不要重新启用整套下载、解码、粒子或加载门禁。
+
+工作目录 `/Users/ranklier/code/gitlab/ranklier/bookmark-app/.worktrees/card-open-simple`，分支 `feat/card-open-simple`，基线 `f49d575`。按本会话既有“更新代码、推送镜像”授权，验证后合入 main 并发布；最终版本、修订、摘要以 `.release/state.json` 和对应 verification 记录为准。NAS 运行容器不自动更新。
+
+- `CardOpenOverlay.tsx` 只复制当前卡面，使用浏览器原生 transform 动画，600ms 内旋转 360°、居中并放大，完成后沿用正常新标签页打开。没有 JS 逐帧绘制、Canvas、额外人物图片、模糊纹理、粒子、碎裂或冲屏闪光。动画事件未到时 900ms 保底结束；系统减少动态效果直接打开。
+- 移除 App 中的预加载服务、进度、就绪门禁和牌列预加载回调。普通页面不再访问召唤 IndexedDB 或下载 `/spirits/`；已存的旧文件不主动读取或改动。
+- 人物 PNG 和旧模块保留在源码中作为历史参考，Vite 生产复制和 Docker 上下文排除 `web/public/spirits/`。移除主入口的旧预览动态 import，`?summon-preview=...` 不再激活旧召唤。产物约从 85.54 MiB 降为 6.26 MiB。
+- 保留原牌型、书签排序、纯享版地面背景和独立“翻阅”详情。旧样式文件中共享的翻阅按钮、44px 点击区域、原卡隐藏／恢复和高对比度规则移到 `card-open.css`，避免移除旧碎裂样式时误伤详情。
+- 点击空白跳过，Esc／关闭／窗口变化／切后台取消；清理动画与超时，防止取消后延迟或重复打开。弹窗被拦截时显示原有详情及手动链接。
+
+当前验证脚本为 `docs/handoff/scripts/verify-card-open.py`。旧 `verify-preload.py`、召唤／原画预览脚本只对应历史实现，不适用于新的正常入口；`verify.py --only layout` 的管理版布局检查仍可按需使用。真实浏览器验证必须使用隔离 DATA_DIR，并在演示库加入指向测试服务器 `/api/health?animation-check=1` 的“本地打开验证”书签，避免实际打开外部网站。
+
+验证完成：TypeScript、84 项前端测试和生产构建通过。产物 6,564,641 字节（约 6.26 MiB），52 张原卡面保留，`spirits` 目录、相关缓存与召唤代码均未进入生产输出。Chrome／WebKit 在 1280×900、390×844、320×568、844×390 四个视口确认旋转放大、无需加载门禁，Canvas 调用、IndexedDB 访问和人物素材请求均为 0；Esc、关闭、跳过、改变窗口、切后台、动画事件保底、减少动态效果和详情打开／关闭／焦点返回均通过。真实新标签页打开实测 Chrome 4 倍 CPU 降速约 666ms，WebKit 约 640ms，非真机帧率验收。同步修复了 WebKit 关闭详情时卡牌尚未恢复可见，导致焦点无法回到翻阅按钮的时序。核验报告位于 `/Users/ranklier/.codex/visualizations/2026/11/07/01a1b638-4a9a-71d3-a3f2-d1e070f85bd7/card-open-simple/verification.json`。

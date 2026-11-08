@@ -1,0 +1,43 @@
+/* Quiet lettering below the card opens its back without covering the artwork. */
+.clarity-shell .clow-card .clow-details-seal {
+  position: absolute; z-index: 5; left: calc(50% - 44px); top: calc(100% + 8px); width: 88px; height: 44px;
+  display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0; border: 0; border-radius: 2px;
+  color: #795835; background: transparent; box-shadow: none;
+  font: 500 13px/1 Georgia, "Songti SC", serif; letter-spacing: 2px; cursor: pointer;
+}
+.clarity-shell.mode-enjoy .clow-card .clow-details-seal { color: #d8ba81; text-shadow: 0 1px 3px #160f24; }
+.clarity-shell .hand-card .clow-details-seal { opacity: 0; pointer-events: none; }
+.bookmark-hand[data-active-index=""] .hand-card.is-centered .clow-details-seal,
+.clarity-shell .hand-card:is(.is-drawn, :focus-within) .clow-details-seal { opacity: 1; pointer-events: auto; }
+.clarity-shell .clow-card .clow-details-seal:hover { color: #54391d; background: transparent; }
+.clarity-shell.mode-enjoy .clow-card .clow-details-seal:hover { color: #fff0c5; }
+.clarity-shell .clow-card .clow-details-seal:focus-visible { outline: 2px solid #ffe7b4; outline-offset: 3px; }
+.clarity-shell .clow-card:is(.is-reading, .is-departing) > :is(.clow-art, .clow-details-seal) { visibility: hidden; }
+.clow-popup-notice { margin: 0; color: #f1d5a0; font-size: 13px; line-height: 1.65; }
+
+
+.card-open {
+  position: fixed; inset: 0; width: 100%; height: 100dvh; max-width: none; max-height: none;
+  margin: 0; padding: 0; overflow: hidden; border: 0; background: transparent; color: #ead6b3; cursor: pointer;
+}
+.card-open::backdrop { background: #120a1eb8; }
+.card-open-face {
+  position: absolute; left: 50%; top: 50%; overflow: hidden; border-radius: 12px;
+  background: #efdbaa; box-shadow: 0 14px 42px #0006; will-change: transform; pointer-events: none;
+}
+.card-open-face .clow-face-image { position: absolute; inset: 0; width: 100%; height: 100%; }
+.card-open-cancel {
+  position: absolute; top: max(16px, env(safe-area-inset-top)); right: 20px; width: 44px; height: 44px;
+  display: grid; place-items: center; border: 1px solid #d8ba8160; border-radius: 50%; background: #382233; color: inherit; cursor: pointer;
+}
+.card-open-cancel:focus-visible { outline: 2px solid #eed49c; outline-offset: 3px; }
+.card-open-status {
+  position: absolute; bottom: max(16px, env(safe-area-inset-bottom)); left: 24px; right: 24px;
+  margin: 0; color: #e2cba5; font-size: 13px; line-height: 1.6; text-align: center;
+  overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+}
+
+@media (forced-colors: active) {
+  .clarity-shell .clow-card .clow-details-seal,
+  .clarity-shell.mode-enjoy .clow-card .clow-details-seal { background: ButtonFace; color: ButtonText; border: 1px solid ButtonText; text-shadow: none; }
+}

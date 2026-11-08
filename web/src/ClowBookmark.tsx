@@ -7,8 +7,7 @@ import { date, folderPath } from "./api";
 import { handPose } from "./BookmarkHand";
 import type { HandPosition } from "./BookmarkHand";
 import { cardForBookmark } from "./clowDeck";
-// Opening a card summons its spirit; CardDepartureOverlay (flip and shatter) remains available.
-import CardDeparture from "./CardSummonOverlay";
+import CardOpenOverlay from "./CardOpenOverlay";
 import { bookmarkTarget, openBookmarkTab } from "./cardDeparture";
 import { ribbonTitleLines } from "./ribbonTitle";
 import { useBookmarkDetails } from "./bookmarkDetails";
@@ -55,10 +54,9 @@ export type BookmarkCardProps = {
   managing: boolean; hand?: HandPosition; bookmark: Bookmark; folders: FolderType[];
   selected: boolean; toggle: () => void; edit: () => void; refresh: () => void;
   remove: () => void; restore: () => void; filterTag: (tag: string) => void; busy: boolean;
-  summonReady?: boolean;
 };
 
-export default function ClowBookmark({ managing, hand, bookmark: b, folders, selected, toggle, edit, refresh, remove, restore, filterTag, busy, summonReady = true }: BookmarkCardProps) {
+export default function ClowBookmark({ managing, hand, bookmark: b, folders, selected, toggle, edit, refresh, remove, restore, filterTag, busy }: BookmarkCardProps) {
   const [origin, setOrigin] = useState<DOMRect | null>(null);
   const [departure, setDeparture] = useState<DOMRect | null>(null);
   const [popupBlocked, setPopupBlocked] = useState(false);
@@ -115,11 +113,11 @@ export default function ClowBookmark({ managing, hand, bookmark: b, folders, sel
   return <article className={`bookmark-card bookmark-ribbon clow-card ${hand ? "hand-card" : ""} ${drawn ? "is-drawn" : ""} ${centered ? "is-centered" : ""} ${selected ? "is-selected" : ""} ${origin ? "is-reading" : ""} ${departure ? "is-departing" : ""}`}
     style={hand ? handPose(hand, selected) : undefined} data-hand-index={hand?.index} data-card-kind={card.key}>
     {managing && <label className="ribbon-select"><input type="checkbox" aria-label={`选择 ${title}`} checked={selected} disabled={busy} onChange={toggle} /></label>}
-    <button ref={trigger} className="clow-art" aria-label={managing || !safeUrl ? `翻牌查看 ${title}（${card.glyph}）` : `翻牌打开 ${title}（新标签页）`} aria-describedby={!managing && !summonReady ? 'summon-preload-status' : undefined} title={managing || !safeUrl ? "翻牌查看详情" : summonReady ? "翻牌打开网站" : "正在准备召唤资源"} disabled={busy || (!managing && !summonReady)} onClick={visit}>
+    <button ref={trigger} className="clow-art" aria-label={managing || !safeUrl ? `翻牌查看 ${title}（${card.glyph}）` : `翻牌打开 ${title}（新标签页）`} title={managing || !safeUrl ? "翻牌查看详情" : "旋转放大后打开网站"} disabled={busy} onClick={visit}>
       <CardFace id={b.id} title={title} />
     </button>
     <button ref={detailsTrigger} className="clow-details-seal" aria-label={`翻牌查看 ${title} 的详情`} aria-haspopup="dialog" aria-expanded={Boolean(origin)} title="只查看详情，不打开网站" disabled={busy} onClick={() => open()}><BookOpen size={14} aria-hidden="true" /><span>翻阅</span></button>
-    {departure && <CardDeparture bookmarkId={b.id} title={title} origin={departure} front={<CardFace id={b.id} title={title} />} onFinish={finishVisit} onCancel={restoreCard} />}
+    {departure && <CardOpenOverlay title={title} origin={departure} front={<CardFace id={b.id} title={title} />} onFinish={finishVisit} onCancel={restoreCard} />}
     {origin && <FlipDetail title={title} bookmarkId={b.id} origin={origin} trigger={trigger} returnFocus={readerFocus} onClosed={() => setOrigin(null)}>
       {(close) => <>
         <div className="clow-detail-heading">
@@ -207,7 +205,8 @@ function FlipDetail({ title, bookmarkId, origin, trigger, returnFocus, onClosed,
   }, []);
   const finish = () => {
     dialog.current?.close();
-    onClosed();
+    // Restore the card's visibility before Safari attempts to focus its details button.
+    flushSync(onClosed);
     requestAnimationFrame(() => {
       if (returnFocus.current?.isConnected) returnFocus.current.focus({ preventScroll: true });
       actionAfterClose.current?.();

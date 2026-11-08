@@ -4,8 +4,6 @@ import BrandMark from "./BrandMark";
 import ClowCatalog from "./ClowCatalog";
 import FolderRail from "./FolderRail";
 import { EnjoyAtmosphere, EnjoySearch, WorkspaceModeSwitch } from "./EnjoyScene";
-import SummonPreloadStatus from "./SummonPreloadStatus";
-import { startSummonPreload } from "./summonPreload";
 import { bookmarkQuery } from "./bookmarkQuery";
 import { availableFolder, readFolderPreference, writeFolderPreference } from "./folderPreference";
 import type { CSSProperties, FormEvent, ReactNode } from "react";
@@ -84,8 +82,7 @@ import "./enjoy-scene.css";
 import "./clow-catalog.css";
 import "./bookmark-list.css";
 import "./brand.css";
-import "./card-departure.css";
-import "./card-summon.css";
+import "./card-open.css";
 import "./transfer-page.css";
 import "./drag-order.css";
 import "./polish.css";
@@ -248,21 +245,6 @@ function Loading() {
 function App() {
   const [mode, setMode] = useState<WorkspaceMode>(getWorkspaceMode);
   const managing = mode === "manage";
-  const [summonPreload, setSummonPreload] = useState<ReturnType<typeof startSummonPreload> | null>(null);
-  const [summonReady, setSummonReady] = useState(false);
-  useEffect(() => {
-    const session = startSummonPreload();
-    setSummonPreload(session);
-    const changed = () => {
-      const phase = session.getSnapshot().phase;
-      setSummonReady(phase === 'ready' || phase === 'skipped');
-    };
-    const unsubscribe = session.subscribe(changed);
-    changed();
-    return () => { unsubscribe(); session.dispose(); };
-  }, []);
-  useEffect(() => { if (managing) summonPreload?.prioritize([]); }, [managing, summonPreload]);
-  const browseSummon = useCallback((ids: number[]) => summonPreload?.prioritizeBookmarks(ids), [summonPreload]);
   const BookmarkView = managing ? BookmarkRow : BookmarkCard;
   const [auth, setAuth] = useState<{
     initialized: boolean;
@@ -1331,16 +1313,13 @@ function App() {
                   )}
                 </Empty>
               ) : (
-                <>
-                {!managing && <SummonPreloadStatus session={summonPreload} />}
-                <BookmarkResults managing={managing} items={visibleItems} onBrowse={browseSummon}
+                <BookmarkResults managing={managing} items={visibleItems}
                   order={sortingBookmarks ? { folderId: scopeFolderId, pending: page === "pending",
                     setSaving: saving => setBusy(saving ? "保存书签顺序" : ""), saved: () => updated("书签顺序已保存") } : undefined}
                   key={`${mode}:${page}:${folderId}:${query}:${tag}:${searchMode}:${sortingBookmarks ? "sorting" : managing ? paged.page : 0}`}>
                    {(bookmark, hand) => (
                      <BookmarkView
                       managing={managing}
-                      summonReady={summonReady}
                        hand={hand}
                       key={bookmark.id}
                       bookmark={bookmark}
@@ -1374,7 +1353,6 @@ function App() {
                     />
                    )}
                 </BookmarkResults>
-                </>
               )}
               {managing && !sortingBookmarks && <nav className="bookmark-pagination" aria-label="书签分页">
                 <span className="page-range" role="status">{loading ? "正在加载…" : `第 ${paged.start}–${paged.end} 条，共 ${total} 条`}</span>
@@ -2947,8 +2925,4 @@ function ModelFields({
 }
 
 const root = createRoot(document.getElementById("root")!);
-if (new URLSearchParams(location.search).has("summon-preview")) {
-  void import("./RainArtworkPreview").then(({ default: RainArtworkPreview }) => root.render(<RainArtworkPreview />));
-} else {
-  root.render(<StrictMode><App /></StrictMode>);
-}
+root.render(<StrictMode><App /></StrictMode>);
