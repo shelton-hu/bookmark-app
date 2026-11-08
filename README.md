@@ -226,12 +226,14 @@ cd web
 npm ci
 npm run build
 cd ..
-DATA_DIR=./data .venv/bin/uvicorn backend.main:app --host 127.0.0.1 --port 8000
+.venv/bin/python -m tools.dev
 ```
 
-构建后服务端在 `http://127.0.0.1:8000` 提供 Web 和 API。前端热更新可另开终端在 `web` 运行 `npm run dev`，代理 `/api` 到 8000。
+构建后服务端在 `http://127.0.0.1:8000` 提供 Web 和 API，打开首页自动进入，无需输入账号密码。开发数据默认保存在被 Git 忽略的 `.test-data/local-preview/`；可用 `--port 18015 --data-dir /tmp/bookmark-preview` 指定本地端口和隔离目录。启动器固定监听 `127.0.0.1`，仅为本机浏览器建立会话，保留接口的同源检查。退出后刷新首页可再次直接进入。
 
-浏览器测试应使用隔离的 `DATA_DIR` 并自行创建测试账号。运行数据、账号、模型密钥和浏览器会话均不包含在公开源码中；`.env.example` 与 `.env.deploy.example` 仅为配置模板。
+前端热更新可另开终端在 `web` 运行 `npm run dev`，代理 `/api` 到 8000；浏览器使用相同主机名，首次先打开 8000 首页建立本机会话。跨端口写操作需在启动后端时显式设置 `ALLOWED_ORIGINS=http://127.0.0.1:5173`，主机名和端口应与实际 Vite 地址一致。正常认证联调仍使用 `DATA_DIR=/tmp/bookmark-auth-test .venv/bin/uvicorn backend.main:app --host 127.0.0.1 --port 8000`，自行设置测试账号。NAS／Docker 继续使用正常认证入口，本地预览启动器不进入运行镜像。
+
+需要验证登录流程的浏览器测试应使用正常认证入口、隔离的 `DATA_DIR` 并自行创建测试账号。运行数据、账号、模型密钥和浏览器会话均不包含在公开源码中；`.env.example` 与 `.env.deploy.example` 仅为配置模板。
 
 ```sh
 .venv/bin/python -m pytest backend/tests -q
@@ -243,6 +245,6 @@ docker compose config
 
 ## 公开源码与资源说明
 
-公开仓库包含应用源码、测试、构建与部署模板及当前界面所需素材。真实 `.env`、数据库、备份、登录状态、测试数据、设计存档和本地部署配置均通过 `.gitignore` 排除。首次运行需要创建自己的账号并填写自己的模型配置；项目不附带可用凭据。
+公开仓库包含应用源码、测试、构建与部署模板及当前界面所需素材。真实 `.env`、数据库、备份、登录状态、测试数据、设计存档和本地部署配置均通过 `.gitignore` 排除。NAS 首次运行需要创建自己的账号并填写自己的模型配置；项目不附带可用凭据。
 
 第三方卡面和魔法阵的来源及授权核查状态见 [THIRD_PARTY_ASSETS.md](THIRD_PARTY_ASSETS.md)。来源记录不等于再分发许可，项目未为第三方素材授予开源许可。
