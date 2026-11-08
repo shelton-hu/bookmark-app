@@ -3,9 +3,9 @@ import type { ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 
-const OPEN_MS = 1200;
-// Constant angular deceleration makes the three turns take about 0.22, 0.29 and
-// 0.69 seconds. Sample once; the browser plays them without a JavaScript frame loop.
+const OPEN_MS = 600;
+// Constant angular deceleration makes the three turns take about 0.11, 0.14 and
+// 0.35 seconds. Sample once; the browser plays them without a JavaScript frame loop.
 const spinFrames = Array.from({ length: 31 }, (_, index) => {
   const t = index / 30;
   const progress = 1 - (1 - t) ** 2;
