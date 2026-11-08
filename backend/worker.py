@@ -5,6 +5,7 @@ import threading
 import time
 from datetime import datetime, timedelta, timezone
 from .store import now
+from .bookmark_query import append_bookmarks
 from . import services
 
 
@@ -99,6 +100,8 @@ class Worker:
                             if protected_import:
                                 parent = current['folder_id']
                             db.execute("UPDATE bookmarks SET folder_id=?,tags=?,summary=?,classification_status='done',manual_classification=0,error=NULL,updated_at=? WHERE id=?", (parent, json.dumps(result['tags']), result['summary'], now(), bookmark['id']))
+                            if parent != current['folder_id']:
+                                append_bookmarks(db, [bookmark['id']])
                             store.invalidate_index(bookmark['id'])
                 elif task['kind'] == 'fetch':
                     result = services.fetch_page(bookmark['url'])

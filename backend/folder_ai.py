@@ -10,6 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, model_
 
 from . import services
 from .store import now
+from .bookmark_query import append_bookmarks
 
 
 class SuggestionError(ValueError):
@@ -232,7 +233,7 @@ def register_folder_ai(app, store, auth):
         if len(data.selected) != len(set(data.selected)):
             raise HTTPException(422, '所选修改不能重复。')
         selection = sorted(data.selected)
-        with store.transaction():
+        with store.transaction() as db:
             preview = store.one('SELECT * FROM folder_ai_previews WHERE id=?', (data.preview_id,))
             if not preview or preview['expires_at'] < now():
                 raise HTTPException(409, '预览已过期，请重新生成。')
@@ -264,6 +265,7 @@ def register_folder_ai(app, store, auth):
                 store.execute('UPDATE folders SET name=? WHERE id=?', (name, identifier))
                 counts['folders_renamed'] += 1
             by_id = {b['id']: b for b in bookmarks}
+            moved = []
             for item in chosen:
                 if item['kind'] == 'title':
                     store.execute('UPDATE bookmarks SET title=?,updated_at=? WHERE id=?',
@@ -286,7 +288,10 @@ def register_folder_ai(app, store, auth):
                             counts['folders_created'] += 1
                     store.execute("UPDATE bookmarks SET folder_id=?,classification_status='done',manual_classification=1,error=NULL,updated_at=? WHERE id=?",
                                   (parent, now(), bookmark['id']))
+                    if parent != bookmark['folder_id']:
+                        moved.append(bookmark['id'])
                     counts['bookmarks_moved'] += 1
+            append_bookmarks(db, moved)
             store.execute('UPDATE folder_ai_previews SET result=? WHERE id=?',
                           (json.dumps({'selected': selection, 'counts': counts}), data.preview_id))
         return counts

@@ -1,4 +1,4 @@
-"""Read bookmark scopes in one SQLite snapshot without per-bookmark queries."""
+"""Shared bookmark display order and scoped reads without per-bookmark queries."""
 import json
 import math
 import threading
@@ -13,6 +13,26 @@ SUMMARY_COLUMNS = ('id', 'url', 'title', 'folder_id', 'tags', 'source_folder',
                    'created_at', 'updated_at', 'preserve_import_folder')
 DEFAULT_ORDER = 'b.created_at DESC,b.id'
 ORDER = '(b.sort_order IS NOT NULL),b.sort_order,b.created_at DESC,b.id'
+
+
+def append_bookmarks(db, identifiers):
+    """Append active refiled books in their current order; caller holds a write transaction.
+
+    One global order serves every directory and both UI modes. Appending globally
+    places incoming books after the destination's existing books (including its
+    descendants), without changing any other book's saved position. New captures
+    retain their NULL position and continue to lead the list.
+    """
+    if not identifiers:
+        return
+    rows = list(db.execute(f'''SELECT b.id FROM bookmarks b WHERE b.deleted_at IS NULL
+        AND b.id IN (SELECT value FROM json_each(?)) ORDER BY {ORDER}''', (json.dumps(identifiers),)))
+    if not rows:
+        return
+    last = db.execute('SELECT MAX(sort_order) FROM bookmarks WHERE deleted_at IS NULL').fetchone()[0]
+    start = 0 if last is None else last + 1
+    db.executemany('UPDATE bookmarks SET sort_order=? WHERE id=?',
+                   ((start + index, row['id']) for index, row in enumerate(rows)))
 
 
 class QueryVectors:

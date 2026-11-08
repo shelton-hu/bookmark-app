@@ -41,7 +41,7 @@ def test_default_subtree_move_preserves_content_tree_trash_and_embeddings(client
         after = store.bookmark(bookmark['id'])
         assert after['folder_id'] == target and after['manual_classification']
         assert after['classification_status'] == 'done' and after['error'] is None
-        for key in set(after) - {'folder_id', 'manual_classification', 'classification_status', 'error', 'updated_at'}:
+        for key in set(after) - {'folder_id', 'manual_classification', 'classification_status', 'error', 'updated_at', 'sort_order'}:
             assert after[key] == before[bookmark['id']][key], key
     assert store.bookmark(untouched['id']) == before[untouched['id']]
     assert store.bookmark(trash['id']) == before[trash['id']]

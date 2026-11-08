@@ -16,7 +16,7 @@ from fastapi.responses import FileResponse
 from typing import Annotated, Literal
 from pydantic import BaseModel, Field, ConfigDict, StrictInt, field_validator, model_validator
 from .store import Store, now
-from .bookmark_query import ORDER, QueryVectors, read_bookmarks
+from .bookmark_query import ORDER, QueryVectors, append_bookmarks, read_bookmarks
 from .version import VersionCheck
 from .worker import Worker, text_for, safe_error
 from . import services, importing
@@ -496,21 +496,24 @@ def create_app(data_dir=None, start_worker=True):
 
     @app.patch('/api/bookmarks/{identifier}')
     def bookmark_patch(identifier: int, data: Patch, user=Depends(auth)):
-        existing(identifier)
         changes = data.model_dump(exclude_unset=True)
         if any(changes.get(k) is None for k in ('title', 'notes') if k in changes):
             raise HTTPException(422, 'Title and notes must be strings')
-        if 'folder_id' in changes:
-            validate_folder(changes['folder_id'])
         if 'tags' in changes:
             changes['tags'] = json.dumps(tags_check(changes['tags'] or []))
         if any(k in changes for k in ('tags', 'folder_id')):
             changes['manual_classification'] = 1
             changes['classification_status'] = 'done'
             changes['error'] = None
-        changes['updated_at'] = now()
-        store.execute('UPDATE bookmarks SET ' + ','.join(k+'=?' for k in changes) + ' WHERE id=?', (*changes.values(), identifier))
-        store.invalidate_index(identifier)
+        with store.transaction() as db:
+            bookmark = existing(identifier)
+            if 'folder_id' in changes:
+                validate_folder(changes['folder_id'])
+            changes['updated_at'] = now()
+            store.execute('UPDATE bookmarks SET ' + ','.join(k+'=?' for k in changes) + ' WHERE id=?', (*changes.values(), identifier))
+            if 'folder_id' in changes and changes['folder_id'] != bookmark['folder_id']:
+                append_bookmarks(db, [identifier])
+            store.invalidate_index(identifier)
         return existing(identifier)
 
     @app.delete('/api/bookmarks/{identifier}')
@@ -678,7 +681,7 @@ def create_app(data_dir=None, start_worker=True):
 
     @app.post('/api/folders/move-bookmarks')
     def folders_move_bookmarks(data: FolderMoveApply, user=Depends(auth)):
-        with store.transaction():
+        with store.transaction() as db:
             ids, counts, snapshot = folder_move_plan(data)
             if not hmac.compare_digest(snapshot, data.snapshot):
                 raise HTTPException(409, '目录或书签已变化，本次未迁移任何书签，请重新预览范围和数量。')
@@ -688,6 +691,7 @@ def create_app(data_dir=None, start_worker=True):
                     classification_status='done',error=NULL,updated_at=?
                     WHERE id IN (SELECT value FROM json_each(?))''',
                     (data.target_folder_id, now(), json.dumps(ids)))
+                append_bookmarks(db, ids)
         return {'moved': counts['bookmarks_to_move'], 'already_in_target': counts['already_in_target'],
                 'folders_included': counts['folders_included']}
 
@@ -785,14 +789,17 @@ def create_app(data_dir=None, start_worker=True):
             raise HTTPException(404, 'Preview not found or already applied')
         changes = json.loads(preview['changes'])
         tree = check_tree(changes)
-        with store.connect() as db:
+        with store.transaction() as db:
             for folder in tree.values():
                 db.execute('UPDATE folders SET name=?,parent_id=?,sort_order=CASE WHEN parent_id IS ? THEN sort_order ELSE NULL END WHERE id=?',
                            (folder['name'],folder['parent_id'],folder['parent_id'],folder['id']))
+            moved = []
             for change in changes:
                 if 'merge_into' in change:
+                    moved.extend(row['id'] for row in db.execute('SELECT id FROM bookmarks WHERE folder_id=? AND deleted_at IS NULL', (change['folder_id'],)))
                     db.execute('UPDATE bookmarks SET folder_id=?,updated_at=? WHERE folder_id=?', (change['merge_into'],now(),change['folder_id']))
                     db.execute('DELETE FROM folders WHERE id=?', (change['folder_id'],))
+            append_bookmarks(db, moved)
             db.execute('DELETE FROM previews WHERE id=?', (data.preview_id,))
         return {'status':'ok'}
 
