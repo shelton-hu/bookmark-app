@@ -55,9 +55,10 @@ export type BookmarkCardProps = {
   managing: boolean; hand?: HandPosition; bookmark: Bookmark; folders: FolderType[];
   selected: boolean; toggle: () => void; edit: () => void; refresh: () => void;
   remove: () => void; restore: () => void; filterTag: (tag: string) => void; busy: boolean;
+  summonReady?: boolean;
 };
 
-export default function ClowBookmark({ managing, hand, bookmark: b, folders, selected, toggle, edit, refresh, remove, restore, filterTag, busy }: BookmarkCardProps) {
+export default function ClowBookmark({ managing, hand, bookmark: b, folders, selected, toggle, edit, refresh, remove, restore, filterTag, busy, summonReady = true }: BookmarkCardProps) {
   const [origin, setOrigin] = useState<DOMRect | null>(null);
   const [departure, setDeparture] = useState<DOMRect | null>(null);
   const [popupBlocked, setPopupBlocked] = useState(false);
@@ -114,7 +115,7 @@ export default function ClowBookmark({ managing, hand, bookmark: b, folders, sel
   return <article className={`bookmark-card bookmark-ribbon clow-card ${hand ? "hand-card" : ""} ${drawn ? "is-drawn" : ""} ${centered ? "is-centered" : ""} ${selected ? "is-selected" : ""} ${origin ? "is-reading" : ""} ${departure ? "is-departing" : ""}`}
     style={hand ? handPose(hand, selected) : undefined} data-hand-index={hand?.index} data-card-kind={card.key}>
     {managing && <label className="ribbon-select"><input type="checkbox" aria-label={`选择 ${title}`} checked={selected} disabled={busy} onChange={toggle} /></label>}
-    <button ref={trigger} className="clow-art" aria-label={managing || !safeUrl ? `翻牌查看 ${title}（${card.glyph}）` : `翻牌打开 ${title}（新标签页）`} title={managing || !safeUrl ? "翻牌查看详情" : "翻牌打开网站"} disabled={busy} onClick={visit}>
+    <button ref={trigger} className="clow-art" aria-label={managing || !safeUrl ? `翻牌查看 ${title}（${card.glyph}）` : `翻牌打开 ${title}（新标签页）`} aria-describedby={!managing && !summonReady ? 'summon-preload-status' : undefined} title={managing || !safeUrl ? "翻牌查看详情" : summonReady ? "翻牌打开网站" : "正在准备召唤资源"} disabled={busy || (!managing && !summonReady)} onClick={visit}>
       <CardFace id={b.id} title={title} />
     </button>
     <button ref={detailsTrigger} className="clow-details-seal" aria-label={`翻牌查看 ${title} 的详情`} aria-haspopup="dialog" aria-expanded={Boolean(origin)} title="只查看详情，不打开网站" disabled={busy} onClick={() => open()}><BookOpen size={14} aria-hidden="true" /><span>翻阅</span></button>

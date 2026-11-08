@@ -7,7 +7,9 @@ import { createBackTexture } from "./departureCanvas";
 import { beginSummon, spiritPalette, summonFrame, SUMMON_ARTWORK_HOLD_MS } from "./summonSequence";
 import type { SpiritPalette, SummonFrame } from "./summonSequence";
 import { restoredSpirits } from "./spiritArtwork";
-import type { ArtWindow } from "./spiritArtwork";
+import { ART_WINDOW, loadFigure, preparedFigure } from "./summonArtwork";
+import type { Figure } from "./summonArtwork";
+import { suspendSummonPreload } from "./summonPreload";
 import { CLOW_CIRCLE_ASSET, CLOW_CIRCLE_TURN_MS } from "./clowCircle";
 
 const noise = (n: number) => { const value = Math.sin(n * 127.1 + 311.7) * 43758.5453; return value - Math.floor(value); };
@@ -19,84 +21,6 @@ const motes = Array.from({ length: 220 }, (_, i) => ({
 }));
 const sparks = Array.from({ length: 36 }, (_, i) => ({ angle: noise(i + 31) * Math.PI * 2, speed: .4 + noise(i + 77) * .9, radius: 1.3 + noise(i + 113) * 1.6, size: .6 + noise(i + 151) * 1.6 }));
 
-/** The illustration window inside every card face, as fractions of the card. */
-export const ART_WINDOW = { x: .15, y: .09, w: .7, h: .72 };
-type Figure = { sharp: HTMLCanvasElement; glow: HTMLCanvasElement; window?: ArtWindow; retry?: boolean };
-// Keep only the eight most recently used cards.
-const figures = new Map<string, Promise<Figure | null>>();
-const smoothstep = (a: number, b: number, v: number) => { const x = Math.min(1, Math.max(0, (v - a) / (b - a))); return x * x * (3 - 2 * x); };
-
-/** Lift the light figure off the purple ground of this card's own illustration. */
-function extractFigure(image: HTMLImageElement, palette: SpiritPalette): Figure | null {
-  const sw = image.naturalWidth, sh = image.naturalHeight;
-  const w = Math.round(sw * ART_WINDOW.w), h = Math.round(sh * ART_WINDOW.h);
-  const sharp = document.createElement("canvas");
-  sharp.width = w; sharp.height = h;
-  const ctx = sharp.getContext("2d", { willReadFrequently: true });
-  if (!ctx || !w || !h) return null;
-  ctx.drawImage(image, Math.round(sw * ART_WINDOW.x), Math.round(sh * ART_WINDOW.y), w, h, 0, 0, w, h);
-  let pixels: ImageData;
-  try { pixels = ctx.getImageData(0, 0, w, h); } catch { return null; }
-  const tint = [1, 3, 5].map((i) => parseInt(palette.core.slice(i, i + 2), 16));
-  const data = pixels.data, featherX = w * .09, featherY = h * .05;
-  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
-    const i = (y * w + x) * 4, r = data[i] / 255, g = data[i + 1] / 255, b = data[i + 2] / 255;
-    // Cream line art is warm and light; the purple ground is cool and darker.
-    // Gold frame and sun ornaments are strongly saturated; the line art is not.
-    const saturation = Math.max(r, g, b) - Math.min(r, g, b);
-    const keep = smoothstep(.05, .2, (r + g) / 2 - b) * smoothstep(.42, .7, .3 * r + .59 * g + .11 * b) * (1 - smoothstep(.3, .45, saturation));
-    const edge = Math.min(1, Math.min(x, w - 1 - x) / featherX, Math.min(y, h - 1 - y) / featherY);
-    data[i] = Math.min(255, data[i] * .8 + tint[0] * .3);
-    data[i + 1] = Math.min(255, data[i + 1] * .8 + tint[1] * .3);
-    data[i + 2] = Math.min(255, data[i + 2] * .8 + tint[2] * .3);
-    data[i + 3] = Math.round(255 * keep * edge);
-  }
-  ctx.putImageData(pixels, 0, 0);
-  const glow = document.createElement("canvas");
-  glow.width = w; glow.height = h;
-  const blur = glow.getContext("2d");
-  if (!blur) return null;
-  blur.filter = `blur(${Math.max(4, w * .025)}px)`;
-  blur.drawImage(sharp, 0, 0);
-  return { sharp, glow };
-}
-
-function loadFigure(cardKey: string, palette: SpiritPalette): Promise<Figure | null> {
-  const key = `${cardKey}:${palette.core}`;
-  let result = figures.get(key);
-  if (!result) {
-    const art = new Image();
-    const restored = restoredSpirits[cardKey];
-    art.decoding = "async";
-    art.src = restored?.src ?? `/clow-deck/${cardKey}.webp`;
-    result = art.decode().then(() => {
-      if (!restored) return extractFigure(art, palette);
-      // Preserve all original colours, dark outlines and the authored alpha.
-      const { crop } = restored;
-      const sharp = document.createElement('canvas'); sharp.width = crop.w; sharp.height = crop.h;
-      const ctx = sharp.getContext('2d'); if (!ctx) return null;
-      ctx.drawImage(art, crop.x, crop.y, crop.w, crop.h, 0, 0, crop.w, crop.h);
-      const glow = document.createElement('canvas'); glow.width = crop.w; glow.height = crop.h;
-      const blur = glow.getContext('2d'); if (!blur) return null;
-      blur.filter = `blur(${Math.max(4, crop.w * .025)}px)`; blur.drawImage(sharp, 0, 0);
-      return { sharp, glow, window: restored.placement };
-    }).catch(async () => {
-      if (!restored) return null;
-      const original = new Image(); original.src = `/clow-deck/${cardKey}.webp`;
-      try {
-        await original.decode(); const fallback = extractFigure(original, palette);
-        return fallback ? { ...fallback, retry: true } : null;
-      } catch { return null; }
-    });
-    const pending = result;
-    // A failed or unavailable image must be retried on the next summon.
-    void pending.then(figure => { if ((!figure || figure.retry) && figures.get(key) === pending) figures.delete(key); });
-  }
-  figures.delete(key);
-  figures.set(key, result);
-  if (figures.size > 8) figures.delete(figures.keys().next().value!);
-  return result;
-}
 
 type Stage = { width: number; height: number; cx: number; cy: number; cardW: number; cardH: number };
 
@@ -207,6 +131,7 @@ export default function CardSummon({ bookmarkId, title, origin, front, onFinish,
     const dialog = modal.current, element = flight.current, flip = flipper.current, backCanvas = back.current;
     const wash = light.current, hollowEl = hollow.current, groundPlane = ground.current, circleImage = circle.current, overCanvas = over.current, statusLine = status.current;
     if (!dialog || !element || !flip || !backCanvas || !wash || !hollowEl || !groundPlane || !circleImage || !overCanvas || !statusLine) return;
+    const resumePreload = suspendSummonPreload();
     settled.current = false;
     dialog.showModal();
     dialog.dataset.artwork = "loading";
@@ -233,7 +158,8 @@ export default function CardSummon({ bookmarkId, title, origin, front, onFinish,
     if (texture && backCtx) { backCanvas.width = texture.width; backCanvas.height = texture.height; backCtx.drawImage(texture, 0, 0); }
     const x = origin.left + origin.width / 2 - stage.cx, y = origin.top + origin.height / 2 - stage.cy;
     const scale = origin.width / cardW;
-    let figure: Figure | null = null;
+    let figure = preparedFigure(card.key, palette);
+    if (figure) dialog.dataset.artwork = figure.window ? 'restored' : 'extracted';
     let stopTimeline = () => {};
     let artworkTimeout: number | undefined;
     stop.current = () => { stopTimeline(); window.clearTimeout(artworkTimeout); };
@@ -303,6 +229,7 @@ export default function CardSummon({ bookmarkId, title, origin, front, onFinish,
       window.removeEventListener("resize", cancel);
       document.body.style.overflow = overflow;
       dialog.close();
+      resumePreload();
     };
   }, []);
   return createPortal(<dialog ref={modal} className="clow-summon" aria-label={`召唤 ${title}`}

@@ -45,3 +45,11 @@
   background: radial-gradient(ellipse at 50% 45%, #6b4f86, #4a3560 70%, #3a2a4d);
   box-shadow: inset 0 0 18px #20142c;
 }
+
+.mode-enjoy .summon-preload-status {
+  display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px 14px;
+  min-height: 24px; margin: 8px 20px 0; color: #d4c2a5; font-size: 12px; line-height: 1.7;
+}
+.summon-preload-status progress { width: 130px; max-width: 35vw; height: 4px; accent-color: #c9a96f; }
+.summon-preload-status button { min-height: 44px; padding: 8px 12px; border: 0; background: transparent; color: inherit; text-decoration: underline; cursor: pointer; }
+.summon-preload-status[data-state="ready"] { opacity: .65; }

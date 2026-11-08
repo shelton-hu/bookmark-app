@@ -29,7 +29,7 @@ INSTRUMENT = """(() => {
   const draw = p.drawImage;
   p.drawImage = function(source, ...args) {
     const start = performance.now(), result = draw.call(this, source, ...args);
-    if (source instanceof HTMLImageElement && source.src.includes('/spirits/')) {
+    if (source instanceof HTMLImageElement && (source.dataset.summonSource || source.src).includes('/spirits/')) {
       window.__figureRuns.push(performance.now() - start);
     }
     return result;

@@ -11,9 +11,10 @@ export function rankToHandSlot(rank: number, count: number): number {
 }
 
 /** Stable slots own pointer targeting; only the card faces move. */
-export function BookmarkHand<T extends { id: number }>({ items, children }: {
+export function BookmarkHand<T extends { id: number }>({ items, children, onBrowse }: {
   items: T[];
   children: (item: T, hand: HandPosition) => ReactNode;
+  onBrowse?: (ids: number[]) => void;
 }) {
   const [hovered, setHovered] = useState<number | null>(null);
   const [focused, setFocused] = useState<number | null>(null);
@@ -29,6 +30,15 @@ export function BookmarkHand<T extends { id: number }>({ items, children }: {
   const activeIndex = hovered ?? focused;
   const identity = items.map((item) => item.id).join(",");
   const scrollBehavior = (): ScrollBehavior => window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+  useEffect(() => {
+    if (!onBrowse) return;
+    const anchor = activeIndex ?? centerIndex;
+    const nearest = items.map((item, rank) => ({
+      id: item.id,
+      distance: Math.abs(rankToHandSlot(rank, items.length) - anchor),
+    })).sort((a, b) => a.distance - b.distance);
+    onBrowse(nearest.map(item => item.id));
+  }, [identity, centerIndex, activeIndex, onBrowse]);
 
   useLayoutEffect(() => {
     const rail = railRef.current;

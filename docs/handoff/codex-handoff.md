@@ -200,3 +200,25 @@ TypeScript、81 项前端测试和构建通过；Chrome 检查单选、全选、
 已构建本地 ARM64 预览镜像 `bookmark-app:summon-artwork-ready`，使用 tmpfs 隔离数据启动 `bookmark-artwork-ready-preview`，仅监听 `127.0.0.1:18013`。容器健康，HTTP 提供的修复 JS 与本地生产构建字节一致，52 张 PNG 均与来源记录的校验值一致；同一组 7 个冷加载场景在容器上通过 Chrome／WebKit 复查。预览演示账号仍为“演示账号”／`demo-pass-123`。源码预览服务另在 18012，均不连接真实 NAS 数据。
 
 发布只读计划的下一版本为 v0.0.17（amd64＋arm64，同时更新 latest）。用户已按 AGENTS.md 确认提交和发布；实际发布版本、源码修订和镜像摘要由本机 `.release/state.json` 记录，并在发布后核对远端。
+
+## 13. 召唤素材随页面启动准备与浏览器持久缓存（2026-11-08）
+
+用户在 v0.0.17 发布后要求提前准备动画数据，随后明确要求随页面启动加载、复用浏览器缓存，并选择“页面先可用，召唤区显示准备进度，资源就绪后可点”。当前改动在分支 `feat/summon-preload`，worktree `/Users/ranklier/code/gitlab/ranklier/bookmark-app/.worktrees/summon-preload`，基于 `9158819`。本轮沿用用户此前明确的“更新代码、推送镜像”授权，将改动提交、合入 main 并正式发布；最终版本、修订和摘要见主目录 `.release/state.json`。
+
+- `App` 挂载即启动一个页面级任务，登录阶段已开始下载，不再等待纯享版挂载。52 张修复原画、52 张原卡面和共用法阵共 105 个图片资源分批准备；后台最多 2 个传输、1 个纹理准备任务。切换管理／纯享版共用该任务，页面退出时清理。
+- 纯享版显示简短进度；全部图片资源及附近卡牌纹理就绪后启用点牌召唤。管理和“翻阅”始终可用。失败显示重试；重试只补缺失资源；减少动态效果时跳过素材准备，保留直接打开。
+- `summonAssetCache.ts` 通过 IndexedDB 按版本 URL 保存 52 张 PNG Blob，下载和解码共用同一份文件／在途请求。Blob 异步读取后用临时 Object URL 解码，纹理完成后释放 URL。页面启动清理已不再使用的旧版本键；没有修改图像字节和造型。存储受限／配额不足时回退 HTTP 缓存，不阻止使用。
+- HTTP 缓存：版本化 PNG 和 Vite 指纹文件使用 `public, max-age=31536000, immutable`；HTML、原卡和法阵使用 `no-cache` 与 ETag／Last-Modified 协商，未改变时 304、不重传正文。缺失静态素材返回 404/no-store，防止误缓存 SPA HTML；API 的 no-store 保留。
+- `summonArtwork.ts` 保持最多 8 张解码纹理的 LRU；只提前解码当前中央／悬停／焦点附近 5 种牌，浏览位置改变时更新。刷新会重建这部分内存纹理，复用本地文件，不把整套 52 张都解码。
+- 召唤播放时暂停其他牌的后台准备。点击正在准备的同一张牌会提升并复用任务；原来的 700ms 等待、8 秒打开兜底、取消／跳过行为保留。后台图片准备 8 秒、普通传输 15 秒超时释放队列。
+
+验证：TypeScript、84 项跟踪前端测试和生产构建通过；319 项后端测试通过，其中新增 11 项静态缓存、304、版本更新与缺失素材回归。Chrome 与 WebKit 均验证页面启动即请求、页面仍可用、进度及禁用／启用、附近 5 种牌、暖点击不新增解码／纹理、浏览位置调整、失败重试、存储不可用回退、减少动态效果及 390px 无横向溢出。Chrome 使用 4 倍 CPU 降速与可控动画时钟，不能代替真机帧率验收。
+
+缓存实测使用普通持久浏览器配置，未使用会关闭 HTTP 缓存的 Playwright routing：两种引擎首次原画传输 82,952,564 字节（含传输开销），本地 52 条 PNG；普通刷新、新标签页、关闭后重开浏览器，原画请求／网络传输均为 0，本地仍 52 条，只解码附近 5 种牌。仅 HTTP 缓存时 WebKit 曾部分重传，因此增加 IndexedDB 文件缓存，不能用旧的 HTTP-only 结果描述当前实现。无痕／站点数据被清理或存储被浏览器回收时仍可能重新下载。
+
+```sh
+.venv/bin/python docs/handoff/scripts/verify-preload.py --base-url http://127.0.0.1:18015 --out /tmp/preload-check --engine chrome
+.venv/bin/python docs/handoff/scripts/verify-preload.py --base-url http://127.0.0.1:18015 --out /tmp/preload-check --engine webkit
+```
+
+本地预览 `http://127.0.0.1:18015/` 使用临时 DATA_DIR，账号“演示账号”／`demo-pass-123`，没有连接真实数据。核验报告在 `/Users/ranklier/.codex/visualizations/2026/11/07/01a1b638-4a9a-71d3-a3f2-d1e070f85bd7/summon-preload/startup-cache/verification.json`。正式发布时合入 main；版本镜像与 latest 均由发布脚本核验，并另存 `.release/verification-<版本>.json`。NAS 运行容器不由本发布流程更新。

@@ -4,6 +4,7 @@ import hmac
 import html
 import json
 import os
+import re
 import secrets
 import sqlite3
 from contextlib import asynccontextmanager
@@ -12,7 +13,7 @@ from pathlib import Path
 from urllib.parse import urlsplit
 from bs4 import BeautifulSoup
 from fastapi import FastAPI, Depends, HTTPException, Request, Response, UploadFile, File, Form, Query
-from fastapi.responses import FileResponse
+from starlette.staticfiles import StaticFiles
 from typing import Annotated, Literal
 from pydantic import BaseModel, Field, ConfigDict, StrictInt, field_validator, model_validator
 from .store import Store, now
@@ -1199,7 +1200,7 @@ def create_app(data_dir=None, start_worker=True):
         return counts
 
     @app.get('/{path:path}', include_in_schema=False)
-    def static(path: str):
+    async def static(path: str, request: Request):
         if path.startswith('api/'):
             raise HTTPException(404,'Not found')
         root = Path(__file__).resolve().parent.parent / 'web' / 'dist'
@@ -1207,9 +1208,17 @@ def create_app(data_dir=None, start_worker=True):
         if not resolved.is_relative_to(root.resolve()):
             raise HTTPException(404,'Not found')
         if resolved.is_file():
-            return FileResponse(resolved)
+            response = await StaticFiles(directory=root, check_dir=False).get_response(path, request.scope)
+            versioned = re.fullmatch(r'spirits/[a-z]+-restored-v[1-9]\d*\.png', path)
+            fingerprinted = re.fullmatch(r'assets/[\w.-]+-[\w-]{8}\.(?:js|css|woff2?|png|svg|webp)', path)
+            response.headers['Cache-Control'] = 'public, max-age=31536000, immutable' if versioned or fingerprinted else 'no-cache'
+            return response
+        if path.startswith(('assets/', 'spirits/', 'clow-deck/', 'clow-scene/')):
+            raise HTTPException(404, 'Asset not found', headers={'Cache-Control': 'no-store'})
         if (root/'index.html').is_file():
-            return FileResponse(root/'index.html')
+            response = await StaticFiles(directory=root, check_dir=False).get_response('index.html', request.scope)
+            response.headers['Cache-Control'] = 'no-cache'
+            return response
         raise HTTPException(404,'Frontend is not built')
 
     register_folder_ai(app, store, auth)

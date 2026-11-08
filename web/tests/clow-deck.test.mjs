@@ -112,6 +112,13 @@ test('ribbon titles fit two readable lines and retain complete graphemes', () =>
 
 const bookmark = { id: 1, title: 'Cashbook <script>alert(1)</script>', url: 'https://example.test/a', tags: [], folder_id: null };
 const props = { bookmark, managing: false, folders: [], selected: false, busy: false, toggle() {}, edit() {}, refresh() {}, remove() {}, restore() {}, filterTag() {} };
+test('startup resource preparation gates summoning while leaving details available', () => {
+  const html = renderToStaticMarkup(createElement(Card, { ...props, summonReady: false }));
+  const buttons = [...html.matchAll(/<button[^>]*>/g)].map(match => match[0]);
+  assert.match(buttons[0], /aria-describedby="summon-preload-status"/);
+  assert.match(buttons[0], /disabled=""/);
+  assert.doesNotMatch(buttons[1], /disabled=/);
+});
 test('the card exposes distinct quick-open and details buttons with escaped titles', () => {
   const html = renderToStaticMarkup(createElement(Card, props));
   assert.match(html, /clow-scroll-title/);
