@@ -15,7 +15,7 @@ async function moduleUrl(name) {
   }).outputText;
   for (const match of [...output.matchAll(/from "([^"]+)"/g)]) {
     const dependency = match[1];
-    const url = dependency.startsWith('./') ? await moduleUrl(`${dependency.slice(2)}${['./BookmarkHand', './CardDepartureOverlay', './DragOrder'].includes(dependency) ? '.tsx' : '.ts'}`) : import.meta.resolve(dependency);
+    const url = dependency.startsWith('./') ? await moduleUrl(`${dependency.slice(2)}${['./BookmarkHand', './CardDepartureOverlay', './CardSummonOverlay', './DragOrder'].includes(dependency) ? '.tsx' : '.ts'}`) : import.meta.resolve(dependency);
     output = output.replace(match[0], `from ${JSON.stringify(url)}`);
   }
   const url = `data:text/javascript;base64,${Buffer.from(output).toString('base64')}`;

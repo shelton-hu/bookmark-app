@@ -18,18 +18,19 @@ const renderDelete = (changes = {}, busy = false) => renderToStaticMarkup(create
 
 test('management counts name their descendant scope and show the direct count separately', () => {
   const html = renderToStaticMarkup(createElement(FolderSummary, {
-    folder: {id: 1, bookmark_count: 7, direct_bookmark_count: 2}, path: '资料 / 开发 <script>',
+    folder: {id: 1, name: '开发 <script>', bookmark_count: 7, direct_bookmark_count: 2}, path: '资料 / 开发 <script>',
   }));
   assert.match(html, /7 条书签/);
   assert.match(html, /含子目录 · 本目录 2 条/);
   assert.match(html, /开发 &lt;script&gt;/);
+  assert.match(html, /title="资料 \/ 开发 &lt;script&gt;">开发 &lt;script&gt;<\/span>/);
   assert.doesNotMatch(html, /<script>/);
 });
 
 test('empty is shown as zero while absent old-server counts are not reported as empty', () => {
-  const zero = renderToStaticMarkup(createElement(FolderSummary, {folder: {id: 1, bookmark_count: 0, direct_bookmark_count: 0}, path: '空目录'}));
+  const zero = renderToStaticMarkup(createElement(FolderSummary, {folder: {id: 1, name: '空目录', bookmark_count: 0, direct_bookmark_count: 0}, path: '空目录'}));
   assert.match(zero, /0 条书签/); assert.match(zero, /本目录 0 条/);
-  const unknown = renderToStaticMarkup(createElement(FolderSummary, {folder: {id: 1}, path: '资料'}));
+  const unknown = renderToStaticMarkup(createElement(FolderSummary, {folder: {id: 1, name: '资料'}, path: '资料'}));
   assert.match(unknown, /数量待刷新/); assert.doesNotMatch(unknown, /0 条书签/);
 });
 

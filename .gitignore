@@ -80,6 +80,10 @@ __pycache__/
 !/web/public/brand/
 !/web/public/clow-deck/
 !/web/public/clow-scene/
+!/web/public/spirits/
+/web/public/spirits/*
+!/web/public/spirits/*-restored-v*.png
+!/web/public/spirits/provenance.json
 /web/public/brand/*
 !/web/public/brand/sealed-book.svg
 !/web/public/brand/sealed-book-transparent.svg

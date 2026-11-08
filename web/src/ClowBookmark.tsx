@@ -7,7 +7,8 @@ import { date, folderPath } from "./api";
 import { handPose } from "./BookmarkHand";
 import type { HandPosition } from "./BookmarkHand";
 import { cardForBookmark } from "./clowDeck";
-import CardDeparture from "./CardDepartureOverlay";
+// Opening a card summons its spirit; CardDepartureOverlay (flip and shatter) remains available.
+import CardDeparture from "./CardSummonOverlay";
 import { bookmarkTarget, openBookmarkTab } from "./cardDeparture";
 import { ribbonTitleLines } from "./ribbonTitle";
 import { useBookmarkDetails } from "./bookmarkDetails";

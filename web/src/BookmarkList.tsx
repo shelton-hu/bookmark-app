@@ -22,6 +22,17 @@ export function BookmarkResults({ managing, items, order, children }: {
     : <div className="bookmark-hands"><BookmarkHand items={items}>{children}</BookmarkHand></div>;
 }
 
+/** Rows show where a link leads; the full address stays in the tooltip and details. */
+function host(url: string) {
+  try {
+    const { hostname, pathname } = new URL(url);
+    const path = pathname === "/" ? "" : pathname.replace(/\/$/, "");
+    return hostname.replace(/^www\./, "") + (path.length > 28 ? `${path.slice(0, 27)}…` : path);
+  } catch {
+    return url;
+  }
+}
+
 export default function BookmarkRow({ bookmark: b, folders, selected, toggle, edit, refresh, remove, restore, filterTag, busy }: BookmarkCardProps) {
   const [expanded, setExpanded] = useState(false);
   const details = useBookmarkDetails(b, expanded);
@@ -34,8 +45,12 @@ export default function BookmarkRow({ bookmark: b, folders, selected, toggle, ed
     <label className="bookmark-row-select"><input type="checkbox" checked={selected} disabled={busy} onChange={toggle} aria-label={`选择 ${title}`} /></label>
     <div className="bookmark-row-content">
       <h2>{safeUrl ? <a href={safeUrl} target="_blank" rel="noopener noreferrer">{title}</a> : title}</h2>
-      <div className="bookmark-row-url">{b.url}</div>
-      <div className="bookmark-row-meta"><span><Folder size={13} aria-hidden="true" />{folderPath(b.folder_id, folders)}</span>
+      <div className="bookmark-row-meta">
+        <span className="bookmark-row-url" title={b.url}>{host(b.url)}</span>
+        <span className="bookmark-row-folder"><Folder size={13} aria-hidden="true" />{folderPath(b.folder_id, folders)}</span>
+        {b.tags.length > 0 && <span className="bookmark-row-inline-tags">{b.tags.slice(0, 3).map((tag) =>
+          <button type="button" key={tag} onClick={() => filterTag(tag)} aria-label={`按标签 ${tag} 筛选`}>#{tag}</button>)}
+          {b.tags.length > 3 && <small>+{b.tags.length - 3}</small>}</span>}
         {!b.deleted_at && status && <span className={`bookmark-row-status ${status}`}>{status === "failed" ? "分类失败" : "待整理"}</span>}
       </div>
     </div>
@@ -53,7 +68,7 @@ export default function BookmarkRow({ bookmark: b, folders, selected, toggle, ed
       {expanded && <>
         {details.loading ? <p role="status">正在加载详情…</p> : details.error ?
           <div role="alert"><p>{details.error}</p><button type="button" className="text-button" onClick={details.retry}>重新加载详情</button></div> : <>
-          <dl><dt>摘要</dt><dd>{detail.summary || detail.description || "暂无摘要。"}</dd>{detail.notes && <><dt>笔记</dt><dd>{detail.notes}</dd></>}</dl>
+          <dl><dt>网址</dt><dd className="bookmark-row-full-url">{b.url}</dd><dt>摘要</dt><dd>{detail.summary || detail.description || "暂无摘要。"}</dd>{detail.notes && <><dt>笔记</dt><dd>{detail.notes}</dd></>}</dl>
           {detail.tags.length > 0 && <div className="bookmark-row-tags" aria-label="标签">{detail.tags.map((tag) => <button type="button" key={tag} onClick={() => filterTag(tag)}># {tag}</button>)}</div>}
           {detail.error && <p className="bookmark-row-error">{detail.error}</p>}
         </>}

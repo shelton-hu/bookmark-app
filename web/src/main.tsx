@@ -2,6 +2,7 @@ import { StrictMode, useCallback, useEffect, useLayoutEffect, useMemo, useRef, u
 import BookmarkCard from "./ClowBookmark";
 import BrandMark from "./BrandMark";
 import ClowCatalog from "./ClowCatalog";
+import FolderRail from "./FolderRail";
 import { EnjoyAtmosphere, EnjoySearch, WorkspaceModeSwitch } from "./EnjoyScene";
 import { bookmarkQuery } from "./bookmarkQuery";
 import { availableFolder, readFolderPreference, writeFolderPreference } from "./folderPreference";
@@ -82,8 +83,10 @@ import "./clow-catalog.css";
 import "./bookmark-list.css";
 import "./brand.css";
 import "./card-departure.css";
+import "./card-summon.css";
 import "./transfer-page.css";
 import "./drag-order.css";
+import "./polish.css";
 import { accessiblePage, getWorkspaceMode, resetWorkspaceMode, setWorkspaceMode } from "./workspaceMode";
 import type { WorkspaceMode } from "./workspaceMode";
 
@@ -796,6 +799,56 @@ function App() {
     ["queued", "running", "paused"].includes(j.status),
   ).length;
   const libraryPage = ["library", "pending", "trash"].includes(page);
+  // Each page names its own actions in the header; the primary one comes last.
+  const addBookmark = <button className={`${page === "pending" ? "secondary" : "primary"} action-add`} disabled={sortingBookmarks || Boolean(busy)} onClick={() => open({ type: "bookmark" })}><Plus size={17} />添加网址</button>;
+  const pageActions: ReactNode = !managing ? null
+    : page === "library" ? addBookmark
+    : page === "pending" ? <>
+      {addBookmark}
+      <button className="primary" disabled={sortingBookmarks || Boolean(busy)}
+        onClick={() => open({ type: "classification-assistant", bookmarkIds: [...selected] })}>
+        <Sparkles size={17} />分类助手
+      </button>
+    </>
+    : page === "folders" ? <>
+      <button className="secondary sort-mode-toggle" aria-pressed={folderSortMode}
+        disabled={Boolean(busy) || (!folderSortMode && !canSortFolders)}
+        onClick={() => { setSelectedFolders([]); setFolderSortMode(value => !value); }}>
+        {folderSortMode ? <Check size={17} /> : <GripVertical size={17} />}{folderSortMode ? "完成排序" : "拖拽排序"}
+      </button>
+      <button
+        className="secondary"
+        disabled={Boolean(busy) || folders.length < 2}
+        title={folders.length < 2 ? "至少需要两个目录才能迁移书签" : undefined}
+        onClick={() => open({ type: "folder-move" })}
+      >
+        <FolderInput size={17} />迁移书签
+      </button>
+      <button
+        className="secondary"
+        disabled={
+          Boolean(busy) || folderSortMode || !folders.length
+        }
+        title={
+          !modelReady(settings?.classification)
+            ? "请先配置分类模型"
+            : undefined
+        }
+        onClick={() => open({ type: "folder-ai" })}
+      >
+        <Sparkles size={17} />
+        AI 整理
+      </button>
+      <button
+        className="primary"
+        onClick={() => open({ type: "folder" })}
+      >
+        <FolderPlus size={18} />
+        新建目录
+      </button>
+    </>
+    : page === "jobs" ? <button className="secondary" disabled={Boolean(busy)} onClick={() => void run("刷新任务", async () => setJobs(await api("/jobs")))}><RefreshCw size={16} />刷新进度</button>
+    : null;
   return (
     <div className={`app-shell clarity-shell clow-theme mode-${mode}`} data-mode={mode}>
       {!managing && <EnjoyAtmosphere />}
@@ -942,7 +995,7 @@ function App() {
             <WorkspaceModeSwitch mode={mode} busy={Boolean(busy)} onChange={switchMode} />
             {managing && <button className="icon-button settings-toggle" aria-label="设置" aria-current={page === "settings" ? "page" : undefined} onClick={() => navigate("settings")}><SettingsIcon size={19} /></button>}
             <button ref={navToggleRef} className="icon-button navigation-toggle mobile-only" aria-label="打开导航与目录" aria-expanded={drawerOpen} onClick={() => setMobileNav(true)}><Menu size={21} /></button>
-            {managing && libraryPage && page !== "trash" && <button className="primary action-add" disabled={sortingBookmarks || Boolean(busy)} onClick={() => open({ type: "bookmark" })}><Plus size={17} />添加网址</button>}
+            {managing && libraryPage && page !== "trash" && addBookmark}
           </div>
         </header>}
         <main id="main" className={libraryPage ? "library-main" : page === "transfer" ? "transfer-main" : undefined} tabIndex={-1}>
@@ -965,11 +1018,14 @@ function App() {
                     : page === "settings"
                       ? "连接你的 AI 服务，按自己的方式整理与搜索。"
                       : page === "folders"
-                        ? "新建、编辑和调整目录层级。"
+                        ? "新建、编辑和调整目录层级。自动分类最多三级，手动目录可按需扩展。"
                         : "把浏览器里的收藏带进来，也把你的资料安全带走。"}
               </p>
             </div>
-
+            <div className="page-actions">
+              <WorkspaceModeSwitch mode={mode} busy={Boolean(busy)} onChange={switchMode} />
+              {pageActions && <><span className="page-actions-divider" aria-hidden="true" />{pageActions}</>}
+            </div>
           </div>}
           {error && !dialog && (
             <ErrorBox error={error} onDismiss={() => setError("")} />
@@ -994,7 +1050,9 @@ function App() {
             )}
           </div>
           {libraryPage && (
-            <>
+            <div className={`library-layout${managing && page === "library" ? " has-rail" : ""}`}>
+              {managing && page === "library" && <FolderRail folders={folders} selected={folderId} onSelect={selectFolder} />}
+              <div className="library-content">
               {!managing ? <EnjoySearch inputRef={searchRef} query={query} onQuery={setQuery}
                 searchMode={searchMode} onSearchMode={setSearchMode} folders={folders} folderId={folderId}
                 onFolder={(id) => { selectFolder(id); setTag(""); }} onMode={switchMode}
@@ -1062,9 +1120,10 @@ function App() {
                         ))}
                     </datalist>
                   </label>
-                  {(query || scopeFolderId || tag) && (
+                  {(
                     <button
-                      className="text-button"
+                      className="text-button filter-clear"
+                      hidden={!(query || scopeFolderId || tag)}
                       onClick={() => {
                         setQuery("");
                         selectFolder("");
@@ -1076,6 +1135,7 @@ function App() {
                   )}
                   <button
                     className="text-button filter-refresh"
+                    title="刷新列表"
                     disabled={loading}
                     onClick={() => {
                       setError("");
@@ -1316,7 +1376,8 @@ function App() {
                 </div>
               </nav>}
               </section>
-            </>
+              </div>
+            </div>
           )}
           {managing && page === "jobs" && (
             <JobsPage
@@ -1345,7 +1406,6 @@ function App() {
               modelConfigured={Boolean(settings && modelReady(settings.classification))}
             />
           )}
-          {managing && page === "settings" && <VersionPanel state={versionState} />}
           {managing && page === "settings" &&
             (settings ? (
               <SettingsPage
@@ -1400,51 +1460,10 @@ function App() {
                 </button>
               </div>
             ))}
+          {/* Version is reference information; the AI services above are what this page is for. */}
+          {managing && page === "settings" && <VersionPanel state={versionState} />}
           {managing && page === "folders" && (
             <section className={`panel directory-panel${folderSortMode ? " is-sorting" : ""}`}>
-              <div className="section-heading">
-                <div>
-                  <h2>目录结构</h2>
-                  <p>自动分类最多三级，手动目录可按需扩展。</p>
-                </div>
-                <div className="button-row">
-                  <button className="secondary sort-mode-toggle" aria-pressed={folderSortMode}
-                    disabled={Boolean(busy) || (!folderSortMode && !canSortFolders)}
-                    onClick={() => { setSelectedFolders([]); setFolderSortMode(value => !value); }}>
-                    {folderSortMode ? <Check size={17} /> : <GripVertical size={17} />}{folderSortMode ? "完成排序" : "拖拽排序"}
-                  </button>
-                  <button
-                    className="secondary"
-                    disabled={Boolean(busy) || folders.length < 2}
-                    title={folders.length < 2 ? "至少需要两个目录才能迁移书签" : undefined}
-                    onClick={() => open({ type: "folder-move" })}
-                  >
-                    <FolderInput size={17} />迁移书签
-                  </button>
-                  <button
-                    className="secondary"
-                    disabled={
-                      Boolean(busy) || folderSortMode || !folders.length
-                    }
-                    title={
-                      !modelReady(settings?.classification)
-                        ? "请先配置分类模型"
-                        : undefined
-                    }
-                    onClick={() => open({ type: "folder-ai" })}
-                  >
-                    <Sparkles size={17} />
-                    AI 整理
-                  </button>
-                  <button
-                    className="primary"
-                    onClick={() => open({ type: "folder" })}
-                  >
-                    <FolderPlus size={18} />
-                    新建目录
-                  </button>
-                </div>
-              </div>
               {!modelReady(settings?.classification) && (
                 <div className="notice">
                   <AlertCircle size={17} />
@@ -1491,7 +1510,6 @@ function App() {
                             onChange={(event) => setSelectedFolders((current) => event.target.checked ? [...current, folder.id] : current.filter((id) => id !== folder.id))}
                           />
                         </label>
-                        <FolderIcon size={21} />
                         <FolderSummary folder={folder} path={folderPath(folder.id, folders)} />
                         <div className="folder-row-actions">
                           <button className="secondary" disabled={Boolean(busy) || folderSortMode}
@@ -2322,50 +2340,25 @@ function JobsPage({
       <section className="panel">
         <div className="section-heading">
           <div>
-            <h2>新建后台任务</h2>
-            <p>分类默认处理待分类书签；抓取和重建索引默认处理所有有效书签。</p>
+            <h2>开始任务</h2>
+            <p>任务在后台运行，可以离开本页；进度显示在下方任务记录中。</p>
           </div>
-          <button
-            className="text-button"
-            onClick={refresh}
-            disabled={Boolean(busy)}
-          >
-            <RefreshCw size={16} />
-            刷新进度
-          </button>
         </div>
-        <div className="job-launch">
-          <button
-            className="secondary"
-            disabled={Boolean(busy) || !modelReady(settings?.classification)}
-            onClick={() => start("classify")}
-          >
-            <Sparkles size={18} />
-            整理待分类书签
-          </button>
-          <button
-            className="secondary"
-            disabled={Boolean(busy)}
-            onClick={() => start("fetch")}
-          >
-            <Globe size={18} />
-            抓取全部网页
-          </button>
-          <button
-            className="secondary"
-            disabled={Boolean(busy) || !modelReady(settings?.embedding)}
-            onClick={() => start("reindex")}
-          >
-            <RefreshCw size={18} />
-            重建语义索引
-          </button>
+        <div className="job-launch job-tiles">
+          {([
+            { kind: "classify", icon: <Sparkles size={20} />, title: "整理待分类书签", body: "用分类模型为待整理箱里的书签选择目录和标签。", ready: modelReady(settings?.classification), need: "需要先配置分类模型" },
+            { kind: "fetch", icon: <Globe size={20} />, title: "抓取全部网页", body: "重新读取所有有效书签的标题、摘要和正文。", ready: true, need: "" },
+            { kind: "reindex", icon: <RefreshCw size={20} />, title: "重建语义索引", body: "为所有有效书签重新生成语义搜索向量。", ready: modelReady(settings?.embedding), need: "需要先配置 Embedding 模型" },
+          ] as const).map((task) => (
+            <article className="job-tile" key={task.kind}>
+              <span className="job-tile-icon" aria-hidden="true">{task.icon}</span>
+              <h3>{task.title}</h3>
+              <p>{task.body}</p>
+              <button className="secondary" disabled={Boolean(busy) || !task.ready} onClick={() => start(task.kind)}>开始</button>
+              {!task.ready && <small className="job-tile-need">{task.need}</small>}
+            </article>
+          ))}
         </div>
-        {(!modelReady(settings?.classification) ||
-          !modelReady(settings?.embedding)) && (
-          <p className="helper">
-            未配置的模型任务暂不可用。请到设置填写对应服务地址、模型和 API Key。
-          </p>
-        )}
         <details className="advanced">
           <summary>高级操作：重新分类历史书签</summary>
           <p>
@@ -2932,8 +2925,9 @@ function ModelFields({
   );
 }
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-);
+const root = createRoot(document.getElementById("root")!);
+if (new URLSearchParams(location.search).has("summon-preview")) {
+  void import("./RainArtworkPreview").then(({ default: RainArtworkPreview }) => root.render(<RainArtworkPreview />));
+} else {
+  root.render(<StrictMode><App /></StrictMode>);
+}

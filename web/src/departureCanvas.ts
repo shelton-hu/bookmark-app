@@ -5,6 +5,13 @@ const circle = typeof Image === "undefined" ? null : new Image();
 if (circle) circle.src = "/clow-scene/clow-circle.svg";
 const shards = createDepartureShards();
 const font = 'Georgia, "Songti SC", "Noto Serif SC", serif';
+const CRACK_MS = 70;
+/** Downward pull in px over a fragment's lifetime, so pieces fall instead of drifting. */
+const GRAVITY = 200;
+const smooth = (from: number, to: number, value: number) => {
+  const x = Math.min(1, Math.max(0, (value - from) / (to - from)));
+  return x * x * (3 - 2 * x);
+};
 
 export function createBackTexture(width: number, height: number, ratio: number, title: string, glyph: string, name: string) {
   const canvas = document.createElement("canvas");
@@ -85,18 +92,34 @@ export function prepareShatter(canvas: HTMLCanvasElement, texture: HTMLCanvasEle
     context.clearRect(0, 0, width + padding * 2, height + padding * 2);
     // First hand-off is pixel-identical, avoiding visible triangle seams at rest.
     if (elapsed <= 0) { context.drawImage(texture, padding, padding, width, height); return; }
+    // A brief crack: pieces part by a hair and their edges catch gold light before the burst.
+    const crack = Math.min(1, elapsed / CRACK_MS);
     for (const shard of prepared) {
       const t = Math.min(1, Math.max(0, (elapsed - shard.delay) / DEPARTURE_SCATTER_MS));
       if (t === 1) continue;
-      const ease = 1 - Math.pow(1 - t, 3), scale = 1 - .82 * ease;
+      const ease = 1 - Math.pow(1 - t, 2.4);
+      const spin = t * .55 + ease * .45;
+      const scale = 1 - .72 * Math.pow(ease, 1.4);
+      const part = crack * 1.6, dx = shard.cx - width / 2, dy = shard.cy - height / 2, reach = Math.hypot(dx, dy) || 1;
       context.save();
-      context.globalAlpha = 1 - Math.max(0, (t - .22) / .78);
-      context.translate(padding + shard.cx + shard.x * ease, padding + shard.cy + shard.y * ease);
-      context.rotate(shard.rotate * ease * Math.PI / 180);
-      context.scale(scale * Math.cos(shard.tilt * ease * Math.PI / 180), scale);
+      context.globalAlpha = 1 - smooth(.3, 1, t);
+      context.translate(padding + shard.cx + dx / reach * part + shard.x * ease,
+        padding + shard.cy + dy / reach * part + shard.y * ease + GRAVITY * t * t);
+      context.rotate(shard.rotate * 1.35 * spin * Math.PI / 180);
+      context.scale(scale * Math.cos(shard.tilt * spin * Math.PI / 180), scale);
+      context.save();
       context.clip(shard.path);
       context.drawImage(texture, shard.left * ratio, shard.top * ratio, shard.width * ratio, shard.height * ratio,
         shard.left - shard.cx, shard.top - shard.cy, shard.width, shard.height);
+      context.restore();
+      // Only some edges catch light, so the cracks read as a fracture rather than a mesh.
+      const glint = Math.abs(shard.tilt) > 34 ? crack * (1 - smooth(0, .4, t)) : 0;
+      if (glint > .01) {
+        context.globalAlpha *= glint * .7;
+        context.lineWidth = .7 / scale;
+        context.strokeStyle = "#f3d391";
+        context.stroke(shard.path);
+      }
       context.restore();
     }
   };

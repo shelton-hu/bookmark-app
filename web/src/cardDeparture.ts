@@ -1,7 +1,8 @@
 /** One animation clock drives the flight, flip, fragments and final navigation. */
-export const DEPARTURE_FLIP_MS = 340;
-export const DEPARTURE_SCATTER_MS = 430;
-export const DEPARTURE_STAGGER_MS = 65;
+export const DEPARTURE_FLIP_MS = 380;
+export const DEPARTURE_SCATTER_MS = 520;
+/** Fragments leave as a wave from the centre; the outer rim departs last. */
+export const DEPARTURE_STAGGER_MS = 150;
 export const DEPARTURE_TOTAL_MS = DEPARTURE_FLIP_MS + DEPARTURE_SCATTER_MS + DEPARTURE_STAGGER_MS;
 
 export function bookmarkTarget(url: string): string | undefined {
@@ -92,7 +93,7 @@ export function createDepartureShards() {
       y: (cy - 50) * (1.3 + noise(index + 42)) - 28 + (noise(index + 401) - .5) * 36,
       rotate: (noise(index + 87) - .5) * 100,
       tilt: (noise(index + 124) - .5) * 120,
-      delay: Math.round(noise(index + 234) * DEPARTURE_STAGGER_MS),
+      delay: Math.round(Math.min(1, Math.hypot((cx - 50) / 50, (cy - 50) / 50) / Math.SQRT2 * .8 + noise(index + 234) * .2) * DEPARTURE_STAGGER_MS),
     };
   });
 }

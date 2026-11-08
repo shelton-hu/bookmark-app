@@ -40,6 +40,7 @@ export default function CardDeparture({ bookmarkId, title, origin, front, onFini
     const texture = createBackTexture(width, height, ratio, title, card.glyph, card.name);
     const paint = texture && prepareShatter(shardCanvas, texture, width, height, ratio);
     const backContext = backCanvas.getContext("2d");
+    const faces = [flip.firstElementChild, backCanvas].filter((face): face is HTMLElement => face instanceof HTMLElement);
     const finish = () => {
       if (settled.current) return;
       settled.current = true;
@@ -54,11 +55,21 @@ export default function CardDeparture({ bookmarkId, title, origin, front, onFini
       cancelSequence.current = beginDeparture({
         reducedMotion: window.matchMedia("(prefers-reduced-motion: reduce)").matches,
         onFrame: ({ flip: progress, phase, scatterMs }) => {
+          // Travel leads, the turn follows slightly behind, and the card lifts toward the viewer mid-turn.
           const travel = 1 - Math.pow(1 - progress, 3);
-          const turn = progress * progress * (3 - 2 * progress);
+          const lag = Math.min(1, Math.max(0, (progress - .08) / .92));
+          // Ease in, swing a few degrees past the back, then settle: the card lands rather than stops.
+          const u = lag ** 1.6 - 1, overshoot = 1.15;
+          const turn = 1 + (overshoot + 1) * u ** 3 + overshoot * u ** 2;
+          const lift = Math.sin(Math.PI * Math.min(1, turn));
           element.style.transform = `translate(-50%, -50%) translate(${x * (1 - travel)}px, ${y * (1 - travel)}px) scale(${scale + (1 - scale) * travel})`;
-          flip.style.transform = `rotateY(${turn * 180}deg)`;
+          flip.style.transform = `translateZ(${lift * 70}px) rotateX(${lift * 7}deg) rotateZ(${lift * -2.5}deg) rotateY(${turn * 180}deg)`;
+          // The face turning away dims and the back brightens as it meets the light.
+          const shade = `brightness(${1 - .42 * lift})`;
+          const shadow = `0 ${8 + lift * 26}px ${18 + lift * 40}px #0d061866`;
+          for (const face of faces) { face.style.filter = shade; face.style.boxShadow = face === backCanvas ? shadow : `1px 1px #ae8a56, ${shadow}`; }
           if (phase === "shattering") {
+            if (!dialog.classList.contains("is-shattering")) dialog.classList.add("is-shattering");
             paint(scatterMs);
             flip.style.visibility = "hidden";
             shardCanvas.style.visibility = "visible";

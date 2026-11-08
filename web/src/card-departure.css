@@ -20,7 +20,11 @@
   margin: 0; padding: 0; border: 0; overflow: hidden; color: #f5e9d4; background: transparent;
   perspective: 1400px;
 }
-.clow-departure::backdrop { background: #150b2290; }
+.clow-departure::backdrop { background: #150b2290; animation: clow-departure-dim-in 220ms ease-out both; }
+.clow-departure.is-shattering::backdrop { animation: clow-departure-dim-out 520ms ease-in 80ms both; }
+@keyframes clow-departure-dim-in { from { opacity: 0; } }
+@keyframes clow-departure-dim-out { from { opacity: 1; } to { opacity: .35; } }
+@media (prefers-reduced-motion: reduce) { .clow-departure::backdrop { animation: none; } }
 .clow-departure-flight {
   position: absolute; top: 50%; left: 50%; height: min(600px, calc(100dvh - 140px), calc((100vw - 64px) * 2.24));
   aspect-ratio: 600 / 1344; transform-style: preserve-3d;

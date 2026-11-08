@@ -1,9 +1,13 @@
 import { useState } from "react";
+import { FolderOpen } from "lucide-react";
 import type { Folder, FolderDeletePreview } from "./api";
 
 export function FolderSummary({ folder, path }: { folder: Folder; path: string }) {
   return <div className="folder-row-summary">
-    <span className="folder-row-path">{path}</span>
+    <div className="folder-row-heading">
+      <FolderOpen className="folder-row-icon" size={18} strokeWidth={1.6} aria-hidden="true" />
+      <span className="folder-row-path" title={path}>{folder.name}</span>
+    </div>
     <span className="folder-row-counts">
       <strong>{folder.bookmark_count === undefined ? "数量待刷新" : `${folder.bookmark_count} 条书签`}</strong>
       <span>含子目录{folder.direct_bookmark_count !== undefined && ` · 本目录 ${folder.direct_bookmark_count} 条`}</span>

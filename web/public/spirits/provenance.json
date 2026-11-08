@@ -1,0 +1,1249 @@
+{
+  "rain-restored-v3.png": {
+    "method": "Built-in ImageGen: direct original-card extraction and conservative completion",
+    "date": "2026-11-07",
+    "reference": "../clow-deck/rain.webp",
+    "sha256": "43cd458bba35e16924ddc7858b7adc6d0e5fad760fe5e1a1cf3904b50b90dea3",
+    "size": {
+      "w": 838,
+      "h": 1877
+    },
+    "crop": {
+      "x": 97,
+      "y": 31,
+      "w": 638,
+      "h": 1794
+    },
+    "placement": {
+      "x": 0.211,
+      "y": 0.123,
+      "w": 0.5696,
+      "h": 0.715
+    },
+    "prompt": "Use case: background-extraction, precise preservation. EDIT THIS ORIGINAL CARD IMAGE DIRECTLY. The user wants the summoned person to look EXACTLY like the person printed in this card, merely complete rather than damaged by a crude colour-threshold cutout. Make a faithful transparent cutout of ONLY the existing illustrated character. Do not redraw or reinterpret the character. Keep the original asymmetric silhouette, face, closed eyelashes, eyebrows, tiny mouth, forehead blue water drop, original long hair shape, ear shapes, split high hood points, hand and finger positions, sleeves, diamond robe pattern, every hanging droplet, curled shoes, original proportions, original outlines, original paint colours, original watercolour texture and shading. Preserve their exact positions and scale on the original 600x1344 canvas, where possible. Remove only the purple card backdrop, gold borders and ornamentation, lettering, sun and scroll. Real gaps around the hood, ears, collar ornaments and inside the curled shoes must become transparent. Keep ALL dark brown outlines and ALL interior features fully intact; these are part of the person, never background. Only if removing an overlapping card ornament leaves a small broken character contour, minimally continue the adjacent original line and fill colour. Do not symmetrize or beautify the original drawing. No new face, hair, pose, clothes, anatomy, palette, lighting, extra detail, paper rectangle, ground shadow, glow, 3D or CGI. Output a genuine transparent PNG of the whole original character, complete and uncropped."
+  },
+  "windy-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/windy.webp",
+    "reference_sha256": "9471ba0a65fbb841de5f69c749be246d56219d0233a35c000531bf20ea0f0446",
+    "sha256": "ffe1284ac3f61908f23ecee308255d6d3b6739dd567ad9ec63f0d7c4558a73c9",
+    "size": {
+      "w": 869,
+      "h": 1810
+    },
+    "crop": {
+      "x": 0,
+      "y": 39,
+      "w": 749,
+      "h": 1667
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1171805264,
+      "w": 0.68,
+      "h": 0.6756389472
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nThis edit is the WINDY card; use this supplied card only.\nFinal ornament cleanup edit:\nUse case: precise-object-edit. Edit this transparent original-art cutout conservatively. Remove ONLY the small generic gold crescent-moon card-frame emblem at the BOTTOM of this sprite. It is a card decoration accidentally retained during background extraction, not part of the windy subject.  Keep every other pixel and all original facial features, pose, shapes, proportions, brown outlines, colours, texture, fingers, hair, wings, chains and clothing unchanged. Where the emblem overlapped a tiny part of the subject, continue only that local subject contour using the adjacent original line and fill, without redesigning or extending the whole body. Delete detached gold ornament bits and edge debris. Preserve a genuinely transparent background, natural holes and the entire unclipped subject. No substitute emblem, no new scene, no new character, no changed expression or costume, no lighting, no 3D."
+  },
+  "fly-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/fly.webp",
+    "reference_sha256": "331dc6dc0bebc68ba2ea7200eaf1c27326a229b25d2ccfe36581ae76bd84d050",
+    "sha256": "c109f662e10736add4d576dac54191faa30c7d094b14cb9f61b269a42fd8788e",
+    "size": {
+      "w": 881,
+      "h": 1785
+    },
+    "crop": {
+      "x": 29,
+      "y": 0,
+      "w": 832,
+      "h": 1763
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1333675309,
+      "w": 0.68,
+      "h": 0.6432649382
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nThis edit is the FLY card; use this supplied card only.\nFinal ornament cleanup edit:\nUse case: precise-object-edit. Edit this transparent original-art cutout conservatively. Remove ONLY the small generic gold crescent-moon card-frame emblem at the BOTTOM of this sprite. It is a card decoration accidentally retained during background extraction, not part of the fly subject.  Keep every other pixel and all original facial features, pose, shapes, proportions, brown outlines, colours, texture, fingers, hair, wings, chains and clothing unchanged. Where the emblem overlapped a tiny part of the subject, continue only that local subject contour using the adjacent original line and fill, without redesigning or extending the whole body. Delete detached gold ornament bits and edge debris. Preserve a genuinely transparent background, natural holes and the entire unclipped subject. No substitute emblem, no new scene, no new character, no changed expression or costume, no lighting, no 3D."
+  },
+  "shadow-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/shadow.webp",
+    "reference_sha256": "04cc58a1578558992bbbc82340a4be066967cc930e22cb3944e1c88e6a140440",
+    "sha256": "06f63343820ff5ef6869ca1e3037d2507570709d4683e09df929d3f10a2eaeae",
+    "size": {
+      "w": 855,
+      "h": 1839
+    },
+    "crop": {
+      "x": 27,
+      "y": 198,
+      "w": 741,
+      "h": 1581
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1311495084,
+      "w": 0.68,
+      "h": 0.6477009832
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nThis edit is the SHADOW card; use this supplied card only.\nFinal ornament cleanup edit:\nUse case: precise-object-edit. Edit this transparent original-art cutout conservatively. Remove ONLY the small generic gold crescent-moon card-frame emblem at the BOTTOM of this sprite. It is a card decoration accidentally retained during background extraction, not part of the shadow subject. Also remove the dangling gold wavy ray sticking out of the top of its hood; that is another card-frame ornament. Keep every other pixel and all original facial features, pose, shapes, proportions, brown outlines, colours, texture, fingers, hair, wings, chains and clothing unchanged. Where the emblem overlapped a tiny part of the subject, continue only that local subject contour using the adjacent original line and fill, without redesigning or extending the whole body. Delete detached gold ornament bits and edge debris. Preserve a genuinely transparent background, natural holes and the entire unclipped subject. No substitute emblem, no new scene, no new character, no changed expression or costume, no lighting, no 3D."
+  },
+  "watery-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/watery.webp",
+    "reference_sha256": "b395755588944e2eed9e7d04b50a957856992772c0923fdcf03e82c4608d8894",
+    "sha256": "634db1cf35b5e882a9d925c029ca81f93856f9eab65a2f171c613302f0eaec9c",
+    "size": {
+      "w": 858,
+      "h": 1832
+    },
+    "crop": {
+      "x": 83,
+      "y": 9,
+      "w": 739,
+      "h": 1759
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.0937130292,
+      "w": 0.68,
+      "h": 0.7225739416
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nThis edit is the WATERY card; use this supplied card only.\nFinal ornament cleanup edit:\nUse case: precise-object-edit. Edit this transparent original-art cutout conservatively. Remove ONLY the small generic gold crescent-moon card-frame emblem at the BOTTOM of this sprite. It is a card decoration accidentally retained during background extraction, not part of the watery subject.  Keep every other pixel and all original facial features, pose, shapes, proportions, brown outlines, colours, texture, fingers, hair, wings, chains and clothing unchanged. Where the emblem overlapped a tiny part of the subject, continue only that local subject contour using the adjacent original line and fill, without redesigning or extending the whole body. Delete detached gold ornament bits and edge debris. Preserve a genuinely transparent background, natural holes and the entire unclipped subject. No substitute emblem, no new scene, no new character, no changed expression or costume, no lighting, no 3D."
+  },
+  "wood-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/wood.webp",
+    "reference_sha256": "223251f1c7265e8fa868bd6973530e7d004842f26c54cdb7ef3f2fe73c7c0efb",
+    "sha256": "dc6c83ab6c15c79daee2a64554abee66e9cf8b93c7f82c99cc0d8af09b7cf47c",
+    "size": {
+      "w": 858,
+      "h": 1832
+    },
+    "crop": {
+      "x": 41,
+      "y": 24,
+      "w": 718,
+      "h": 1776
+    },
+    "placement": {
+      "x": 0.1694612613,
+      "y": 0.09,
+      "w": 0.6610774775,
+      "h": 0.73
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nThis edit is the WOOD card; use this supplied card only.\nFinal ornament cleanup edit:\nUse case: precise-object-edit. Edit this transparent original-art cutout conservatively. Remove ONLY the small generic gold crescent-moon card-frame emblem at the BOTTOM of this sprite. It is a card decoration accidentally retained during background extraction, not part of the wood subject.  Keep every other pixel and all original facial features, pose, shapes, proportions, brown outlines, colours, texture, fingers, hair, wings, chains and clothing unchanged. Where the emblem overlapped a tiny part of the subject, continue only that local subject contour using the adjacent original line and fill, without redesigning or extending the whole body. Delete detached gold ornament bits and edge debris. Preserve a genuinely transparent background, natural holes and the entire unclipped subject. No substitute emblem, no new scene, no new character, no changed expression or costume, no lighting, no 3D."
+  },
+  "jump-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/jump.webp",
+    "reference_sha256": "fd32f44cf6b16b765cac22ee52aa48bbbf6a2e991e39ed3837475661c0849f2f",
+    "sha256": "5490c61cc8449cd26bde9c8a81137e88a9f75a286ec46b8c7f5dcb040af61587",
+    "size": {
+      "w": 935,
+      "h": 1681
+    },
+    "crop": {
+      "x": 0,
+      "y": 8,
+      "w": 885,
+      "h": 1673
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1680649718,
+      "w": 0.68,
+      "h": 0.5738700565
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nThe supplied edit target is the JUMP card. This is a harmless stylized fantasy rabbit/bird creature. Keep its red eye, long ears, small wings, thin legs and winding tail exactly as in the reference."
+  },
+  "illusion-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/illusion.webp",
+    "reference_sha256": "f5e966e48194b114e18783ab62718356eed28cf6a4a18b317e5fbc2c891a2bb6",
+    "sha256": "69a2e4706892fe514a478d37d437761bae76d0e1e19c1cf04ccc39e53e36d6c8",
+    "size": {
+      "w": 887,
+      "h": 1774
+    },
+    "crop": {
+      "x": 19,
+      "y": 17,
+      "w": 852,
+      "h": 1757
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1419865023,
+      "w": 0.68,
+      "h": 0.6260269953
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nThe supplied edit target is the ILLUSION card. Keep the full original abstract mirrored floral/arrow pattern and red centre, with transparent spaces between its strokes. It has no person; do not invent one.\nFinal ornament cleanup edit:\nUse case: precise-object-edit. Edit this transparent original-art cutout conservatively. Remove ONLY the small generic gold crescent-moon card-frame emblem at the BOTTOM of this sprite. It is a card decoration accidentally retained during background extraction, not part of the illusion subject.  Keep every other pixel and all original facial features, pose, shapes, proportions, brown outlines, colours, texture, fingers, hair, wings, chains and clothing unchanged. Where the emblem overlapped a tiny part of the subject, continue only that local subject contour using the adjacent original line and fill, without redesigning or extending the whole body. Delete detached gold ornament bits and edge debris. Preserve a genuinely transparent background, natural holes and the entire unclipped subject. No substitute emblem, no new scene, no new character, no changed expression or costume, no lighting, no 3D."
+  },
+  "silent-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/silent.webp",
+    "reference_sha256": "76105dfdcf36df1844ecc6781f02efecf8664a3f56a791e273410266011e1ddc",
+    "sha256": "ad89d67598d222830e201247c929230645456a0468b5778205deaf928330c236",
+    "size": {
+      "w": 870,
+      "h": 1808
+    },
+    "crop": {
+      "x": 90,
+      "y": 33,
+      "w": 663,
+      "h": 1735
+    },
+    "placement": {
+      "x": 0.187568415,
+      "y": 0.09,
+      "w": 0.62486317,
+      "h": 0.73
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nThe supplied edit target is the SILENT card. Keep the entire central subject exactly as printed.\nFinal ornament cleanup edit:\nUse case: precise-object-edit. Edit this transparent original-art cutout conservatively. Remove ONLY the small generic gold crescent-moon card-frame emblem at the BOTTOM of this sprite. It is a card decoration accidentally retained during background extraction, not part of the silent subject.  Keep every other pixel and all original facial features, pose, shapes, proportions, brown outlines, colours, texture, fingers, hair, wings, chains and clothing unchanged. Where the emblem overlapped a tiny part of the subject, continue only that local subject contour using the adjacent original line and fill, without redesigning or extending the whole body. Delete detached gold ornament bits and edge debris. Preserve a genuinely transparent background, natural holes and the entire unclipped subject. No substitute emblem, no new scene, no new character, no changed expression or costume, no lighting, no 3D."
+  },
+  "thunder-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/thunder.webp",
+    "reference_sha256": "af2f6e93ae87d62ec11037c39457acdb55a75f7b6fbf40ae6dd7d222bbebcb38",
+    "sha256": "8217cb03758692afed2ccade593b40c4aadc7d704d8913cc5437f41c3d493167",
+    "size": {
+      "w": 866,
+      "h": 1816
+    },
+    "crop": {
+      "x": 25,
+      "y": 14,
+      "w": 815,
+      "h": 1783
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.12293383,
+      "w": 0.68,
+      "h": 0.6641323401
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nThe supplied edit target is the THUNDER card. Keep the entire central subject exactly as printed.\nFinal ornament cleanup edit:\nUse case: precise-object-edit. Edit this transparent original-art cutout conservatively. Remove ONLY the small generic gold crescent-moon card-frame emblem at the BOTTOM of this sprite. It is a card decoration accidentally retained during background extraction, not part of the thunder subject.  Keep every other pixel and all original facial features, pose, shapes, proportions, brown outlines, colours, texture, fingers, hair, wings, chains and clothing unchanged. Where the emblem overlapped a tiny part of the subject, continue only that local subject contour using the adjacent original line and fill, without redesigning or extending the whole body. Delete detached gold ornament bits and edge debris. Preserve a genuinely transparent background, natural holes and the entire unclipped subject. No substitute emblem, no new scene, no new character, no changed expression or costume, no lighting, no 3D."
+  },
+  "sword-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/sword.webp",
+    "reference_sha256": "62fbd3681953c7c953dec11dc552c7902bcf3c81501afbd5e9885e1497c7d859",
+    "sha256": "d20255bf806ba4fc3a093db126cf2d15b424b4f84e0975d9e60b20581fe9876b",
+    "size": {
+      "w": 864,
+      "h": 1821
+    },
+    "crop": {
+      "x": 0,
+      "y": 9,
+      "w": 858,
+      "h": 1812
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1344455544,
+      "w": 0.68,
+      "h": 0.6411088911
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nThe supplied edit target is the SWORD card. Keep the entire central subject exactly as printed.\nFinal ornament cleanup edit:\nUse case: precise-object-edit. Edit this transparent original-art cutout conservatively. Remove ONLY the small generic gold crescent-moon card-frame emblem at the BOTTOM of this sprite. It is a card decoration accidentally retained during background extraction, not part of the sword subject.  Keep every other pixel and all original facial features, pose, shapes, proportions, brown outlines, colours, texture, fingers, hair, wings, chains and clothing unchanged. Where the emblem overlapped a tiny part of the subject, continue only that local subject contour using the adjacent original line and fill, without redesigning or extending the whole body. Delete detached gold ornament bits and edge debris. Preserve a genuinely transparent background, natural holes and the entire unclipped subject. No substitute emblem, no new scene, no new character, no changed expression or costume, no lighting, no 3D."
+  },
+  "flower-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/flower.webp",
+    "reference_sha256": "c07e3edfc5737157d837424b47f52970e5b040b31a123fc27423d4f351871a03",
+    "sha256": "d19940cb20eef67e00dcf251f91eef2e72f22dfc5f29490b59b905de7e45d492",
+    "size": {
+      "w": 906,
+      "h": 1735
+    },
+    "crop": {
+      "x": 0,
+      "y": 15,
+      "w": 872,
+      "h": 1720
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1556061599,
+      "w": 0.68,
+      "h": 0.5987876802
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nThe supplied edit target is the FLOWER card. Keep the entire central subject exactly as printed.\nFinal ornament cleanup edit:\nUse case: precise-object-edit. Edit this transparent original-art cutout conservatively. Remove ONLY the small generic gold crescent-moon card-frame emblem at the BOTTOM of this sprite. It is a card decoration accidentally retained during background extraction, not part of the flower subject.  Keep every other pixel and all original facial features, pose, shapes, proportions, brown outlines, colours, texture, fingers, hair, wings, chains and clothing unchanged. Where the emblem overlapped a tiny part of the subject, continue only that local subject contour using the adjacent original line and fill, without redesigning or extending the whole body. Delete detached gold ornament bits and edge debris. Preserve a genuinely transparent background, natural holes and the entire unclipped subject. No substitute emblem, no new scene, no new character, no changed expression or costume, no lighting, no 3D."
+  },
+  "shield-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/shield.webp",
+    "reference_sha256": "2896ea1fbd7f593e677830d1a505f0122ccf426516eb05abf95121cbe696c9cf",
+    "sha256": "51b58f34dacccaee1ac771a37f76ee06a499d6376089718cc802a1a0c15962a5",
+    "size": {
+      "w": 889,
+      "h": 1769
+    },
+    "crop": {
+      "x": 58,
+      "y": 17,
+      "w": 736,
+      "h": 1670
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1105949146,
+      "w": 0.68,
+      "h": 0.6888101708
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nThe supplied edit target is the SHIELD card. Keep the entire central subject exactly as printed.\nFinal ornament cleanup edit:\nUse case: precise-object-edit. Edit this transparent original-art cutout conservatively. Remove ONLY the small generic gold crescent-moon card-frame emblem at the BOTTOM of this sprite. It is a card decoration accidentally retained during background extraction, not part of the shield subject.  Keep every other pixel and all original facial features, pose, shapes, proportions, brown outlines, colours, texture, fingers, hair, wings, chains and clothing unchanged. Where the emblem overlapped a tiny part of the subject, continue only that local subject contour using the adjacent original line and fill, without redesigning or extending the whole body. Delete detached gold ornament bits and edge debris. Preserve a genuinely transparent background, natural holes and the entire unclipped subject. No substitute emblem, no new scene, no new character, no changed expression or costume, no lighting, no 3D."
+  },
+  "time-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/time.webp",
+    "reference_sha256": "559bfdd9de761a670829291dfeac535f178b36637f3e6d6ad71c232fb4782b53",
+    "sha256": "319b48eb6351512ce08fc7c964d5f12d02427963e7fa448bd95c332d4600891b",
+    "size": {
+      "w": 878,
+      "h": 1792
+    },
+    "crop": {
+      "x": 0,
+      "y": 42,
+      "w": 764,
+      "h": 1716
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1140781601,
+      "w": 0.68,
+      "h": 0.6818436799
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nThe supplied edit target is the TIME card. Keep the entire central subject exactly as printed.\nFinal ornament cleanup edit:\nUse case: precise-object-edit. Edit this transparent original-art cutout conservatively. Remove ONLY the small generic gold crescent-moon card-frame emblem at the BOTTOM of this sprite. It is a card decoration accidentally retained during background extraction, not part of the time subject.  Keep every other pixel and all original facial features, pose, shapes, proportions, brown outlines, colours, texture, fingers, hair, wings, chains and clothing unchanged. Where the emblem overlapped a tiny part of the subject, continue only that local subject contour using the adjacent original line and fill, without redesigning or extending the whole body. Delete detached gold ornament bits and edge debris. Preserve a genuinely transparent background, natural holes and the entire unclipped subject. No substitute emblem, no new scene, no new character, no changed expression or costume, no lighting, no 3D."
+  },
+  "power-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/power.webp",
+    "reference_sha256": "03e1c7805447b3c9bd567c9e40b68b1570385122d1e015a95ba210927a642f14",
+    "sha256": "13d1f673ea0a2d249f8bfb7528f2b60c43b48f6981c1baf33fd624ee918c6bea",
+    "size": {
+      "w": 885,
+      "h": 1777
+    },
+    "crop": {
+      "x": 57,
+      "y": 15,
+      "w": 810,
+      "h": 1762
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.124819224,
+      "w": 0.68,
+      "h": 0.660361552
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nThe supplied edit target is the POWER card. Keep the entire central subject exactly as printed."
+  },
+  "mist-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/mist.webp",
+    "reference_sha256": "a3f96c910fb4864d9a75e77f3328dd7b671809671ad18b73a59f25c5255be336",
+    "sha256": "80ee2617728df7ea8ead3500572086d2c1895d7c23ec22530dd16c29c3b8aabe",
+    "size": {
+      "w": 865,
+      "h": 1819
+    },
+    "crop": {
+      "x": 0,
+      "y": 27,
+      "w": 785,
+      "h": 1737
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1191378526,
+      "w": 0.68,
+      "h": 0.6717242948
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nThe supplied edit target is the MIST card. Keep the entire central subject exactly as printed.\nFinal ornament cleanup edit:\nUse case: precise-object-edit. Edit this transparent original-art cutout conservatively. Remove ONLY the small generic gold crescent-moon card-frame emblem at the BOTTOM of this sprite. It is a card decoration accidentally retained during background extraction, not part of the mist subject.  Keep every other pixel and all original facial features, pose, shapes, proportions, brown outlines, colours, texture, fingers, hair, wings, chains and clothing unchanged. Where the emblem overlapped a tiny part of the subject, continue only that local subject contour using the adjacent original line and fill, without redesigning or extending the whole body. Delete detached gold ornament bits and edge debris. Preserve a genuinely transparent background, natural holes and the entire unclipped subject. No substitute emblem, no new scene, no new character, no changed expression or costume, no lighting, no 3D."
+  },
+  "storm-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/storm.webp",
+    "reference_sha256": "e2d8aecf31fc8e57383b1e09d30e2ca26e72a2cb1870fafb040c647418d14a67",
+    "sha256": "4040c95fd1954d5fdba150963a41e4c7d9211831e2bc0bd4fa4c408d98108bf0",
+    "size": {
+      "w": 864,
+      "h": 1821
+    },
+    "crop": {
+      "x": 15,
+      "y": 25,
+      "w": 797,
+      "h": 1770
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1179100197,
+      "w": 0.68,
+      "h": 0.6741799606
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nThe supplied edit target is the STORM card. Keep the entire central subject exactly as printed.\nFinal ornament cleanup edit:\nUse case: precise-object-edit. Edit this transparent original-art cutout conservatively. Remove ONLY the small generic gold crescent-moon card-frame emblem at the BOTTOM of this sprite. It is a card decoration accidentally retained during background extraction, not part of the storm subject.  Keep every other pixel and all original facial features, pose, shapes, proportions, brown outlines, colours, texture, fingers, hair, wings, chains and clothing unchanged. Where the emblem overlapped a tiny part of the subject, continue only that local subject contour using the adjacent original line and fill, without redesigning or extending the whole body. Delete detached gold ornament bits and edge debris. Preserve a genuinely transparent background, natural holes and the entire unclipped subject. No substitute emblem, no new scene, no new character, no changed expression or costume, no lighting, no 3D."
+  },
+  "float-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/float.webp",
+    "reference_sha256": "4773cb3788bd2ebc574099e5efe070c1063d86d7b35d9ee06916af80658d3387",
+    "sha256": "166e46f17f41e33a8db339107a7b0232a0fe793fa227efe304d5554834d36d6f",
+    "size": {
+      "w": 881,
+      "h": 1785
+    },
+    "crop": {
+      "x": 0,
+      "y": 31,
+      "w": 878,
+      "h": 1730
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1559233648,
+      "w": 0.68,
+      "h": 0.5981532704
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nThe supplied edit target is the FLOAT card. Keep the original balloon, ropes, winged basket and gems; omit the surrounding background clouds."
+  },
+  "erase-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/erase.webp",
+    "reference_sha256": "57cd8c3d018fe0d0c8be7b41378efe30df226797a21bcc8117d1388ac8b7853a",
+    "sha256": "a7a58c41a11bf09dd76db314672d34b84eb5b7648c6d136baaa41da785b55e48",
+    "size": {
+      "w": 887,
+      "h": 1774
+    },
+    "crop": {
+      "x": 49,
+      "y": 15,
+      "w": 816,
+      "h": 1733
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.132641369,
+      "w": 0.68,
+      "h": 0.6447172619
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nThe supplied edit target is the ERASE card. Keep the entire central subject exactly as printed.\nFinal ornament cleanup edit:\nUse case: precise-object-edit. Edit this transparent original-art cutout conservatively. Remove ONLY the small generic gold crescent-moon card-frame emblem at the BOTTOM of this sprite. It is a card decoration accidentally retained during background extraction, not part of the erase subject.  Keep every other pixel and all original facial features, pose, shapes, proportions, brown outlines, colours, texture, fingers, hair, wings, chains and clothing unchanged. Where the emblem overlapped a tiny part of the subject, continue only that local subject contour using the adjacent original line and fill, without redesigning or extending the whole body. Delete detached gold ornament bits and edge debris. Preserve a genuinely transparent background, natural holes and the entire unclipped subject. No substitute emblem, no new scene, no new character, no changed expression or costume, no lighting, no 3D."
+  },
+  "glow-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/glow.webp",
+    "reference_sha256": "9724ea3964100eccb8abd8b169d219cb6853f50fa1fdc524b40cd3f65bbf0a48",
+    "sha256": "93fd2423693247031a39fbe6e9c64fa750e6c1015be5ae53da001e3533f58e25",
+    "size": {
+      "w": 854,
+      "h": 1842
+    },
+    "crop": {
+      "x": 73,
+      "y": 33,
+      "w": 751,
+      "h": 1789
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.0934225794,
+      "w": 0.68,
+      "h": 0.7231548412
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the GLOW card. Preserve the subject exactly."
+  },
+  "move-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/move.webp",
+    "reference_sha256": "b9e89efb8e6148117593009649f93862617139d8c8c664f3d4598d44eb7c20aa",
+    "sha256": "4503ae729cc8abdac298faf8491b69af8344a5fc707401f0cbfa31c4e9078a98",
+    "size": {
+      "w": 877,
+      "h": 1793
+    },
+    "crop": {
+      "x": 0,
+      "y": 20,
+      "w": 851,
+      "h": 1749
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1430455766,
+      "w": 0.68,
+      "h": 0.6239088467
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the MOVE card. Preserve the subject exactly."
+  },
+  "fight-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/fight.webp",
+    "reference_sha256": "b445524fd2695817146d9a8faa17a2a3c03fb47a39fa7f6e6d7418e14bcd97cf",
+    "sha256": "a04f708f0438e37b1dfbd92e86dec5fcec1846750096b6d19816bc07c39eea56",
+    "size": {
+      "w": 862,
+      "h": 1825
+    },
+    "crop": {
+      "x": 0,
+      "y": 12,
+      "w": 840,
+      "h": 1800
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.129744898,
+      "w": 0.68,
+      "h": 0.6505102041
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the FIGHT card. Preserve the subject exactly."
+  },
+  "loop-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/loop.webp",
+    "reference_sha256": "aebfea5441b9e94654aa24c83ee65847a575dc3722395c715bde9c7850dedee6",
+    "sha256": "cc713ef9930eb84ab51577fd26dbfd86c81e639513a51cb96bf4d7437fc1b9db",
+    "size": {
+      "w": 883,
+      "h": 1782
+    },
+    "crop": {
+      "x": 47,
+      "y": 93,
+      "w": 744,
+      "h": 1663
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1157262865,
+      "w": 0.68,
+      "h": 0.678547427
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the LOOP card. Preserve the subject exactly."
+  },
+  "sleep-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/sleep.webp",
+    "reference_sha256": "4ebba238c05c6897ead584992849dd9023cb8ad639e9525bd02d0c59aa07b8c8",
+    "sha256": "c931436d7aa5dccd1eb040d24df40204aa62d8968c5efbece0d8eaa19bbbe48c",
+    "size": {
+      "w": 849,
+      "h": 1853
+    },
+    "crop": {
+      "x": 0,
+      "y": 0,
+      "w": 846,
+      "h": 1853
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1225426376,
+      "w": 0.68,
+      "h": 0.6649147248
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the SLEEP card. Preserve its handheld wand and the small moon attached to that wand, but remove only the larger generic gold crescent at the bottom of the card frame."
+  },
+  "song-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/song.webp",
+    "reference_sha256": "f067e69433eee58aaa678818e5a5206363383c037ca614a2173d38b9246c496f",
+    "sha256": "f71e0d82fa1f1fc016c6c50e1bf4d7c1294954de8d3d810775616ce06a1ece7b",
+    "size": {
+      "w": 875,
+      "h": 1798
+    },
+    "crop": {
+      "x": 23,
+      "y": 17,
+      "w": 838,
+      "h": 1781
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.132410075,
+      "w": 0.68,
+      "h": 0.64517985
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the SONG card. Keep the original musical staff and notes above the singer and her original partial arms; complete only tiny clipped contour ends."
+  },
+  "little-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/little.webp",
+    "reference_sha256": "cd5af2445d25bb5c4ea824c7656c1cd014b30c51f9ab0864039c6d79a374b9e4",
+    "sha256": "8f081e239ac2fedac0f22873d8602494bea47048ff3e969c8d23ed3b1dd03c62",
+    "size": {
+      "w": 854,
+      "h": 1842
+    },
+    "crop": {
+      "x": 41,
+      "y": 34,
+      "w": 761,
+      "h": 1808
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.0943842688,
+      "w": 0.68,
+      "h": 0.7212314624
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the LITTLE card. Preserve the subject exactly."
+  },
+  "mirror-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/mirror.webp",
+    "reference_sha256": "0dfc1275561da28a9d5e7224ca9cbc3d243f3a843cdba55b9b9d86d049f61fb1",
+    "sha256": "b9c7846a9a2a950348ae25f6d485d2a2630e38e116b41688671da32f5ccbc3b1",
+    "size": {
+      "w": 849,
+      "h": 1851
+    },
+    "crop": {
+      "x": 0,
+      "y": 12,
+      "w": 829,
+      "h": 1825
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1208517146,
+      "w": 0.68,
+      "h": 0.6682965707
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the MIRROR card. Preserve the subject exactly."
+  },
+  "maze-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/maze.webp",
+    "reference_sha256": "d66853dd47cd37212daa10b11344c2cc8573b6faa0a737d6436b0e9e539abd84",
+    "sha256": "e654fe00d93aa43efa921ee9f62ecf7ccacc2fdcea792673c0354624cdbe79a5",
+    "size": {
+      "w": 869,
+      "h": 1810
+    },
+    "crop": {
+      "x": 47,
+      "y": 74,
+      "w": 776,
+      "h": 1728
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1170029455,
+      "w": 0.68,
+      "h": 0.675994109
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the MAZE card. It is an abstract perspective labyrinth. Preserve the entire printed maze with its dark vertical wall faces; only purple empty gaps become transparent. No invented character."
+  },
+  "return-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/return.webp",
+    "reference_sha256": "223928e6a1c33f0bff3ce598221dd54b846c4f4469018938e81d7c8fc0db9c9d",
+    "sha256": "e7585c2e3be9eb8445dd7d0cdccfdd71127970cfd69c6c84e40ab907436ffc92",
+    "size": {
+      "w": 862,
+      "h": 1825
+    },
+    "crop": {
+      "x": 40,
+      "y": 13,
+      "w": 792,
+      "h": 1798
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1104157648,
+      "w": 0.68,
+      "h": 0.6891684704
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the RETURN card. Preserve the subject exactly."
+  },
+  "shot-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/shot.webp",
+    "reference_sha256": "28526627470c3e59526822107a8d8ca3e01601789f2b356f888c1e3fb3ae8403",
+    "sha256": "addac4f282e6aaacfcac4e57d929dde8623f09504e57cb57fb0c656dd7c992f2",
+    "size": {
+      "w": 856,
+      "h": 1838
+    },
+    "crop": {
+      "x": 0,
+      "y": 39,
+      "w": 844,
+      "h": 1767
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1372211408,
+      "w": 0.68,
+      "h": 0.6355577183
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the SHOT card. Preserve the subject exactly."
+  },
+  "sweet-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/sweet.webp",
+    "reference_sha256": "538f39bd1428a914c051218d8cb9ea524654b5a25b9e9afc146c30d786e08c77",
+    "sha256": "185d7b90b4fb9b6bff07d23a907f967c62078b161c7542e05dd0b92afec5ee05",
+    "size": {
+      "w": 868,
+      "h": 1812
+    },
+    "crop": {
+      "x": 39,
+      "y": 21,
+      "w": 803,
+      "h": 1791
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1164592599,
+      "w": 0.68,
+      "h": 0.6770814802
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the SWEET card. Preserve the subject exactly."
+  },
+  "dash-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/dash.webp",
+    "reference_sha256": "738b8f2e774cab86fd968e9ddbf2eb1fad0fc5e3c72365959331c21a3a25d060",
+    "sha256": "0a73c0c6387ba9ec860b5dc3b696d55becb2ea4a41ac5b9a0ac78ddaaed73440",
+    "size": {
+      "w": 838,
+      "h": 1877
+    },
+    "crop": {
+      "x": 0,
+      "y": 26,
+      "w": 832,
+      "h": 1838
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1196849245,
+      "w": 0.68,
+      "h": 0.6706301511
+    },
+    "prompt": "Use case: background-extraction. The supplied original illustration shows a harmless fully fur-covered fantasy animal leaping headfirst: a long-tailed pale fox-like creature with dark paws, dark ear tips, and a blue forehead gem. Make a faithful transparent cutout of that SAME animal only. Keep its exact drawn pose, face, ears, paws, curved tail, original cream/brown colours, brown outlines and watercolor texture. Remove the surrounding card frame, purple backdrop, lettering, top sun and dangling gold ray, and the separate gold crescent moon decoration at the bottom. Complete only tiny animal contours hidden by the frame, without redesign or added features. Preserve all fur and dark markings. Entire animal, unclipped; genuine transparent background. No added objects or embellishments."
+  },
+  "big-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/big.webp",
+    "reference_sha256": "99db55ef8c17be77db82e75d810e9f2a6ba94cec7498920cbb6bd6e819f2be74",
+    "sha256": "8dbf26100c555004abba65ca283307fb3d1d1d97e317d9045caff579648477f5",
+    "size": {
+      "w": 852,
+      "h": 1846
+    },
+    "crop": {
+      "x": 60,
+      "y": 41,
+      "w": 754,
+      "h": 1789
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.0948612164,
+      "w": 0.68,
+      "h": 0.7202775673
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the BIG card. Preserve the complete central subject exactly."
+  },
+  "create-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/create.webp",
+    "reference_sha256": "05b4c78550f31985c8b7a29907adaee4dfbaa67f1402a079caaacb07ac6c2a51",
+    "sha256": "5851144cac48bd24daaf22ee1728751aa6edd03275d858794903068abe910748",
+    "size": {
+      "w": 928,
+      "h": 1695
+    },
+    "crop": {
+      "x": 0,
+      "y": 64,
+      "w": 884,
+      "h": 1582
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1833653846,
+      "w": 0.68,
+      "h": 0.5432692308
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the CREATE card. Keep the original closed book with its blue star and the same angled perspective; remove all card decorations."
+  },
+  "change-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/change.webp",
+    "reference_sha256": "07a936e88efcec616a36a3184e763bfe0f658a3ae638c54e153b1c2b9bf6ba39",
+    "sha256": "8a5768d4dee385b14426d040bbc01aa4f5a6e9f7c69c16754dce344c52aa9cf6",
+    "size": {
+      "w": 923,
+      "h": 1703
+    },
+    "crop": {
+      "x": 0,
+      "y": 38,
+      "w": 904,
+      "h": 1633
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1808118679,
+      "w": 0.68,
+      "h": 0.5483762642
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the CHANGE card. Preserve the complete central subject exactly."
+  },
+  "freeze-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/freeze.webp",
+    "reference_sha256": "d36af77891de7c0a6602cb8503d835f0526ead82f0b89b02c82573dece5ddbc6",
+    "sha256": "8696cafda23ed8df5ce9a2aeffd6a99e202316dc639f38c01a3e4f4d02faf00b",
+    "size": {
+      "w": 845,
+      "h": 1860
+    },
+    "crop": {
+      "x": 58,
+      "y": 15,
+      "w": 769,
+      "h": 1829
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.0939908044,
+      "w": 0.68,
+      "h": 0.7220183912
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the FREEZE card. Preserve the complete central subject exactly."
+  },
+  "firey-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/firey.webp",
+    "reference_sha256": "f05f0be036a9404b49fb6d4af31b02b58750d5c3859bbd01c83a4883fc110a83",
+    "sha256": "e211ae5fedc8b596521c52929a7d54b070c98d243307783cf9f8594a4a2b237f",
+    "size": {
+      "w": 890,
+      "h": 1767
+    },
+    "crop": {
+      "x": 0,
+      "y": 10,
+      "w": 870,
+      "h": 1757
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1484626437,
+      "w": 0.68,
+      "h": 0.6130747126
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the FIREY card. Preserve the complete central subject exactly."
+  },
+  "snow-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/snow.webp",
+    "reference_sha256": "778158d6fe4ded7c8d0a071d77a59ac69301f2d06704c81e0afbaf4bb98f990c",
+    "sha256": "1f2e16543425550ec9085dbb9a7ba557ff91be10b8c4948671499de4db0d48d1",
+    "size": {
+      "w": 870,
+      "h": 1808
+    },
+    "crop": {
+      "x": 0,
+      "y": 21,
+      "w": 866,
+      "h": 1787
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1417886011,
+      "w": 0.68,
+      "h": 0.6264227978
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the SNOW card. Preserve the complete central subject exactly."
+  },
+  "arrow-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/arrow.webp",
+    "reference_sha256": "4bbc9f64c7646fb3a5062f4443f13d162c4dfcf70a843948701a16d35e5ca8a3",
+    "sha256": "5eaaeab80ab928612f8f6a8146e5344c2f2c8a1f29e7a8a4065e4209258f1412",
+    "size": {
+      "w": 887,
+      "h": 1774
+    },
+    "crop": {
+      "x": 0,
+      "y": 15,
+      "w": 881,
+      "h": 1759
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1519454354,
+      "w": 0.68,
+      "h": 0.6061091292
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the ARROW card. Preserve the complete central subject exactly."
+  },
+  "bubbles-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/bubbles.webp",
+    "reference_sha256": "e49a7dca6ddc9bf425aa503d5696eab09cb743d65e2b04821251bb14aa0ddcc2",
+    "sha256": "63035ca8a9dfb8d02ed8008c2b968424f0adda8ebda497d5b59fa7326dfd5b66",
+    "size": {
+      "w": 848,
+      "h": 1854
+    },
+    "crop": {
+      "x": 57,
+      "y": 21,
+      "w": 713,
+      "h": 1813
+    },
+    "placement": {
+      "x": 0.1784617761,
+      "y": 0.09,
+      "w": 0.6430764479,
+      "h": 0.73
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the BUBBLES card. Preserve the complete central subject exactly."
+  },
+  "through-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/through.webp",
+    "reference_sha256": "4f6e91640ef4594224855c69cdfa54cdcb1da1fe6c005139d8024329b9641529",
+    "sha256": "ffca8c1cf6da92c61a82cee147531ef9b6d64dad6b2020326b1adf7dad009201",
+    "size": {
+      "w": 858,
+      "h": 1832
+    },
+    "crop": {
+      "x": 41,
+      "y": 10,
+      "w": 807,
+      "h": 1822
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1123066029,
+      "w": 0.68,
+      "h": 0.6853867941
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the THROUGH card. Preserve the complete central subject exactly."
+  },
+  "wave-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/wave.webp",
+    "reference_sha256": "066a65e05b37a2120e5207fea1353d524b66b3e241b77dcd4f41ead6577247fe",
+    "sha256": "f847b791bd3638b161569bacf0175d5c1f97acb29ee646f553faa3962acfeee9",
+    "size": {
+      "w": 859,
+      "h": 1831
+    },
+    "crop": {
+      "x": 41,
+      "y": 17,
+      "w": 806,
+      "h": 1798
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1164010989,
+      "w": 0.68,
+      "h": 0.6771978022
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the WAVE card. Preserve the original flowing ribbon of waves and its blue droplets; complete only clipped outer ends without inventing a person."
+  },
+  "libra-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/libra.webp",
+    "reference_sha256": "a71649dbc0d6b9ef1d7b0873b42c76595a58541ed38ff4f49304ff0372557640",
+    "sha256": "f2092daec447c98a8df4a5153d1ee6cfa70c81f9da323c51ae1025b006bc0f3e",
+    "size": {
+      "w": 883,
+      "h": 1782
+    },
+    "crop": {
+      "x": 35,
+      "y": 3,
+      "w": 834,
+      "h": 1761
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1345028263,
+      "w": 0.68,
+      "h": 0.6409943474
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the LIBRA card. The subject is the entire hanging scale with its OWN suspended moon and sun; KEEP THOSE TWO because they are part of the scale. Remove ONLY the separate generic bottom card-frame moon and generic top frame sun."
+  },
+  "voice-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/voice.webp",
+    "reference_sha256": "d9d6faf8bca5657818f6b8a2ce3df2f300f54d5dab2d07bc6a0080e312adfc1b",
+    "sha256": "8331a581dd1c11bb16ea6dfe644ab53eddbfa53f1cbaa9df577e356ffa33d1fa",
+    "size": {
+      "w": 872,
+      "h": 1802
+    },
+    "crop": {
+      "x": 50,
+      "y": 10,
+      "w": 808,
+      "h": 1792
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1183663366,
+      "w": 0.68,
+      "h": 0.6732673267
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the VOICE card. Preserve the complete original subject."
+  },
+  "cloud-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/cloud.webp",
+    "reference_sha256": "006222fa308d3178c15a791f891cd64fa00355defa1f01eca56e7264c5d28f47",
+    "sha256": "80e36642c20658da7140c19e63b68347fad571a746a45cc0d4667756f2ec5899",
+    "size": {
+      "w": 917,
+      "h": 1716
+    },
+    "crop": {
+      "x": 0,
+      "y": 22,
+      "w": 819,
+      "h": 1640
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1510579103,
+      "w": 0.68,
+      "h": 0.6078841793
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the CLOUD card. Preserve the complete original subject."
+  },
+  "dream-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/dream.webp",
+    "reference_sha256": "55098320dec359b48c7b4ee1bae39177ab02a84d5badda56220fb47bf22d6460",
+    "sha256": "c5f868d6b5a7d674ffe80e15f555e222b7adee3b0a9aae4febad4a5ea3a9ef5a",
+    "size": {
+      "w": 851,
+      "h": 1847
+    },
+    "crop": {
+      "x": 82,
+      "y": 45,
+      "w": 688,
+      "h": 1778
+    },
+    "placement": {
+      "x": 0.1836283465,
+      "y": 0.09,
+      "w": 0.6327433071,
+      "h": 0.73
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the DREAM card. Preserve the complete original subject."
+  },
+  "sand-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/sand.webp",
+    "reference_sha256": "618cdb2f727e18266dd2864254f9a38c9d8cdb01dc7070565e25b515b066af6b",
+    "sha256": "9473bd5eb28f0137b3b49e308c445dc4fb7d73bfed79af8a1a2ddabe5b4d0827",
+    "size": {
+      "w": 860,
+      "h": 1829
+    },
+    "crop": {
+      "x": 50,
+      "y": 53,
+      "w": 767,
+      "h": 1731
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1124431924,
+      "w": 0.68,
+      "h": 0.6851136152
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the SAND card. Preserve the original character and the adjacent flowing sand forms; complete only contour edges interrupted by the card border."
+  },
+  "light-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/light.webp",
+    "reference_sha256": "d0aa5a3cd7d7f01a25d6bb9d06a73bc42be3166b4e2abe2a9e04d394c3668d55",
+    "sha256": "eeccef2a1c99fc93bf81811b3bfa64c2b8fa3a03ac237e2e1310ba97fafd0812",
+    "size": {
+      "w": 862,
+      "h": 1824
+    },
+    "crop": {
+      "x": 35,
+      "y": 19,
+      "w": 807,
+      "h": 1792
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1179491945,
+      "w": 0.68,
+      "h": 0.6741016109
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the LIGHT card. Preserve the complete original subject."
+  },
+  "dark-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/dark.webp",
+    "reference_sha256": "4741a65897d7df35783cab13ab1030791beb5192d1867d455e788290353b0d51",
+    "sha256": "33a5bc58285473b2246ad5d9f0c8d0b9704a47772fa1bbfd130004ce86c61325",
+    "size": {
+      "w": 847,
+      "h": 1857
+    },
+    "crop": {
+      "x": 54,
+      "y": 12,
+      "w": 763,
+      "h": 1833
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.0903562067,
+      "w": 0.68,
+      "h": 0.7292875866
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the DARK card. Keep the character's own small crescent held in her right hand and star in her left, along with her fully dark gown and dark hair; remove only the SEPARATE generic bottom gold card-frame crescent."
+  },
+  "twin-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/twin.webp",
+    "reference_sha256": "63fb45d7021cf9ec6208b3266fcf7f5320200dab50df154f539e3c388fffc4c3",
+    "sha256": "3136a5cfee6b878ce8112fa61d358ffbfc3625c48bc617f97e47c0bd0790424f",
+    "size": {
+      "w": 887,
+      "h": 1774
+    },
+    "crop": {
+      "x": 33,
+      "y": 30,
+      "w": 818,
+      "h": 1744
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1313884038,
+      "w": 0.68,
+      "h": 0.6472231925
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the TWIN card. Keep BOTH intertwined original twins and their connected ornaments in the exact original poses. Do not rotate them upright or separate them."
+  },
+  "earthy-restored-v1.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/earthy.webp",
+    "reference_sha256": "5b0ac4580525be52242fe943fe848d91a5e213afd7bea62e156e93d88b5f919e",
+    "sha256": "bfa814ba3f53c4e8b10b1d3736ef5cefb9e9ea402fbe46bd353eae356f7f3ceb",
+    "size": {
+      "w": 845,
+      "h": 1860
+    },
+    "crop": {
+      "x": 37,
+      "y": 7,
+      "w": 794,
+      "h": 1853
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.1007696114,
+      "w": 0.68,
+      "h": 0.7084607773
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the EARTHY card. Preserve the complete original subject."
+  },
+  "lock-restored-v2.png": {
+    "method": "Built-in ImageGen: original-card extraction and conservative completion",
+    "date": "2026-11-08",
+    "reference": "../clow-deck/lock.webp",
+    "reference_sha256": "f39b0d02e44c2f3d59acbccb85faa9e29b01844490472bb54bea930be715e45f",
+    "sha256": "96d07efee7f3bbfa1cb5a0aca00f5283cfa84d6d0287ce1b90302990541afe85",
+    "size": {
+      "w": 1024,
+      "h": 1536
+    },
+    "crop": {
+      "x": 0,
+      "y": 39,
+      "w": 931,
+      "h": 1401
+    },
+    "placement": {
+      "x": 0.16,
+      "y": 0.2265877704,
+      "w": 0.68,
+      "h": 0.4568244591
+    },
+    "prompt": "Use case: background-extraction. Asset type: transparent original-art cutout for a Clow card summoning animation.\nEDIT TARGET: the supplied original card image. Extract ONLY the card's central illustrated entity/subject and its integral objects. Preserve the exact original identity, facial expression, anatomy, pose, asymmetry, silhouette, costume, hair, wings, tails, fine outlines, internal dark lines, original colours, cream/gold paint and hand-drawn watercolor texture. If the subject is an object, symbol, animal, cloud or landscape-like magical form, retain that exact depicted form rather than inventing a humanoid.\nRemove the purple card ground, outer gold card frame, generic top sun and corner ornaments, title lettering and bottom name scroll. Preserve integral subject objects that happen to be gold or purple. Only complete tiny subject-contour gaps caused by overlapping card decoration; continue adjacent original line and colour conservatively. Do not redesign, beautify, symmetrize, recolour, relight, add detail, add a ground shadow or glow, or convert to 3D/CGI.\nThe entity must remain entirely within the source's illustration composition, retain original proportions and original orientation. Output the entire original subject unclipped, with small transparent padding on all sides and a GENUINELY TRANSPARENT background. Original natural holes and spaces between limbs, hair, wings and objects must be transparent. No card frame, purple rectangle, text, paper, checkerboard painted into the image, duplicate entity, or added anatomy.\nCRITICAL CARD ORNAMENT EXCLUSION: the small gold crescent moon at the very bottom, the gold wavy ray hanging from the top sun, all generic corner stars, and the outer gold outline are CARD-FRAME DECORATION, never part of the subject. Remove them completely, even when touching or overlapping the subject; minimally restore the subject contour underneath. Do not keep detached gold moons, top sun rays, stars or any yellow/red edge specks. Output only the depicted central subject.\nThe supplied target is the LOCK card. Preserve the complete original subject.\nFinal alpha cleanup edit:\nUse case: background-extraction. Edit ONLY the transparency of this exact winged padlock illustration. Remove ALL of the soft brown/cream glow or haze OUTSIDE the object's crisp drawn contour, including the haze INSIDE the open handle. Keep the lock, wings, brown outline and every internal feature unchanged, without redrawing or recolouring them. The open handle is a genuine empty hole and must be completely transparent. Outside the outer contour must also be completely transparent all the way up to the drawn outline. Keep the solid lock and its details opaque. No shadow, no halo, no glow, no background colour, no new ornament, no 3D. Output the whole original padlock with clean transparent edges and transparent handle interior."
+  }
+}

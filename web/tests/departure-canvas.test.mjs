@@ -8,6 +8,7 @@ const url = source => `data:text/javascript;base64,${Buffer.from(transpile(sourc
 const departureUrl = url(await readFile(new URL('../src/cardDeparture.ts', import.meta.url), 'utf8'));
 const source = (await readFile(new URL('../src/departureCanvas.ts', import.meta.url), 'utf8')).replace('"./cardDeparture"', JSON.stringify(departureUrl));
 const { prepareShatter } = await import(url(source));
+const { DEPARTURE_SCATTER_MS, DEPARTURE_STAGGER_MS } = await import(departureUrl);
 
 test('320 canvas fragments copy bounded regions of the same texture and disappear completely', t => {
   const previous = Object.getOwnPropertyDescriptor(globalThis, 'Path2D');
@@ -18,7 +19,7 @@ test('320 canvas fragments copy bounded regions of the same texture and disappea
     let depth = 0;
     const finite = (...values) => values.forEach(v => assert.ok(Number.isFinite(v)));
     const ctx = { setTransform: finite, clearRect: finite, translate: finite, rotate: finite, scale: finite,
-      save() { depth++; }, restore() { depth--; }, clip() {}, drawImage(...args) { draws.push(args); } };
+      save() { depth++; }, restore() { depth--; }, clip() {}, stroke() {}, drawImage(...args) { draws.push(args); } };
     const canvas = { style: {}, getContext: () => ctx };
     const texture = { width: width * ratio, height: height * ratio };
     const draw = prepareShatter(canvas, texture, width, height, ratio);
@@ -35,7 +36,7 @@ test('320 canvas fragments copy bounded regions of the same texture and disappea
       assert.ok(dw < width / 4 && dh < height / 8, 'only small texture regions are copied');
     }
     draws.length = 0;
-    draw(495);
+    draw(DEPARTURE_SCATTER_MS + DEPARTURE_STAGGER_MS);
     assert.equal(draws.length, 0);
     assert.equal(depth, 0);
   }

@@ -4,6 +4,7 @@ import { BookOpen, MoreHorizontal, RefreshCw, Search, SlidersHorizontal, X } fro
 import ClowCatalog from "./ClowCatalog";
 import type { Folder } from "./api";
 import type { WorkspaceMode } from "./workspaceMode";
+import { CLOW_CIRCLE_ASSET, CLOW_CIRCLE_TURN_MS } from "./clowCircle";
 
 export function EnjoyAtmosphere() {
   const circle = useRef<HTMLImageElement>(null);
@@ -26,7 +27,7 @@ export function EnjoyAtmosphere() {
     };
   }, []);
   return <div className="enjoy-atmosphere" aria-hidden="true">
-    <div className="enjoy-ground"><img ref={circle} style={{ animationPlayState: "paused" }} src="/clow-scene/clow-circle.svg" alt="" width="788" height="788" draggable={false} /></div>
+    <div className="enjoy-ground"><img ref={circle} style={{ animationPlayState: "paused", animationDuration: `${CLOW_CIRCLE_TURN_MS}ms` }} src={CLOW_CIRCLE_ASSET} alt="" width="788" height="788" draggable={false} /></div>
   </div>;
 }
 
@@ -35,6 +36,7 @@ export function WorkspaceModeSwitch({ mode, busy, onChange }: {
 }) {
   const enjoying = mode === "enjoy";
   return <button type="button" className="secondary workspace-mode-link" disabled={busy}
+    aria-label={enjoying ? "去管理版" : "去纯享版"}
     onClick={() => onChange(enjoying ? "manage" : "enjoy")}
     title={enjoying ? "添加、编辑和整理书签" : "按分类浏览、搜索和打开收藏"}>
     {enjoying ? <SlidersHorizontal size={17} aria-hidden="true" /> : <BookOpen size={17} aria-hidden="true" />}
