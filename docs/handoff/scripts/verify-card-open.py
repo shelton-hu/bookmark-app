@@ -85,14 +85,14 @@ async def main():
             await mocked_open(page)
             frame = await paused_open(page)
             assert frame['duration'] == 600 and frame['images'] == 1 and frame['canvases'] == 0
-            assert 'rotateY(720deg)' in frame['spin_end'], frame
+            assert 'rotateY(1080deg)' in frame['spin_end'], frame
             assert 'rotate(' not in frame['spin_end'] and 'rotate(' not in frame['travel_end']
             assert frame['first_half_turn_ms'] <= 100, frame
             assert frame['front_backfaces'] == frame['back_backfaces'] == 'hidden'
             assert frame['back_turn'].startswith('matrix3d(-1,'), frame
             assert not frame['travel_end'].endswith('scale(1)')
             await page.screenshot(path=str(args.out / f'{args.engine}-{width}x{height}-opening.png'))
-            await page.locator('.card-open-face').evaluate('card => card.getAnimations({subtree:true}).forEach(animation => animation.currentTime = 50)')
+            await page.locator('.card-open-face').evaluate('card => card.getAnimations({subtree:true}).forEach(animation => animation.currentTime = 30)')
             await page.screenshot(path=str(args.out / f'{args.engine}-{width}x{height}-back.png'))
             await page.keyboard.press('Escape')
             await page.clock.run_for(2000)
@@ -100,7 +100,7 @@ async def main():
             assert await page.evaluate('window.__opens') == 0
             assert await page.evaluate('window.__canvasCalls + window.__storageCalls') == 0
             assert not requests and not errors, (requests, errors)
-            results['viewports'].append({'width': width, 'height': height, 'duration_ms': 600, 'vertical_spin_degrees': 720,
+            results['viewports'].append({'width': width, 'height': height, 'duration_ms': 600, 'vertical_spin_degrees': 1080,
                                         'first_half_turn_ms': frame['first_half_turn_ms'], 'front_and_back': True, 'rotation_and_growth': True,
                                         'canvas_calls': 0, 'indexeddb_calls': 0, 'spirit_requests': 0, 'cancelled_without_opening': True})
             await context.close()

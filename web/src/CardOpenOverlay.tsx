@@ -3,12 +3,12 @@ import type { ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 
-// Sample the original summon's two-turn ease-out and lift once. The browser runs
+// Sample the original summon's ease-out and lift once, extended to three turns. The browser runs
 // these transform keyframes; the opening has no JavaScript frame loop.
 const spinFrames = Array.from({ length: 31 }, (_, index) => {
   const t = index / 30;
   const lift = Math.sin(Math.PI * (1 - (1 - t) ** 2));
-  return { offset: t, transform: `translateZ(${lift * 90}px) rotateX(${lift * 8}deg) rotateY(${(1 - (1 - t) ** 4) * 720}deg)` };
+  return { offset: t, transform: `translateZ(${lift * 90}px) rotateX(${lift * 8}deg) rotateY(${(1 - (1 - t) ** 4) * 1080}deg)` };
 });
 
 /** Keep the old rapid vertical-axis spin, then open without the summoning scene. */
