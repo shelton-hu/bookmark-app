@@ -1,5 +1,5 @@
 :root {
-  font-family:
+  --ui-font-family:
     Inter,
     -apple-system,
     BlinkMacSystemFont,
@@ -8,6 +8,7 @@
     "Hiragino Sans GB",
     "Microsoft YaHei",
     sans-serif;
+  font-family: var(--ui-font-family);
   color: var(--text);
   background: var(--background);
   font-synthesis: none;
@@ -1521,10 +1522,8 @@ main#main {
   margin-top: 25px;
 }
 .prompt-editor {
-  font-size: 13px;
   line-height: 1.85;
   background: var(--surface-raised);
-  font-family: ui-monospace, SFMono-Regular, Consolas, "PingFang SC", monospace;
 }
 .settings-bottom {
   display: flex;
@@ -1626,10 +1625,6 @@ main#main {
 }
 .token-once .notice {
   margin: 0;
-}
-.token-once input {
-  font-family: monospace;
-  font-size: 13px;
 }
 .auth-layout {
   display: grid;
@@ -2057,9 +2052,6 @@ main#main {
   .field textarea {
     font-size: 16px;
   }
-  .prompt-editor {
-    font-size: 13px !important;
-  }
   .model-fieldset {
     padding: 7px 15px 16px;
   }
@@ -2089,9 +2081,6 @@ main#main {
   .token-once .button-row button {
     white-space: normal;
     flex: 1;
-  }
-  .token-once input {
-    font-size: 12px !important;
   }
   .transfer-grid {
     gap: 0;

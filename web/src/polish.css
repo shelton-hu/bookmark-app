@@ -1,6 +1,18 @@
 /* Final polish for management mode: quieter controls, denser rows, one primary action.
    Loaded last; removing this file restores the previous look. */
 
+/* Use one type scale for native fields and custom filter controls throughout the app. */
+#root :is(
+  input:not([type="checkbox"], [type="radio"], [type="hidden"]),
+  textarea, select,
+  .search-panel .segmented button, .search-panel .hash,
+  .catalog-trigger strong, .enjoy-search-kind button, .si-dropzone > strong
+) {
+  font-family: var(--ui-font-family);
+  font-size: 12px;
+}
+#root input[type="file"]::file-selector-button { font: inherit; }
+
 /* The sidebar already carries the brand on wide screens. */
 @media (min-width: 1101px) {
   .clarity-shell.mode-manage .topbar .workbench-brand { visibility: hidden; }
@@ -28,14 +40,21 @@
 .clarity-shell.mode-manage .filter-row { border-top: 0; padding: 10px 0 0; min-height: 0; gap: 10px; }
 .clarity-shell.mode-manage .filter-row label { position: relative; gap: 0; }
 .clarity-shell.mode-manage .filter-row .hash {
-  position: absolute; left: 12px; font-size: 14px; color: #8a7d82; pointer-events: none;
+  position: absolute; left: 12px; color: #8a7d82; pointer-events: none;
 }
 .clarity-shell.mode-manage .filter-row input {
   width: 180px; min-height: 40px; padding: 8px 12px 8px 28px;
-  border: 1px solid #ded7d2; border-radius: 8px; font-size: 13px;
+  border: 1px solid #ded7d2; border-radius: 8px;
 }
-.clarity-shell.mode-manage .filter-refresh { color: #71686b; font-size: 13px; }
-.clarity-shell.mode-manage .filter-refresh:hover { color: #7a3546; }
+.clarity-shell.mode-manage .filter-actions { display: flex; align-items: center; gap: 4px; margin-inline-start: auto; }
+.clarity-shell.mode-manage .filter-actions .filter-action {
+  display: grid; place-items: center; width: 44px; height: 44px; margin: 0; padding: 0;
+  border: 1px solid transparent; border-radius: 8px; background: transparent;
+  color: #71686b; box-shadow: none;
+}
+.clarity-shell.mode-manage .filter-actions .filter-action:hover:not(:disabled) { background: #f4efea; color: #7a3546; }
+.clarity-shell.mode-manage .filter-actions .filter-action:focus-visible { outline: 2px solid #874455; outline-offset: -2px; }
+.clarity-shell.mode-manage .filter-actions .filter-clear[hidden] { display: none; }
 
 /* List toolbar: secondary tools read as tools, not as a row of primary pills. */
 .clarity-shell.mode-manage .list-toolbar { padding-block: 8px; }
@@ -93,13 +112,11 @@
   .clarity-shell.mode-manage .search-row .segmented button { padding: 6px 8px; min-height: 36px; }
   .clarity-shell.mode-manage .search-row .segmented button svg { display: none; }
   .clarity-shell.mode-manage .search-input { padding-inline: 10px; }
-  .clarity-shell.mode-manage .filter-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; margin-top: 0; padding-top: 8px; gap: 8px; }
+  .clarity-shell.mode-manage .filter-row { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr) auto; margin-top: 0; padding-top: 8px; gap: 8px; }
   .clarity-shell.mode-manage .filter-row:not(:has(.clow-catalog--compact)) { grid-template-columns: minmax(0, 1fr) auto; }
   .clarity-shell.mode-manage .filter-row > * { min-width: 0; }
   .clarity-shell.mode-manage .clow-catalog--compact .catalog-trigger { width: 100%; }
-  .clarity-shell.mode-manage .filter-row input { width: 100%; max-width: none; font-size: 16px; }
-  .clarity-shell.mode-manage .filter-row .text-button:not(.filter-refresh) { grid-column: 1 / -1; justify-self: start; }
-  .clarity-shell.mode-manage .filter-refresh { margin: 0; min-width: 44px; padding: 8px; font-size: 0; gap: 0; }
+  .clarity-shell.mode-manage .filter-row input { width: 100%; max-width: none; }
 
   .clarity-shell.mode-manage .list-toolbar .toolbar-actions {
     flex-wrap: nowrap; overflow-x: auto; padding-inline-start: 4px; margin-top: 0; scrollbar-width: none;
@@ -113,6 +130,22 @@
   .clarity-shell.mode-manage .bookmark-row-actions button { font-size: 0; gap: 0; min-width: 36px; min-height: 40px; padding: 6px; }
   .clarity-shell.mode-manage .bookmark-row-actions button svg { width: 17px; height: 17px; }
   .clarity-shell.mode-manage .bookmark-row-meta { gap: 2px 10px; }
+}
+@media (max-width: 360px) {
+  .clarity-shell.mode-manage .filter-row { grid-template-columns: minmax(0, 1fr) auto; }
+  .clarity-shell.mode-manage .filter-row .clow-catalog--compact { grid-column: 1 / -1; }
+}
+
+/* Browsing rows share the toolbar inset; selection and sorting use their own control column. */
+.clarity-shell.mode-manage .library-panel:not(.is-selecting, .is-sorting) .list-toolbar { padding-inline-start: 18px; }
+.clarity-shell.mode-manage .library-panel:not(.is-selecting, .is-sorting) .bookmark-row {
+  grid-template-columns: minmax(0, 1fr) auto; padding-inline-start: 18px;
+}
+.clarity-shell.mode-manage .library-panel:not(.is-selecting, .is-sorting) .bookmark-row-actions { grid-column: 2; grid-row: 1; }
+.clarity-shell.mode-manage .library-panel:not(.is-selecting, .is-sorting) .bookmark-row-details { grid-column: 1 / -1; }
+.clarity-shell.mode-manage .library-panel:is(.is-selecting, .is-sorting) .bookmark-row-content { grid-column: 2; }
+@media (max-width: 900px) {
+  .clarity-shell.mode-manage .library-panel:not(.is-selecting, .is-sorting) :is(.list-toolbar, .bookmark-row) { padding-inline-start: 12px; }
 }
 
 /* ── Page layout ─────────────────────────────────────────────────────────── */
@@ -154,11 +187,6 @@
 /* Reserve the scrollbar so short and long lists keep the same page width. */
 html:has(.clarity-shell.mode-manage) { background: #f6f5f2; }
 @media (min-width: 1101px) { html:has(.clarity-shell.mode-manage) { scrollbar-gutter: stable; } }
-/* The clear button keeps its place on the search line; it only shows when a filter is set. */
-.clarity-shell.mode-manage .library-main .filter-row .filter-clear[hidden] { display: none; }
-@media (min-width: 1280px) {
-  .clarity-shell.mode-manage .library-main .filter-row .filter-clear[hidden] { display: inline-flex; visibility: hidden; }
-}
 .folder-rail h2 { margin: 0 8px 6px; font: 600 12px/1.6 var(--font-sans, sans-serif); color: #8a7d82; letter-spacing: .04em; }
 .folder-rail ul { margin: 0; padding: 0; list-style: none; }
 .folder-rail-row {
@@ -211,11 +239,15 @@ button.folder-rail-toggle:hover { color: #7a3546; }
 /* Every library page (all, inbox, trash) keeps search and filters on one line. */
 @media (min-width: 1280px) {
   .clarity-shell.mode-manage .library-main .search-panel { display: flex; align-items: center; gap: 10px; }
-  .clarity-shell.mode-manage .library-main .search-row { flex: 1; min-width: 0; min-height: 0; }
+  .clarity-shell.mode-manage .library-main .search-row { flex: 1; min-width: 0; min-height: 0; padding: 0; flex-wrap: nowrap; }
+  .clarity-shell.mode-manage .library-main :is(.search-input, .search-row .segmented) { height: 44px; }
+  .clarity-shell.mode-manage .library-main .search-input input { height: 100%; min-height: 0; }
+  .clarity-shell.mode-manage .library-main .search-row .segmented button { height: 100%; min-height: 0; padding-block: 0; }
   .clarity-shell.mode-manage .library-main .filter-row { flex: 0 0 auto; padding: 0; }
   .clarity-shell.mode-manage .library-main .filter-row input { width: 150px; min-height: 44px; }
   .clarity-shell.mode-manage .library-main .clow-catalog--compact .catalog-trigger { width: 170px; min-height: 44px; }
-  .clarity-shell.mode-manage .library-main .filter-refresh { font-size: 0; gap: 0; min-width: 40px; min-height: 40px; padding: 8px; }
+  /* The clear icon keeps its slot when inactive so the search field stays put. */
+  .clarity-shell.mode-manage .filter-actions .filter-clear[hidden] { display: grid; visibility: hidden; }
 }
 /* Align the tools with the centred content column. */
 @media (min-width: 1700px) {
@@ -363,9 +395,6 @@ body:has(.clarity-shell.mode-manage) :is(.modal, .bookmark-detail) {
   .clarity-shell.mode-manage .settings-stack .section-icon { display: none; }
 }
 .clarity-shell.mode-manage .version-panel { margin: 16px 0 0; }
-/* The reserved clear button sits at the end of the line, so no gap opens beside the tag box. */
-.clarity-shell.mode-manage .library-main .filter-row .filter-refresh { order: 1; }
-.clarity-shell.mode-manage .library-main .filter-row .filter-clear { order: 2; }
 /* Task tiles: the start buttons line up along the bottom edge. */
 .job-tile { grid-template-rows: auto 1fr auto auto; }
 .job-tile-need { grid-row: 3; margin-top: 8px; }

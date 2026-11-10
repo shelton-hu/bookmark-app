@@ -33,7 +33,7 @@ function host(url: string) {
   }
 }
 
-export default function BookmarkRow({ bookmark: b, folders, selected, toggle, edit, refresh, remove, restore, filterTag, busy }: BookmarkCardProps) {
+export default function BookmarkRow({ bookmark: b, folders, selected, toggle, edit, refresh, remove, restore, filterTag, busy, showSelection }: BookmarkCardProps & { showSelection?: boolean }) {
   const [expanded, setExpanded] = useState(false);
   const details = useBookmarkDetails(b, expanded);
   const detail = details.bookmark;
@@ -41,8 +41,8 @@ export default function BookmarkRow({ bookmark: b, folders, selected, toggle, ed
   const title = b.title || b.url;
   const safeUrl = /^https?:\/\//i.test(b.url) ? b.url : undefined;
   const status = b.classification_status === "failed" ? "failed" : b.folder_id === null ? "pending" : undefined;
-  return <article className={`bookmark-row${selected ? " is-selected" : ""}`} role="listitem">
-    <label className="bookmark-row-select"><input type="checkbox" checked={selected} disabled={busy} onChange={toggle} aria-label={`选择 ${title}`} /></label>
+  return <article className={`bookmark-row${showSelection && selected ? " is-selected" : ""}`} role="listitem">
+    {showSelection && <label className="bookmark-row-select"><input type="checkbox" checked={selected} disabled={busy} onChange={toggle} aria-label={`选择 ${title}`} /></label>}
     <div className="bookmark-row-content">
       <h2>{safeUrl ? <a href={safeUrl} target="_blank" rel="noopener noreferrer">{title}</a> : title}</h2>
       <div className="bookmark-row-meta">

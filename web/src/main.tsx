@@ -43,6 +43,8 @@ import {
   FolderInput,
   Inbox,
   GripVertical,
+  FilterX,
+  ListChecks,
 } from "lucide-react";
 import {
   api,
@@ -356,8 +358,13 @@ function App() {
   const listPanelRef = useRef<HTMLElement>(null);
   const resultScope = JSON.stringify([mode, page, query, searchMode, scopeFolderId, tag]);
   const [bookmarkSortScope, setBookmarkSortScope] = useState<string | null>(null);
+  const [bookmarkSelectionScope, setBookmarkSelectionScope] = useState<string | null>(null);
   const sortingBookmarks = managing && bookmarkSortScope === resultScope;
-  useEffect(() => { setBookmarkSortScope(null); }, [resultScope]);
+  const selectingBookmarks = managing && !sortingBookmarks && bookmarkSelectionScope === resultScope;
+  useEffect(() => {
+    setBookmarkSortScope(null);
+    setBookmarkSelectionScope(null);
+  }, [resultScope]);
   const requestedPage = managing && pagination.scope === resultScope ? pagination.page : 1;
   const paged = pageInfo(total, requestedPage, pagination.size);
   const visibleItems = items;
@@ -649,6 +656,7 @@ function App() {
     setItems((current) => current.filter((bookmark) => !restored.has(bookmark.id)));
     setTotal((current) => Math.max(0, current - restored.size));
     setSelected(result.conflicts);
+    if (result.conflicts.length) setBookmarkSelectionScope(resultScope);
     selectionAfterReload.current = result.conflicts;
     setReload((value) => value + 1);
     setToast(`已恢复 ${restored.size} 条书签${result.conflicts.length ? `；${result.conflicts.length} 条因网址重复仍留在回收站，已保留选中。` : ""}`);
@@ -1119,9 +1127,25 @@ function App() {
                         ))}
                     </datalist>
                   </label>
-                  {(
+                  <div className="filter-actions">
                     <button
-                      className="text-button filter-clear"
+                      type="button"
+                      className="filter-action filter-refresh"
+                      aria-label="刷新列表"
+                      title="刷新列表"
+                      disabled={loading}
+                      onClick={() => {
+                        setError("");
+                        setReload((n) => n + 1);
+                      }}
+                    >
+                      <RefreshCw size={17} className={loading ? "spin" : ""} aria-hidden="true" />
+                    </button>
+                    <button
+                      type="button"
+                      className="filter-action filter-clear"
+                      aria-label="清除筛选"
+                      title="清除筛选"
                       hidden={!(query || scopeFolderId || tag)}
                       onClick={() => {
                         setQuery("");
@@ -1129,21 +1153,9 @@ function App() {
                         setTag("");
                       }}
                     >
-                      清除筛选
+                      <FilterX size={17} aria-hidden="true" />
                     </button>
-                  )}
-                  <button
-                    className="text-button filter-refresh"
-                    title="刷新列表"
-                    disabled={loading}
-                    onClick={() => {
-                      setError("");
-                      setReload((n) => n + 1);
-                    }}
-                  >
-                    <RefreshCw size={15} className={loading ? "spin" : ""} />
-                    刷新列表
-                  </button>
+                  </div>
                 </div>
               </section>}
               {searchMode === "semantic" &&
@@ -1164,12 +1176,12 @@ function App() {
                   <span>{warning}</span>
                 </div>
               )}
-              <section ref={listPanelRef} tabIndex={-1} className={`library-panel${sortingBookmarks ? " is-sorting" : ""}`} aria-label="书签列表">
+              <section ref={listPanelRef} tabIndex={-1} className={`library-panel${sortingBookmarks ? " is-sorting" : selectingBookmarks ? " is-selecting" : ""}`} aria-label="书签列表">
               {managing && <div className={`list-toolbar${selected.length ? " has-selection" : ""}${sortingBookmarks ? " is-sorting" : ""}`}>
               {managing && <div className="results-toolbar">
                 {sortingBookmarks && <span className="sort-mode-label">排序模式 · {total} 条书签</span>}
                 <div className="list-selection-summary">
-                  <label className="page-select-all">
+                  {selectingBookmarks && <label className="page-select-all">
                     <span className="page-select-box"><input
                       type="checkbox"
                       checked={allPageSelected}
@@ -1178,19 +1190,29 @@ function App() {
                       onChange={(e) => setSelected(e.target.checked ? visibleItems.map((b) => b.id) : [])}
                     /></span>
                     全选本页
-                  </label>
+                  </label>}
                   <div className="result-count">
                     <strong>{total}</strong> 条书签
                     {selected.length > 0 && <span> · 已选 {selected.length} 条</span>}
                   </div>
                 </div>
                 <div className="toolbar-actions">
+                  {!sortingBookmarks && <button type="button" className="secondary" aria-pressed={selectingBookmarks}
+                    disabled={Boolean(busy) || (!selectingBookmarks && (loading || visibleItems.length === 0))}
+                    onClick={() => {
+                      setSelected([]);
+                      selectionAfterReload.current = null;
+                      setBookmarkSelectionScope(selectingBookmarks ? null : resultScope);
+                    }}>
+                    {selectingBookmarks ? <X size={16} aria-hidden="true" /> : <ListChecks size={16} aria-hidden="true" />}
+                    {selectingBookmarks ? "退出选择" : "批量选择"}
+                  </button>}
                   {selected.length > 0 && (
                     <button
                       className="text-button"
                       onClick={() => setSelected([])}
                     >
-                      取消选择
+                      清空已选
                     </button>
                   )}
                   {allPageSelected && selected.length < resultIds.length && (
@@ -1211,6 +1233,7 @@ function App() {
                         title={query || tag ? "请清除搜索和标签筛选后调整顺序" : "拖拽调整当前范围的书签顺序"}
                         onClick={() => {
                           setSelected([]);
+                          setBookmarkSelectionScope(null);
                           setBookmarkSortScope(sortingBookmarks ? null : resultScope);
                           if (sortingBookmarks) listPanelRef.current?.scrollIntoView({ block: "start" });
                         }}>
@@ -1324,6 +1347,7 @@ function App() {
                       key={bookmark.id}
                       bookmark={bookmark}
                       folders={folders}
+                      showSelection={selectingBookmarks}
                       selected={selected.includes(bookmark.id)}
                       toggle={() =>
                         setSelected((s) =>

@@ -140,15 +140,18 @@ test('rain uses the same quick-open flow and unsafe URLs only offer details', ()
   assert.match(unsafe, /aria-label="翻牌查看 /);
 });
 test('management rows expose complete URLs and folder paths with direct actions, without card artwork', () => {
-  const html = renderToStaticMarkup(createElement(Row, { ...props, managing: true, selected: true, bookmark: { ...bookmark, folder_id: 2, classification_status: 'done' }, folders: [{ id: 1, name: '工作', parent_id: null }, { id: 2, name: '资料', parent_id: 1 }] }));
+  const rowProps = { ...props, managing: true, bookmark: { ...bookmark, folder_id: 2, classification_status: 'done' }, folders: [{ id: 1, name: '工作', parent_id: null }, { id: 2, name: '资料', parent_id: 1 }] };
+  const html = renderToStaticMarkup(createElement(Row, rowProps));
   assert.match(html, /role="listitem"/);
   assert.match(html, /Cashbook &lt;script&gt;/);
   assert.match(html, /href="https:\/\/example.test\/a"[^>]*target="_blank"[^>]*rel="noopener noreferrer"/);
   assert.match(html, /工作 \/ 资料/);
-  assert.match(html, /type="checkbox"[^>]*checked=""/);
+  assert.doesNotMatch(html, /type="checkbox"/);
   assert.match(html, />编辑<|编辑<\/button>/);
   assert.match(html, />删除<|删除<\/button>/);
   assert.doesNotMatch(html, /<img|clow-art|clow-reader|hand-card/);
+  const selecting = renderToStaticMarkup(createElement(Row, { ...rowProps, showSelection: true, selected: true }));
+  assert.match(selecting, /type="checkbox"[^>]*checked=""/);
 });
 test('filed bookmarks are not pending even when the automatic classification status is pending', () => {
   const row = (overrides) => renderToStaticMarkup(createElement(Row, { ...props, bookmark: { ...bookmark, ...overrides } }));
