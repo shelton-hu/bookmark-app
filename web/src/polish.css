@@ -148,6 +148,25 @@
   .clarity-shell.mode-manage .library-panel:not(.is-selecting, .is-sorting) :is(.list-toolbar, .bookmark-row) { padding-inline-start: 12px; }
 }
 
+.clarity-shell.mode-manage .bookmark-pagination { padding-block: 8px; row-gap: 8px; }
+.clarity-shell.mode-manage .bookmark-pagination .page-size { position: relative; }
+.clarity-shell.mode-manage .bookmark-pagination .page-size::after {
+  content: "";
+  position: absolute; inset-inline-end: 12px; top: 50%; width: 6px; height: 6px;
+  border: solid currentColor; border-width: 0 1px 1px 0;
+  transform: translateY(-75%) rotate(45deg); pointer-events: none;
+}
+.clarity-shell.mode-manage .bookmark-pagination select { appearance: none; padding-inline-end: 26px; }
+@media (max-width: 480px) {
+  .clarity-shell.mode-manage .bookmark-pagination { padding-block: 4px; row-gap: 2px; }
+}
+@media (min-width: 901px) and (hover: hover) and (pointer: fine) {
+  .clarity-shell.mode-manage .bookmark-pagination :is(select, button) {
+    min-height: 32px;
+    padding-block: 4px;
+  }
+}
+
 /* ── Page layout ─────────────────────────────────────────────────────────── */
 
 /* Wide screens: the tools sit on the title line instead of an empty bar of their own. */
@@ -284,6 +303,7 @@ button.folder-rail-toggle:hover { color: #7a3546; }
 .clarity-shell.mode-manage .folder-row { border-color: #eeeae6; }
 .clarity-shell.mode-manage .folder-row:hover { background: #fcfaf8; }
 .clarity-shell.mode-manage .folder-row-selected { background: #faf0f1; }
+.clarity-shell .app-footer { padding-block: 10px; }
 .clarity-shell.mode-manage .app-footer { border-top-color: #e6e1dd; color: #8a7d82; }
 
 /* Import & export: same left edge and width rules as the other pages. */
@@ -381,6 +401,10 @@ body:has(.clarity-shell.mode-manage) :is(.modal, .bookmark-detail) {
 .clarity-shell.mode-manage .panel { padding: 20px 24px; }
 
 /* Settings: a label column on the left, controls on the right. */
+.clarity-shell.mode-manage .settings-stack .form-footer {
+  margin-top: 12px;
+  padding-top: 10px;
+}
 @media (min-width: 1280px) {
   .clarity-shell.mode-manage .settings-stack > .panel,
   .clarity-shell.mode-manage .version-panel {
