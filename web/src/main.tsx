@@ -1,4 +1,4 @@
-import { StrictMode, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { StrictMode, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 import BookmarkCard from "./ClowBookmark";
 import BrandMark from "./BrandMark";
 import ClowCatalog from "./ClowCatalog";
@@ -29,6 +29,7 @@ import {
   Pencil,
   RotateCcw,
   Check,
+  ChevronDown,
   ShieldCheck,
   KeyRound,
   AlertCircle,
@@ -45,6 +46,7 @@ import {
   GripVertical,
   FilterX,
   ListChecks,
+  MoreHorizontal,
 } from "lucide-react";
 import {
   api,
@@ -108,6 +110,8 @@ type DialogState =
   | { type: "refresh"; bookmark: Bookmark }
   | { type: "organize"; preview: Preview }
   | { type: "classification-assistant"; bookmarkIds: number[] }
+  | { type: "pending-ai"; bookmarkIds: number[]; selectedCount: number }
+  | { type: "pending-archive"; bookmarkIds: number[] }
   | {
       type: "confirm";
       title: string;
@@ -242,6 +246,42 @@ function Loading() {
       正在加载…
     </div>
   );
+}
+
+function PendingMore({ disabled, add, sort, canSort, selectionCount, loading, remove, fetchSelected }: {
+  disabled: boolean;
+  add: () => void;
+  sort: () => void;
+  canSort: boolean;
+  selectionCount: number;
+  loading: boolean;
+  remove: () => void;
+  fetchSelected: () => void;
+}) {
+  const id = useId();
+  const menu = useRef<HTMLDivElement>(null);
+  const choose = (action: () => void) => {
+    menu.current?.hidePopover();
+    action();
+  };
+  return <>
+    <button className="secondary" aria-label="更多操作" disabled={disabled} popoverTarget={id}
+      onClick={(event) => {
+        const bounds = event.currentTarget.getBoundingClientRect();
+        menu.current?.style.setProperty("--pending-menu-left", `${bounds.left}px`);
+        menu.current?.style.setProperty("top", `${bounds.bottom + 6}px`);
+      }}>
+      <MoreHorizontal size={17} aria-hidden="true" />
+    </button>
+    <div ref={menu} id={id} popover="auto" className="pending-more-menu" aria-label="待整理箱更多操作">
+      <button onClick={() => choose(add)}><Plus size={16} />添加网址</button>
+      <button disabled={!canSort} onClick={() => choose(sort)}><GripVertical size={16} />拖拽排序</button>
+      {selectionCount > 0 && <>
+        <button disabled={loading} onClick={() => choose(fetchSelected)}><Globe size={16} />抓取所选</button>
+        <button disabled={loading} className="danger" onClick={() => choose(remove)}><Trash2 size={16} />删除所选（{selectionCount}）</button>
+      </>}
+    </div>
+  </>;
 }
 
 function App() {
@@ -718,7 +758,8 @@ function App() {
     navigate("jobs");
   };
   const requestJob = (kind: Job["kind"]) => {
-    if (kind === "classify" && !modelReady(settings?.classification)) {
+    const pendingClassification = kind === "classify" && page === "pending";
+    if (kind === "classify" && !pendingClassification && !modelReady(settings?.classification)) {
       setError("请先在设置中填写分类服务地址、模型和 API Key。");
       return;
     }
@@ -740,27 +781,27 @@ function App() {
       );
     else
       void run("检查分类范围", async () => {
-        const data = await api<{ items: Bookmark[] }>(page === "pending" ? "/bookmarks?view=summary&pending=true" : "/bookmarks?view=summary");
-        const eligible = data.items.filter(
+        const selectedIds = new Set(selected);
+        const data = await api<{ items: Bookmark[] }>(pendingClassification ? "/bookmarks?view=summary&pending=true" : "/bookmarks?view=summary");
+        const ids = data.items.filter(
           (b) =>
             !b.manual_classification &&
-            (selected.length
-              ? selected.includes(b.id)
+            (selectedIds.size
+              ? selectedIds.has(b.id)
               : b.classification_status === "pending"),
-        );
-        if (!eligible.length) {
+        ).map((b) => b.id);
+        if (pendingClassification) {
+          open({ type: "pending-ai", bookmarkIds: ids, selectedCount: selectedIds.size });
+          return;
+        }
+        if (!ids.length) {
           setToast("没有符合条件的书签；手动分类受保护。");
           return;
         }
         confirm(
           "开始 AI 分类？",
-          `将处理 ${eligible.length} 条${selected.length ? "所选" : "待分类"}书签，生成摘要、目录和标签。内容会发送至你配置的分类服务，可能产生费用。手动分类不会被覆盖。`,
-          () =>
-            startJob(
-              kind,
-              false,
-              eligible.map((b) => b.id),
-            ),
+          `将处理 ${ids.length} 条${selectedIds.size ? "所选" : "待分类"}书签，生成摘要、目录和标签。内容会发送至你配置的分类服务，可能产生费用。手动分类不会被覆盖。`,
+          () => startJob(kind, false, ids),
         );
       });
   };
@@ -806,15 +847,39 @@ function App() {
     ["queued", "running", "paused"].includes(j.status),
   ).length;
   const libraryPage = ["library", "pending", "trash"].includes(page);
+  const toggleBookmarkSelection = () => {
+    setSelected([]);
+    selectionAfterReload.current = null;
+    setBookmarkSelectionScope(selectingBookmarks ? null : resultScope);
+  };
+  const toggleBookmarkSorting = () => {
+    setSelected([]);
+    setBookmarkSelectionScope(null);
+    setBookmarkSortScope(sortingBookmarks ? null : resultScope);
+    if (sortingBookmarks) listPanelRef.current?.scrollIntoView({ block: "start" });
+  };
+  const canStartSorting = !loading && total >= 2 && !query && !tag;
   // Each page names its own actions in the header; the primary one comes last.
-  const addBookmark = <button className={`${page === "pending" ? "secondary" : "primary"} action-add`} disabled={sortingBookmarks || Boolean(busy)} onClick={() => open({ type: "bookmark" })}><Plus size={17} />添加网址</button>;
+  const addBookmark = <button className="primary action-add" disabled={sortingBookmarks || Boolean(busy)} onClick={() => open({ type: "bookmark" })}><Plus size={17} />添加网址</button>;
   const pageActions: ReactNode = !managing ? null
     : page === "library" ? addBookmark
     : page === "pending" ? <>
-      {addBookmark}
-      <button className="primary" disabled={sortingBookmarks || Boolean(busy)}
-        onClick={() => open({ type: "classification-assistant", bookmarkIds: [...selected] })}>
-        <Sparkles size={17} />分类助手
+      <PendingMore
+        disabled={Boolean(busy) || sortingBookmarks}
+        add={() => open({ type: "bookmark" })}
+        sort={toggleBookmarkSorting} canSort={canStartSorting}
+        selectionCount={selected.length} loading={loading}
+        remove={requestDeleteSelected} fetchSelected={() => requestJob("fetch")}
+      />
+      <button className="secondary" aria-pressed={selectingBookmarks}
+        disabled={Boolean(busy) || sortingBookmarks || (!selectingBookmarks && (loading || !visibleItems.length))}
+        onClick={toggleBookmarkSelection}>
+        {selectingBookmarks ? <X size={16} /> : <ListChecks size={16} />}
+        {selectingBookmarks ? "退出整理" : "手动整理"}
+      </button>
+      <button className="primary" disabled={sortingBookmarks || loading || Boolean(busy)}
+        onClick={() => requestJob("classify")}>
+        <Sparkles size={17} />AI 整理
       </button>
     </>
     : page === "folders" ? <>
@@ -1002,7 +1067,7 @@ function App() {
             <WorkspaceModeSwitch mode={mode} busy={Boolean(busy)} onChange={switchMode} />
             {managing && <button className="icon-button settings-toggle" aria-label="设置" aria-current={page === "settings" ? "page" : undefined} onClick={() => navigate("settings")}><SettingsIcon size={19} /></button>}
             <button ref={navToggleRef} className="icon-button navigation-toggle mobile-only" aria-label="打开导航与目录" aria-expanded={drawerOpen} onClick={() => setMobileNav(true)}><Menu size={21} /></button>
-            {managing && libraryPage && page !== "trash" && addBookmark}
+            {page === "library" && addBookmark}
           </div>
         </header>}
         <main id="main" className={libraryPage ? "library-main" : page === "transfer" ? "transfer-main" : undefined} tabIndex={-1}>
@@ -1029,7 +1094,7 @@ function App() {
                         : "把浏览器里的收藏带进来，也把你的资料安全带走。"}
               </p>
             </div>
-            <div className="page-actions">
+            <div className={`page-actions${page === "pending" ? " pending-actions" : ""}`}>
               <WorkspaceModeSwitch mode={mode} busy={Boolean(busy)} onChange={switchMode} />
               {pageActions && <><span className="page-actions-divider" aria-hidden="true" />{pageActions}</>}
             </div>
@@ -1197,13 +1262,9 @@ function App() {
                   </div>
                 </div>
                 <div className="toolbar-actions">
-                  {!sortingBookmarks && <button type="button" className="secondary" aria-pressed={selectingBookmarks}
+                  {page !== "pending" && !sortingBookmarks && <button type="button" className="secondary" aria-pressed={selectingBookmarks}
                     disabled={Boolean(busy) || (!selectingBookmarks && (loading || visibleItems.length === 0))}
-                    onClick={() => {
-                      setSelected([]);
-                      selectionAfterReload.current = null;
-                      setBookmarkSelectionScope(selectingBookmarks ? null : resultScope);
-                    }}>
+                    onClick={toggleBookmarkSelection}>
                     {selectingBookmarks ? <X size={16} aria-hidden="true" /> : <ListChecks size={16} aria-hidden="true" />}
                     {selectingBookmarks ? "退出选择" : "批量选择"}
                   </button>}
@@ -1219,6 +1280,17 @@ function App() {
                     <button className="text-button" disabled={Boolean(busy) || loading}
                       onClick={() => setSelected([...resultIds])}>选择当前结果（{total}）</button>
                   )}
+                  {page === "pending" && selectingBookmarks && (
+                    <button className="primary" disabled={Boolean(busy) || loading || !selected.length}
+                      onClick={() => open({ type: "pending-archive", bookmarkIds: [...selected] })}>
+                      <FolderInput size={16} />归入目录
+                    </button>
+                  )}
+                  {page === "pending" && sortingBookmarks && (
+                    <button className="secondary sort-mode-toggle" disabled={Boolean(busy)} onClick={toggleBookmarkSorting}>
+                      <Check size={16} />完成排序
+                    </button>
+                  )}
                   {page === "trash" && <>
                     {selected.length > 0 && <>
                       <button className="secondary" disabled={Boolean(busy) || loading} onClick={requestRestoreSelected}>恢复所选（{selected.length}）</button>
@@ -1226,17 +1298,12 @@ function App() {
                     </>}
                     <button className="secondary danger" disabled={Boolean(busy) || loading} onClick={() => requestPurge()}>清空回收站</button>
                   </>}
-                  {page !== "trash" && (
+                  {page === "library" && (
                     <>
                       <button className="secondary sort-mode-toggle" aria-pressed={sortingBookmarks}
-                        disabled={Boolean(busy) || (!sortingBookmarks && (loading || total < 2 || Boolean(query || tag)))}
+                        disabled={Boolean(busy) || (!sortingBookmarks && !canStartSorting)}
                         title={query || tag ? "请清除搜索和标签筛选后调整顺序" : "拖拽调整当前范围的书签顺序"}
-                        onClick={() => {
-                          setSelected([]);
-                          setBookmarkSelectionScope(null);
-                          setBookmarkSortScope(sortingBookmarks ? null : resultScope);
-                          if (sortingBookmarks) listPanelRef.current?.scrollIntoView({ block: "start" });
-                        }}>
+                        onClick={toggleBookmarkSorting}>
                         {sortingBookmarks ? <Check size={16} /> : <GripVertical size={16} />}{sortingBookmarks ? "完成排序" : "拖拽排序"}
                       </button>
                       {selected.length > 0 && (
@@ -1596,9 +1663,13 @@ function App() {
                   ? "刷新书签内容"
                   : dialog.type === "classification-assistant"
                     ? "分类助手"
-                    : dialog.type === "organize"
-                      ? "AI 目录整理预览"
-                      : dialog.title
+                    : dialog.type === "pending-ai"
+                      ? "AI 整理待整理箱"
+                      : dialog.type === "pending-archive"
+                        ? "归入目录"
+                        : dialog.type === "organize"
+                          ? "AI 目录整理预览"
+                          : dialog.title
           }
           close={() => {
             if (!busy) {
@@ -1638,6 +1709,53 @@ function App() {
                 setDialog(null);
                 navigate("settings");
               }}
+            />
+          )}
+          {dialog.type === "pending-ai" && (
+            <>
+              <p className="modal-description">
+                {dialog.selectedCount > 0 && `已选 ${dialog.selectedCount} 条。`}
+                {dialog.bookmarkIds.length
+                  ? `将整理 ${dialog.bookmarkIds.length} 条符合条件的书签，生成摘要、目录和标签。`
+                  : "当前范围没有符合条件的书签。"}
+              </p>
+              <p className="helper">
+                {modelReady(settings?.classification)
+                  ? "内容会发送至你配置的分类服务，可能产生费用。手动分类的书签受保护。"
+                  : "请先配置分类模型。"}
+              </p>
+              <div className="modal-actions pending-dialog-actions">
+                <button className="text-button" disabled={Boolean(busy)}
+                  onClick={() => open({ type: "classification-assistant", bookmarkIds: dialog.selectedCount ? dialog.bookmarkIds : [] })}>
+                  调整分类规则
+                </button>
+                {modelReady(settings?.classification)
+                  ? <button className="primary" disabled={Boolean(busy) || !dialog.bookmarkIds.length}
+                      onClick={() => void run("开始 AI 整理", async () => {
+                        await startJob("classify", false, dialog.bookmarkIds);
+                        setDialog(null);
+                      })}>
+                      {busy || "开始整理"}
+                    </button>
+                  : <button className="primary" onClick={() => { setDialog(null); navigate("settings"); }}>配置分类模型</button>}
+              </div>
+            </>
+          )}
+          {dialog.type === "pending-archive" && (
+            <PendingArchiveForm
+              count={dialog.bookmarkIds.length} folders={folders} busy={busy}
+              cancel={() => setDialog(null)}
+              manageFolders={() => { setDialog(null); navigate("folders"); }}
+              archive={(folderId) => void run("正在归档…", async () => {
+                const { moved } = await post<{ moved: number }>("/bookmarks/archive-pending", {
+                  bookmark_ids: dialog.bookmarkIds,
+                  folder_id: folderId,
+                });
+                setSelected([]);
+                setBookmarkSelectionScope(null);
+                setDialog(null);
+                updated(`已归档 ${moved} 条书签至「${folderPath(folderId, folders)}」`);
+              })}
             />
           )}
           {dialog.type === "folder-ai" && <FolderAiOrganizer
@@ -2118,6 +2236,44 @@ type FolderMovePreview = {
   folders_included: number;
   snapshot: string;
 };
+function PendingArchiveForm({ count, folders, busy, archive, cancel, manageFolders }: {
+  count: number;
+  folders: Folder[];
+  busy: string;
+  archive: (folderId: number) => void;
+  cancel: () => void;
+  manageFolders: () => void;
+}) {
+  const [targetId, setTargetId] = useState("");
+  return (
+    <form onSubmit={(event) => {
+      event.preventDefault();
+      if (targetId && !busy) archive(Number(targetId));
+    }}>
+      <p className="modal-description">已选 {count} 条书签。归入目录后，这些书签会从待整理箱移出。</p>
+      {folders.length > 0
+        ? <Field label="目标目录">
+            <span className="pending-folder-select">
+              <select required value={targetId} disabled={Boolean(busy)} onChange={(event) => setTargetId(event.target.value)}>
+                <option value="">请选择目录</option>
+                {folderEntries(folders).map(({ folder }) => (
+                  <option key={folder.id} value={folder.id}>{folderPath(folder.id, folders)}</option>
+                ))}
+              </select>
+              <ChevronDown size={14} aria-hidden="true" />
+            </span>
+          </Field>
+        : <p className="modal-description">请先创建一个目录。</p>}
+      <div className="modal-actions">
+        <button type="button" className="secondary" disabled={Boolean(busy)} onClick={cancel}>取消</button>
+        {folders.length > 0
+          ? <button className="primary" disabled={Boolean(busy) || !targetId}>{busy || "确认归档"}</button>
+          : <button type="button" className="primary" onClick={manageFolders}>去目录管理</button>}
+      </div>
+    </form>
+  );
+}
+
 function FolderMoveForm({ source, folders, busy, run, cancel, moved }: {
   source?: Folder;
   folders: Folder[];

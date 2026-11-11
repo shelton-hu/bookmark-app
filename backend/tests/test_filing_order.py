@@ -78,12 +78,54 @@ def test_subtree_migration_appends_in_current_order_and_skips_existing_destinati
     assert app.state.store.rows('SELECT * FROM folders ORDER BY id') == tree
 
 
-@pytest.mark.parametrize('operation', ['edit', 'migrate'])
+def test_pending_archive_files_only_selected_books_in_their_current_order(client, app):
+    target = folder(client, 'Target')
+    existing = save(client, 'https://example.com/existing', folder_id=target)
+    one = save(client, 'https://example.com/one', notes='Keep note', tags=['keep'])
+    two = save(client, 'https://example.com/two')
+    other = save(client, 'https://example.com/other')
+    incoming = [identifier for identifier in ids(client, pending=True) if identifier != other['id']]
+
+    result = client.post('/api/bookmarks/archive-pending', json={
+        'folder_id': target, 'bookmark_ids': [one['id'], two['id'], one['id']],
+    })
+
+    assert result.json() == {'moved': 2}
+    assert ids(client, pending=True) == [other['id']]
+    assert ids(client, folder_id=target) == [existing['id'], *incoming]
+    for identifier in incoming:
+        filed = app.state.store.bookmark(identifier)
+        assert filed['manual_classification'] and filed['classification_status'] == 'done'
+    filed = app.state.store.bookmark(one['id'])
+    assert filed['notes'] == 'Keep note' and filed['tags'] == ['keep']
+
+
+@pytest.mark.parametrize('change', ['archived', 'deleted'])
+def test_pending_archive_rejects_a_stale_selection_as_one_batch(client, app, change):
+    target = folder(client, 'Target')
+    one = save(client, 'https://example.com/one')
+    two = save(client, 'https://example.com/two')
+    if change == 'archived':
+        other = folder(client, 'Other')
+        assert client.patch(f"/api/bookmarks/{two['id']}", json={'folder_id': other}).status_code == 200
+    else:
+        assert client.delete(f"/api/bookmarks/{two['id']}").status_code == 200
+    before = app.state.store.rows('SELECT * FROM bookmarks ORDER BY id')
+
+    result = client.post('/api/bookmarks/archive-pending', json={
+        'folder_id': target, 'bookmark_ids': [one['id'], two['id']],
+    })
+
+    assert result.status_code == 409
+    assert app.state.store.rows('SELECT * FROM bookmarks ORDER BY id') == before
+
+
+@pytest.mark.parametrize('operation', ['edit', 'migrate', 'pending'])
 def test_position_failure_rolls_back_filing_and_order_together(client, app, operation):
     source = folder(client, 'Source')
     target = folder(client, 'Target')
     save(client, 'https://example.com/existing', folder_id=target)
-    incoming = save(client, folder_id=source)
+    incoming = save(client, folder_id=None if operation == 'pending' else source)
     plan, _ = move_preview(client, source, target)
     store = app.state.store
     before = store.rows('SELECT * FROM bookmarks ORDER BY id')
@@ -93,8 +135,10 @@ def test_position_failure_rolls_back_filing_and_order_together(client, app, oper
     with pytest.raises(sqlite3.IntegrityError, match='position failure'):
         if operation == 'edit':
             client.patch(f"/api/bookmarks/{incoming['id']}", json={'folder_id': target})
-        else:
+        elif operation == 'migrate':
             migrate(client, plan)
+        else:
+            client.post('/api/bookmarks/archive-pending', json={'folder_id': target, 'bookmark_ids': [incoming['id']]})
     assert store.rows('SELECT * FROM bookmarks ORDER BY id') == before
     assert store.settings() == config
 

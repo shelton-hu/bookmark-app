@@ -129,6 +129,11 @@ class TrashIDs(Input):
     bookmark_ids: list[BookmarkID] = Field(min_length=1, max_length=5000)
 
 
+class PendingArchive(Input):
+    bookmark_ids: list[BookmarkID] = Field(min_length=1)
+    folder_id: BookmarkID
+
+
 class TrashScope(Input):
     bookmark_ids: list[BookmarkID] = Field(default_factory=list, max_length=5000)
     all: bool = Field(default=False, strict=True)
@@ -298,6 +303,14 @@ def create_app(data_dir=None, start_worker=True):
     def validate_folder(identifier):
         if identifier is not None and not store.one('SELECT id FROM folders WHERE id=?', (identifier,)):
             raise HTTPException(422, 'Folder does not exist')
+
+    def file_bookmarks(db, ids, folder_id):
+        # Match manual filing protection; content and its text vectors do not change.
+        store.execute('''UPDATE bookmarks SET folder_id=?,manual_classification=1,
+            classification_status='done',error=NULL,updated_at=?
+            WHERE id IN (SELECT value FROM json_each(?))''',
+            (folder_id, now(), json.dumps(ids)))
+        append_bookmarks(db, ids)
 
     def tags_check(tags):
         if any(not isinstance(t, str) or not t.strip() or len(t) > 100 for t in tags):
@@ -490,6 +503,19 @@ def create_app(data_dir=None, start_worker=True):
                 # Only display positions change; content revisions and in-flight jobs stay valid.
                 db.executemany('UPDATE bookmarks SET sort_order=? WHERE id=?', enumerate(identifiers))
         return {'reordered': True}
+
+    @app.post('/api/bookmarks/archive-pending')
+    def archive_pending(data: PendingArchive, user=Depends(auth)):
+        ids = list(dict.fromkeys(data.bookmark_ids))
+        with store.transaction() as db:
+            validate_folder(data.folder_id)
+            count = db.execute('''SELECT COUNT(*) FROM bookmarks
+                WHERE folder_id IS NULL AND deleted_at IS NULL
+                AND id IN (SELECT value FROM json_each(?))''', (json.dumps(ids),)).fetchone()[0]
+            if count != len(ids):
+                raise HTTPException(409, '所选书签已变化，请刷新列表后重新选择。')
+            file_bookmarks(db, ids, data.folder_id)
+        return {'moved': count}
 
     @app.get('/api/bookmarks/{identifier}')
     def bookmark_detail(identifier: int, user=Depends(auth)):
@@ -687,12 +713,7 @@ def create_app(data_dir=None, start_worker=True):
             if not hmac.compare_digest(snapshot, data.snapshot):
                 raise HTTPException(409, '目录或书签已变化，本次未迁移任何书签，请重新预览范围和数量。')
             if ids:
-                # Match manual filing protection; content and its text vectors do not change.
-                store.execute('''UPDATE bookmarks SET folder_id=?,manual_classification=1,
-                    classification_status='done',error=NULL,updated_at=?
-                    WHERE id IN (SELECT value FROM json_each(?))''',
-                    (data.target_folder_id, now(), json.dumps(ids)))
-                append_bookmarks(db, ids)
+                file_bookmarks(db, ids, data.target_folder_id)
         return {'moved': counts['bookmarks_to_move'], 'already_in_target': counts['already_in_target'],
                 'folders_included': counts['folders_included']}
 

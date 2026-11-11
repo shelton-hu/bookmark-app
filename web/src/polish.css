@@ -324,10 +324,6 @@ body:has(.clarity-shell.mode-manage) :is(.modal, .bookmark-detail) {
 }
 .clarity-shell.mode-manage .topbar .workspace-mode-link:hover:not(:disabled) { background: #faf4f2; border-color: #cdb9bf; color: #7a3546; }
 .clarity-shell.mode-manage .topbar .action-add { min-height: 40px; border-radius: 8px; font-size: 13px; }
-.clarity-shell.mode-manage .topbar .action-add.secondary {
-  background: #fff; border: 1px solid #e3dbd4; color: #51484c; box-shadow: none;
-}
-.clarity-shell.mode-manage .topbar .action-add.secondary:hover:not(:disabled) { background: #faf4f2; border-color: #cdb9bf; color: #7a3546; }
 @media (max-width: 700px) {
   .clarity-shell.mode-manage .topbar :is(.workspace-mode-link, .action-add) { min-height: 44px; }
 }
@@ -351,6 +347,27 @@ body:has(.clarity-shell.mode-manage) :is(.modal, .bookmark-detail) {
 .clarity-shell.mode-manage .page-actions .secondary[aria-pressed="true"] { background: #7a3546; border-color: #7a3546; color: #fff8e9; }
 .clarity-shell.mode-manage .page-actions .primary { font-weight: 600; }
 
+.pending-more-menu {
+  position: fixed; inset: auto; left: clamp(8px, var(--pending-menu-left, 8px), calc(100% - 188px));
+  margin: 0; width: 180px; padding: 4px;
+  border: 1px solid #e3dbd4; border-radius: 8px;
+  background: #fff; color: #51484c; box-shadow: 0 8px 24px #3a242c24;
+}
+.pending-more-menu button {
+  width: 100%; min-height: 44px; padding: 6px 10px; justify-content: flex-start;
+  border-radius: 5px; font-size: 13px;
+}
+.pending-more-menu button:hover:not(:disabled) { background: #faf4f2; }
+.pending-more-menu button.danger { color: #a2303d; }
+.modal-actions.pending-dialog-actions { flex-wrap: wrap; }
+.pending-dialog-actions .text-button { margin-inline-end: auto; }
+.pending-folder-select { position: relative; display: block; }
+.pending-folder-select select { appearance: none; padding-inline-end: 34px; }
+.pending-folder-select > svg {
+  position: absolute; top: 50%; inset-inline-end: 12px;
+  transform: translateY(-50%); pointer-events: none;
+}
+
 .sidebar-mode { display: none; }
 @media (min-width: 1101px) {
   .clarity-shell.mode-manage .topbar { display: none; }
@@ -369,6 +386,8 @@ body:has(.clarity-shell.mode-manage) :is(.modal, .bookmark-detail) {
   .clarity-shell.mode-manage .page-actions:not(:has(> :not(.action-add))) { display: none; }
   .clarity-shell.mode-manage .page-actions { width: 100%; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
   .clarity-shell.mode-manage .page-actions > * { flex-shrink: 0; }
+  .clarity-shell.mode-manage .page-actions.pending-actions { flex-wrap: wrap; }
+  .clarity-shell.mode-manage .pending-actions :is(.primary, .secondary) { min-height: 44px; }
   .clarity-shell.mode-manage .management-heading { padding-bottom: 12px; margin-bottom: 14px; }
 }
 
