@@ -6,7 +6,8 @@
   input:not([type="checkbox"], [type="radio"], [type="hidden"]),
   textarea, select,
   .search-panel .segmented button, .search-panel .hash,
-  .catalog-trigger strong, .enjoy-search-kind button, .si-dropzone > strong
+  .catalog-trigger strong, .mode-enjoy .enjoy-toolbar .workspace-mode-link,
+  .enjoy-search-kind button, .si-dropzone > strong
 ) {
   font-family: var(--ui-font-family);
   font-size: 12px;

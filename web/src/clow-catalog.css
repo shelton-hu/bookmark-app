@@ -48,7 +48,7 @@
 .clarity-shell.mode-enjoy .workspace-mode-link {
   position: relative; width: 100%; height: 44px; padding: 0 12px; border: 1px solid var(--folio-border); border-radius: 5px;
   color: var(--folio-gold, #f8e1aa); background: var(--folio-cover); box-shadow: inset 0 1px #f7d7a426, 0 3px 10px #08030e40; text-shadow: none;
-  font: 500 16px/1.4 "Songti SC", "Noto Serif SC", serif;
+  font-weight: 500; line-height: 1.4;
   transition: background-color 160ms ease;
 }
 .clarity-shell.mode-enjoy .workspace-mode-link::before,
@@ -66,16 +66,16 @@
 @media (prefers-reduced-motion: reduce) { .clarity-shell .workspace-mode-link { transition: none; } }
 .clow-catalog { min-width: 0; }
 .mode-enjoy .catalog-trigger {
-  position: relative; isolation: isolate; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; height: 44px; padding: 0 20px 0 10px;
+  position: relative; isolation: isolate; display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; height: 44px; padding: 0 10px;
   color: var(--folio-gold); border: 1px solid var(--folio-border); border-radius: 5px; background: var(--folio-cover); box-shadow: inset 0 1px #f7d7a426, 0 3px 10px #08030e40;
 }
 .mode-enjoy .catalog-trigger::after { content: none; }
 .mode-enjoy .catalog-trigger > * { position: relative; }
 .mode-enjoy .enjoy-toolbar .catalog-trigger .brand-logo { width: 18px; height: 18px; }
 .mode-enjoy .enjoy-toolbar .catalog-trigger > span { flex: 0 1 auto; }
-.mode-enjoy .enjoy-toolbar .catalog-trigger > svg:last-child { position: absolute; right: 6px; width: 12px; height: 12px; }
+.mode-enjoy .enjoy-toolbar .catalog-trigger > svg:last-child { width: 12px; height: 12px; }
 .mode-enjoy .enjoy-toolbar .catalog-trigger small { display: none; }
-.mode-enjoy .enjoy-toolbar .catalog-trigger strong { font-size: 16px; font-weight: 500; line-height: 1.4; }
+.mode-enjoy .enjoy-toolbar .catalog-trigger strong { font-weight: 500; line-height: 1.4; }
 .mode-enjoy .catalog-trigger strong { text-shadow: none; }
 .catalog-trigger > svg { flex-shrink: 0; }
 .catalog-trigger > span { flex: 1; min-width: 0; text-align: left; }
@@ -167,7 +167,6 @@
   .clarity-shell.mode-enjoy .library-main { padding-top: calc(var(--enjoy-top) - 122px) !important; }
   .mode-enjoy .enjoy-toolbar { width: calc(100% - 32px); grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding-block: 7px; }
   .clow-catalog { grid-column: 1; grid-row: 1; }
-  .mode-enjoy .catalog-trigger { padding: 0 20px 0 8px; }
   .catalog-trigger strong { font-size: 16px; }
   .catalog-trigger small { font-size: 10px; }
   .catalog-trigger > svg:first-child { width: 20px; }
