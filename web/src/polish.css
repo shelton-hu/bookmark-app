@@ -6,7 +6,7 @@
   input:not([type="checkbox"], [type="radio"], [type="hidden"]),
   textarea, select,
   .search-panel .segmented button, .search-panel .hash,
-  .catalog-trigger strong, .mode-enjoy .enjoy-toolbar .workspace-mode-link,
+  :where(.mode-manage) .catalog-trigger strong,
   .enjoy-search-kind button, .si-dropzone > strong
 ) {
   font-family: var(--ui-font-family);

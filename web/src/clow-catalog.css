@@ -37,6 +37,9 @@
 .mode-enjoy .enjoy-toolbar .enjoy-search > button:focus-visible { outline-color: #79394a; }
 .mode-enjoy .enjoy-toolbar .enjoy-search > svg { width: 20px; height: 20px; }
 .mode-enjoy .enjoy-toolbar .workspace-mode-link > svg { width: 18px; height: 18px; }
+.mode-enjoy .enjoy-toolbar :is(.catalog-trigger strong, .workspace-mode-link) {
+  font: 500 16px/1.4 var(--ui-font-family);
+}
 /* A single destination action, styled for the workspace it belongs to. */
 .clarity-shell .workspace-mode-link {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
@@ -48,7 +51,6 @@
 .clarity-shell.mode-enjoy .workspace-mode-link {
   position: relative; width: 100%; height: 44px; padding: 0 12px; border: 1px solid var(--folio-border); border-radius: 5px;
   color: var(--folio-gold, #f8e1aa); background: var(--folio-cover); box-shadow: inset 0 1px #f7d7a426, 0 3px 10px #08030e40; text-shadow: none;
-  font-weight: 500; line-height: 1.4;
   transition: background-color 160ms ease;
 }
 .clarity-shell.mode-enjoy .workspace-mode-link::before,
@@ -75,7 +77,6 @@
 .mode-enjoy .enjoy-toolbar .catalog-trigger > span { flex: 0 1 auto; }
 .mode-enjoy .enjoy-toolbar .catalog-trigger > svg:last-child { width: 12px; height: 12px; }
 .mode-enjoy .enjoy-toolbar .catalog-trigger small { display: none; }
-.mode-enjoy .enjoy-toolbar .catalog-trigger strong { font-weight: 500; line-height: 1.4; }
 .mode-enjoy .catalog-trigger strong { text-shadow: none; }
 .catalog-trigger > svg { flex-shrink: 0; }
 .catalog-trigger > span { flex: 1; min-width: 0; text-align: left; }
@@ -167,6 +168,7 @@
   .clarity-shell.mode-enjoy .library-main { padding-top: calc(var(--enjoy-top) - 122px) !important; }
   .mode-enjoy .enjoy-toolbar { width: calc(100% - 32px); grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; padding-block: 7px; }
   .clow-catalog { grid-column: 1; grid-row: 1; }
+  .mode-enjoy .catalog-trigger { padding-inline: 8px; }
   .catalog-trigger strong { font-size: 16px; }
   .catalog-trigger small { font-size: 10px; }
   .catalog-trigger > svg:first-child { width: 20px; }
